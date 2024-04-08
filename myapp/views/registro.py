@@ -13,7 +13,7 @@ def mi_pagina_registro(request):
 
 def post_registro(request):
     if request.method == 'POST':
-        form = RegistroFormulario(request.POST)
+        form = RegistroFormulario(request.POST, request.FILES)
         if form.is_valid():
             # Procesar los datos del formulario si son válidos
             username = form.cleaned_data['username']
@@ -25,7 +25,7 @@ def post_registro(request):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             nombre_negocio = form.cleaned_data['nombre_negocio']
-            #archivos = request.FILES.getlist('archivos')
+            archivos = request.FILES.getlist('archivos')
 
             # Crear el usuario
             user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
@@ -42,8 +42,10 @@ def post_registro(request):
             Partners.objects.create(user=user, negocio=negocio)
 
             # Manejar la carga de archivos
-            #for archivo in archivos:
-            #    Archivo.objects.create(negocio=negocio, archivo=archivo)
+
+            for archivo in archivos:
+                Archivo.objects.create(negocio=negocio, archivo=archivo)
+
 
             return redirect('myapp:index')
     else:

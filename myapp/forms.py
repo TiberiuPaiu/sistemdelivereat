@@ -9,7 +9,7 @@ class RegistroFormulario(forms.Form):
     telefono = forms.CharField(max_length=15)
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=100)
-
+    archivos=forms.ClearableFileInput(attrs={"allow_multiple_selected": True})
 
 
 
