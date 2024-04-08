@@ -27,4 +27,4 @@ class Partners(models.Model):
 
 class Archivo(models.Model):
     negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE, related_name='archivos')
-    archivo = models.FileField(upload_to='archivos_negocio/')
+    archivo = models.FileField(upload_to='documentos_negocio/')
