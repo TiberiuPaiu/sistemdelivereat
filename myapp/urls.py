@@ -11,6 +11,9 @@ urlpatterns = [
     path('', index, name='index'),
     path('registrar/usuario/', post_registro, name='hacer_registro'),
 
+    path('lista/restaurantes/', mi_pagina_restaurante, name='list_restaurantes'),
+    path('anadir/restaurante/', post_add_restaurante, name='add_restaurante'),
+
 
 ]
 
