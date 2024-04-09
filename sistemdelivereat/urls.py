@@ -29,3 +29,5 @@ urlpatterns = [
 # Agregar la configuracion para servir archivos de medios
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# add Configuring static files
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
