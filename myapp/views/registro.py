@@ -12,6 +12,9 @@ def mi_pagina_registro(request):
     return render(request, 'registro.html')
 
 def post_registro(request):
+
+    titulo_pagina= "Pagina de registro"
+
     if request.method == 'POST':
         form = RegistroFormulario(request.POST, request.FILES)
         if form.is_valid():
@@ -51,4 +54,4 @@ def post_registro(request):
     else:
         form = RegistroFormulario()
 
-    return render(request, 'registro.html', {'form': form})
+    return render(request, 'registro.html', {'form': form,'titulo_pagina': titulo_pagina})
