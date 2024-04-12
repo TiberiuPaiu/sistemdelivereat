@@ -26,19 +26,28 @@
 
     <section class="content">
         <div class="container-fluid">
+            
+             <div class="card card-primary card-tabs">
+   <div class="card-header p-0 pt-1">
+      <ul class="nav nav-tabs" >
+         <li class="nav-item">
+            <a class="nav-link active" id="custom-tabs-one-home-tab"  href="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante_id %}" aria-selected="true">Repartidor</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" id="custom-tabs-one-profile-tab"  href="{% url 'myapp:add_user_cocina' restaurante_id=restaurante_id %}"  aria-selected="false">Resposable Cocina</a>
+         </li>
+      </ul>
+   </div>
+   <div class="card-body">
+      <div class="tab-content" >
 
-             <div class="card card-primary">
-                    <form action="{% url 'myapp:add_restaurante'%}"  method="POST" enctype="multipart/form-data" >
+                 <form action="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante_id %}"  method="POST" enctype="multipart/form-data" >
                     {% csrf_token %}
-                  <div class="card-title">
-                      </div>
-
-                  <div class="card-body">
                    
                          <div class="form-group row">
                             <label for="first_name" class="col-sm-3 col-form-label">Nombre:</label>
                             <div class="col-sm-9">
-                              <input type="text" class="form-control" id="first_name"  name="nombre_restaurante"  placeholder="">
+                              <input type="text" class="form-control" id="first_name"  name="first_name"  placeholder="">
                             </div>
 
                               <div class="col-sm-3 col-form-label"></div>
@@ -48,9 +57,9 @@
                          </div>
 
                         <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Pais:</label>
+                            <label for="first_name" class="col-sm-3 col-form-label">Apleidos:</label>
                             <div class="col-sm-9">
-                              <input type="text" class="form-control" id="first_name"  name="pais"  placeholder="">
+                              <input type="text" class="form-control" id="first_name"  name="last_name"  placeholder="">
                             </div>
 
                               <div class="col-sm-3 col-form-label"></div>
@@ -60,9 +69,9 @@
                          </div>
 
                         <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Ciudad:</label>
+                            <label for="first_name" class="col-sm-3 col-form-label">Dirección de correo electrónico:</label>
                             <div class="col-sm-9">
-                              <input type="text" class="form-control" id="first_name"  name="ciudad"  placeholder="">
+                              <input type="text" class="form-control" id="first_name"  name="email"  placeholder="">
                             </div>
 
                               <div class="col-sm-3 col-form-label"></div>
@@ -72,9 +81,25 @@
                          </div>
 
                         <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Código postal:</label>
+                            <label for="first_name" class="col-sm-3 col-form-label">Teléfono:</label>
                             <div class="col-sm-9">
-                              <input type="text" class="form-control" id="first_name"  name="codigo_postal"  placeholder="">
+                                   <div class="row">
+                          <div class="col-sm-3">
+                        <select class="custom-select form-control-border" name="prefix_tel" aria-label="Default select example">
+                          <option value="+34">+34</option>
+                          <option value="+40">+40 </option>
+                          <option value="+36">+36</option>
+                          <option value="+48">+48</option>
+                          <option value="+420">+420</option>
+                          <option value="+421">+421</option>
+                          <option value="+380">+380</option>
+                          
+                        </select>
+                      	</div>
+                           <div class="col-sm">
+                              <input type="text" name="telefono"  id="form3Example3c" class="form-control" />
+                          </div>
+                    </div>
                             </div>
 
                               <div class="col-sm-3 col-form-label"></div>
@@ -83,10 +108,10 @@
                               </small>
                          </div>
                        <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Calle:</label>
+                            <label for="first_name" class="col-sm-3 col-form-label">Nombre de usuario:</label>
 
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="first_name"  name="direcion"  placeholder="">
+                                <input type="text" class="form-control" id="username"  name="username"  placeholder="">
 
                             </div>
 
@@ -95,56 +120,24 @@
                                Error
                               </small>
                          </div>
-                       <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Numero Calle:</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="numero"  name="numero"  placeholder="">
-                            </div>
+                       
 
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
-                         </div>
-
-                        <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Descripcion:</label>
-                            <div class="col-sm-9">
-                              <textarea class="form-control" name="descripcion"  placeholder="Escribe la descricion que desea aqui.."></textarea>
-                            </div>
-
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
-                         </div>
+                       
                       
-                     
-
-                        <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Imagenes:</label>
-                            <div class="col-sm-9">
-                                <input class="form-control" type="file" name="imagenes" id="formFileMultiple" multiple>
-                            </div>
-
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
-                         </div>
-
-                 
-                  </div>
-                 
-                    <div class="card-footer">
+                        
                         <button type="submit" class="btn btn-primary">Envia</button>
-                     </div>
+                     
   </form>
 
+         </div>
 
-             </div>
+      </div>
+   </div>
+</div>
 
-
+      
+            
+ 
 
         </div>
     </section>

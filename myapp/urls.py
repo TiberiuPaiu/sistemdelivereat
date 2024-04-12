@@ -11,9 +11,15 @@ urlpatterns = [
     path('', index, name='index'),
     path('registrar/usuario/', post_registro, name='hacer_registro'),
 
-    path('lista/restaurantes/', mi_pagina_restaurante, name='list_restaurantes'),
+    path('lista/restaurantes/', ArticleDetailView.as_view(), name='list_restaurantes'),
     path('anadir/restaurante/', post_add_restaurante, name='add_restaurante'),
 
+    path('anadir/trabajdor/repartidor/<int:restaurante_id>', add_user_reparidor, name='add_user_reparidor'  ),
+    path('anadir/trabajdor/cocina/<int:restaurante_id>', add_user_cocina, name='add_user_cocina'  ),
+
+    path('lista/trabajdores/<int:restaurante_id>', UsuariosRestauranteListView.as_view(), name='list_user_restaurant'),
+
+    path('reset_password/<int:user_id>/<int:restaurante_id>/', reset_password, name='reset_password')
 
 ]
 

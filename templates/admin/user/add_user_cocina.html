@@ -1,0 +1,173 @@
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
+
+{% block style %}
+ <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+    <!--  iconas fas -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+<div class="content">
+<div class="container">
+
+    <section class="content">
+        <div class="container-fluid">
+
+             <div class="card card-primary card-tabs">
+   <div class="card-header p-0 pt-1">
+      <ul class="nav nav-tabs" >
+         <li class="nav-item">
+            <a class="nav-link " id="custom-tabs-one-home-tab"  href="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante_id %}"  aria-selected="false">Repartidor</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link active" id="custom-tabs-one-profile-tab"  href="{% url 'myapp:add_user_cocina' restaurante_id=restaurante_id %}"  aria-selected="true">Resposable Cocina</a>
+         </li>
+      </ul>
+   </div>
+   <div class="card-body">
+      <div class="tab-content" >
+
+                 <form action="{% url 'myapp:add_user_cocina' restaurante_id=restaurante_id %}"  method="POST" enctype="multipart/form-data" >
+                    {% csrf_token %}
+
+                         <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Nombre:</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="first_name"  name="first_name"  placeholder="">
+                            </div>
+
+                              <div class="col-sm-3 col-form-label"></div>
+                              <small id="emailHelp" class="form-text text-danger">
+                               Error
+                              </small>
+                         </div>
+
+                        <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Apleidos:</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="first_name"  name="last_name"  placeholder="">
+                            </div>
+
+                              <div class="col-sm-3 col-form-label"></div>
+                              <small id="emailHelp" class="form-text text-danger">
+                               Error
+                              </small>
+                         </div>
+
+                        <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Dirección de correo electrónico:</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="first_name"  name="email"  placeholder="">
+                            </div>
+
+                              <div class="col-sm-3 col-form-label"></div>
+                              <small id="emailHelp" class="form-text text-danger">
+                               Error
+                              </small>
+                         </div>
+
+                        <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Teléfono:</label>
+                            <div class="col-sm-9">
+                                   <div class="row">
+                          <div class="col-sm-3">
+                        <select class="custom-select form-control-border" name="prefix_tel" aria-label="Default select example">
+                          <option value="+34">+34</option>
+                          <option value="+40">+40 </option>
+                          <option value="+36">+36</option>
+                          <option value="+48">+48</option>
+                          <option value="+420">+420</option>
+                          <option value="+421">+421</option>
+                          <option value="+380">+380</option>
+
+                        </select>
+                      	</div>
+                           <div class="col-sm">
+                              <input type="text" name="telefono"  id="form3Example3c" class="form-control" />
+                          </div>
+                    </div>
+                            </div>
+
+                              <div class="col-sm-3 col-form-label"></div>
+                              <small id="emailHelp" class="form-text text-danger">
+                               Error
+                              </small>
+                         </div>
+                       <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Nombre de usuario:</label>
+
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="username"  name="username"  placeholder="">
+
+                            </div>
+
+                              <div class="col-sm-3 col-form-label"></div>
+                              <small id="emailHelp" class="form-text text-danger">
+                               Error
+                              </small>
+                         </div>
+
+
+
+
+
+                        <button type="submit" class="btn btn-primary">Envia</button>
+
+  </form>
+
+         </div>
+
+      </div>
+   </div>
+</div>
+
+
+
+
+
+        </div>
+    </section>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+<!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+
+
+{% endblock %}

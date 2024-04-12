@@ -134,3 +134,5 @@ AUTH_USER_MODEL = 'myapp.User'
 # Achivos media
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+GLOBAL_PASSWORD ="Tiberiu.1234"

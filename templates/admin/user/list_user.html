@@ -17,17 +17,17 @@
 <div class="container">
 
   <div class="row">
-    {% for restaurante in restaurantes %}
+
+
+    {% for user in usuarios %}
     <div class="col-md-4">
         <div class="card card-widget widget-user-2">
             <div class="widget-user-header bg-warning">
-                <div class="widget-user-image">
-                    <img class="img-circle elevation-2" src="{{ restaurante.imagens.first.imagen.url }}" alt="User Avatar">
-                </div>
-                <h3 class="widget-user-username">{{ restaurante.nombre }}</h3>
+
+                <h3 class="widget-user-username">{{ user.username }}</h3>
                 <h5 class="widget-user-desc">
                     
-                    {{ restaurante.ubicacion.full_address }}
+                    {{ user.user_type }}
 
 
 
@@ -35,26 +35,12 @@
             </div>
             <div class="card-footer p-0">
                 <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            Añadir Plato
+                    <li class="nav-item"> 
+                        <a href="{% url 'myapp:reset_password'  user.id  restaurante_id %}" class="nav-link">
+                            Restear Contraseña
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            Platos <span class="float-right badge bg-info">5</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante.id %}" class="nav-link">
-                            Añadri Usuario
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante.id %}" class="nav-link">
-                            Usuario <span class="float-right badge bg-info">5</span>
-                        </a>
-                    </li>
+
                 </ul>
             </div>
         </div>
