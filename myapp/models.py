@@ -1,4 +1,4 @@
-
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 class User(AbstractUser):
@@ -74,7 +74,16 @@ class Cocina(models.Model):
     restaurante = models.OneToOneField(Restaurante, on_delete=models.CASCADE, null=True, related_name='cocina_restaurante')
 
 
+class Plato(models.Model):
+    restaurante = models.ForeignKey('Restaurante', on_delete=models.CASCADE, related_name='platos')
+    nombre = models.CharField(max_length=100)
+    precio = models.DecimalField(max_digits=10, decimal_places=2)
+    descuento = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
+
+class Ingrediente(models.Model):
+    nombre = models.CharField(max_length=100)
+    plato =models.ForeignKey(Plato, on_delete=models.CASCADE, related_name='ingredientes')
 
 
 

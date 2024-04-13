@@ -1,0 +1,146 @@
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
+
+{% block style %}
+ <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+    <!--  iconas fas -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+<div class="content">
+<div class="container">
+
+<form class="form-horizontal"  method="POST">
+    {% csrf_token %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Agregar Plato</h3>
+        </div>
+        <div class="card-body">
+            <div class="form-group row">
+                <label for="nombre" class="col-sm-2 col-form-label">Nombre del plato:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Nombre del plato">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="precio" class="col-sm-2 col-form-label">Precio:</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="precio" name="precio" step="0.01" placeholder="Precio">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="descuento" class="col-sm-2 col-form-label">Descuento (%):</label>
+                <div class="col-sm-10">
+                    <input type="number" class="form-control" id="descuento" name="descuento" min="0" max="100" placeholder="Descuento (%)">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="ingredientes" class="col-sm-2 col-form-label">Ingredientes:</label>
+                <div class="col-sm-10">
+                    <input id="btnAgregar" type="button" class="btn btn-primary" value="Agregar Ingrediente" /> <br><br>
+                    <div id="divAgregarInputs">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+    </div>
+</form>
+
+
+
+
+</div>
+
+    </section>
+
+</div>
+
+    </div>
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+
+<!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+<script>
+    var btnAgregar = document.getElementById('btnAgregar');
+    var divAgregarInputs = document.getElementById('divAgregarInputs');
+    var index = 0;
+
+    btnAgregar.addEventListener('click', function() {
+        var divRow = document.createElement('div');
+        divRow.classList.add('row'); // Agregar clase de Bootstrap
+
+        var divColInput = document.createElement('div');
+        divColInput.classList.add('col-9'); // Agregar clase de Bootstrap
+
+        var nuevoInput = document.createElement('input');
+        nuevoInput.type = 'text';
+        nuevoInput.name = 'ingredientes';
+        nuevoInput.placeholder = 'Ingrediente ' + (index + 1);
+        nuevoInput.classList.add('form-control'); // Agregar clase de Bootstrap
+
+        var divColBtn = document.createElement('div');
+        divColBtn.classList.add('col-3'); // Agregar clase de Bootstrap
+
+        // Crear un botón de eliminar
+        var btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.type = 'button';
+        btnEliminar.classList.add('btn', 'btn-danger', 'btn-sm', 'w-100'); // Agregar clases de Bootstrap
+
+        btnEliminar.addEventListener('click', function() {
+            divRow.parentNode.removeChild(divRow);
+        });
+
+        nuevoInput.classList.add('mb-1'); // Agregar clase de Bootstrap para margen inferior
+
+        divColInput.appendChild(nuevoInput);
+        divColBtn.appendChild(btnEliminar);
+
+        divRow.appendChild(divColInput);
+        divRow.appendChild(divColBtn);
+
+        divAgregarInputs.appendChild(divRow);
+
+        index++;
+    });
+</script>
+
+{% endblock %}

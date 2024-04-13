@@ -19,7 +19,10 @@ urlpatterns = [
 
     path('lista/trabajdores/<int:restaurante_id>', UsuariosRestauranteListView.as_view(), name='list_user_restaurant'),
 
-    path('reset_password/<int:user_id>/<int:restaurante_id>/', reset_password, name='reset_password')
+    path('reset_password/<int:user_id>/<int:restaurante_id>/', reset_password, name='reset_password'),
+
+    path('restaurante/agregar_plato/<int:restaurante_id>/', agregar_plato, name='agregar_plato'),
+    path('restaurante/listar_plato/<int:restaurante_id>/', PlatosRestauranteListView.as_view() , name='list_platos'),
 
 ]
 

@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from myapp.forms import RestauranteForm, AddUserFormulario
-from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina
+from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente
 from sistemdelivereat import settings
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
 
@@ -265,3 +265,88 @@ def reset_password(request, user_id, restaurante_id):
     url = reverse('myapp:list_user_restaurant', kwargs={'restaurante_id': restaurante_id})
 
     return redirect(url)
+
+
+
+def agregar_plato(request, restaurante_id):
+    restaurante = Restaurante.objects.get(id=restaurante_id)
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        precio = request.POST.get('precio')
+        descuento = request.POST.get('descuento')
+        ingredientes = request.POST.getlist('ingredientes')
+
+        print(ingredientes)
+
+        # Guardar el plato
+        plato = Plato.objects.create(nombre=nombre, precio=precio, descuento=descuento ,restaurante=restaurante)
+
+        # Guardar los ingredientes
+        for ingrediente in ingredientes:
+            Ingrediente.objects.create(nombre=ingrediente, plato=plato)
+
+        return redirect('myapp:list_restaurantes')
+    else :
+        form = RestauranteForm()
+
+    ruta_pagina = [
+        {
+            'text': "Lista de restaurantes",
+            'link': "myapp:list_restaurantes",
+        },
+
+        {
+            'text': "Añadir plato en el  "+restaurante.nombre,
+            'link': "",
+        }
+    ]
+
+    title_pagina = [
+        {
+            'label_title': "Añadir un plato ",
+            'title_card': "Añadir un plato para  "+restaurante.nombre,
+        }
+    ]
+    context = {
+        'ruta_pagina': ruta_pagina,
+        'title_pagina': title_pagina,
+        'form': "",
+    }
+
+    return render(request, 'admin/platos/add_platos.html', context)
+
+
+class PlatosRestauranteListView(ListView):
+    model = Plato
+    template_name = 'admin/platos/listado_platos.html'  # Reemplaza 'tu_template.html' por la ruta a tu template
+    context_object_name = 'platos'
+    paginate_by = 10
+
+    def get_queryset(self):
+        restaurante_id = self.kwargs['restaurante_id']
+        return Plato.objects.filter(restaurante_id=restaurante_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Obtén el ID del restaurante de la URL
+        restaurante_id = self.kwargs['restaurante_id']
+
+        # Obtén el restaurante
+        restaurante = Restaurante.objects.get(pk=restaurante_id)
+
+
+        context['title_pagina'] = {'label_title': "Llistat de platos",
+                                   'title_card': "Llistat de platos de " + restaurante.nombre,
+                                   },
+        context['ruta_pagina'] = [ {
+            'text': "Lista de restaurantes",
+            'link': "myapp:list_restaurantes",
+        },
+        {
+            'text': "Lista de los platos  de " + restaurante.nombre,
+            'link': "",
+        }
+        ]
+        context['restaurante_id'] = restaurante.id
+        return context
