@@ -21,74 +21,100 @@
     <div class="content">
 <div class="container">
 
-    <div class="card">
-<div class="card-header">
-<h3 class="card-title">Llistat de platos</h3>
-</div>
+    <div class="row">
 
-<div class="card-body">
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Precio</th>
-                    <th>Descuento (%)</th>
-                    <th>Ingredientes</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for plato in platos %}
-                <tr>
-                    <td>{{ plato.nombre }}</td>
-                    <td>{{ plato.precio }}</td>
-                    <td>{{ plato.descuento }}</td>
-                    <td> 
-                        <ul>
-                            {% for ingrediente in plato.ingredientes.all %}
-                            <li>{{ ingrediente.nombre }}</li>
-                            {% endfor %}
+        <div class="col-md-2 d-flex align-items-center">
+
+                   <div class="card">
+                        <!-- Contenido del menú lateral -->
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="{% url 'myapp:detalle_generico' tipo_objeto='restaurante' id_objeto=restaurante_id %}">Datos Restaurante</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:agregar_plato' restaurante_id=restaurante_id %}">Añadir Plato</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:list_platos' restaurante_id=restaurante_id %}">Platos</a></li>
+
+                            <li class="list-group-item"><a href="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante_id %}">Añadri Usuario</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante_id %}"> Usuarios</a></li>
+
+
+                            <!-- Agrega más opciones según sea necesario -->
                         </ul>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <!-- /.card-body -->
 
-  <div class="card-footer clearfix">
-    <ul class="pagination pagination-sm m-0 float-right">
-        {% if is_paginated %}
-            {% if page_obj.has_previous %}
-                <li class="page-item">
-                    <a class="page-link" href="?page=1">&laquo;</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
-                </li>
-            {% endif %}
-            <li class="page-item active">
-                <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                   </div>
+
+         </div>
+
+        <div class="col-md-10">
+
+
+            <div class="card">
+        <div class="card-header">
+        <h3 class="card-title">Llistat de platos</h3>
+        </div>
+
+        <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Descuento (%)</th>
+                            <th>Ingredientes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plato in platos %}
+                        <tr>
+                            <td>{{ plato.nombre }}</td>
+                            <td>{{ plato.precio }}</td>
+                            <td>{{ plato.descuento }}</td>
+                            <td>
+                                <ul>
+                                    {% for ingrediente in plato.ingredientes.all %}
+                                    <li>{{ ingrediente.nombre }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+
+          <div class="card-footer clearfix">
+            <ul class="pagination pagination-sm m-0 float-right">
+                {% if is_paginated %}
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">&laquo;</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                    </li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+            <li class="page-item">
+            <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
             </li>
-            {% if page_obj.has_next %}
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
-                </li>
-            {% endif %}
-        {% else %}
-    <li class="page-item">
-    <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-<li class="page-item"><a class="page-link" href="#">1</a></li>
-<li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-    </li>
-        {% endif %}
-    </ul>
-</div>
-</div>
-
+                {% endif %}
+            </ul>
+        </div>
+        </div>
+        </div>
+    </div>
 </div>
 
 
