@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.views.generic import DetailView
 
 from myapp.forms import RestauranteForm, AddUserFormulario
 from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente
@@ -349,4 +350,25 @@ class PlatosRestauranteListView(ListView):
         }
         ]
         context['restaurante_id'] = restaurante.id
+        return context
+
+
+class DetalleGenericoView(DetailView):
+    template_name = 'admin/detalle_generico.html'
+
+    def get_object(self):
+        # Obtener el tipo de objeto y su ID desde la URL
+        tipo_objeto = self.kwargs['tipo_objeto']
+        id_objeto = self.kwargs['id_objeto']
+
+        # Determinar qué modelo se está solicitando y obtener el objeto correspondiente
+        if tipo_objeto == 'restaurante':
+            return Restaurante.objects.get(pk=id_objeto)
+        elif tipo_objeto == 'usuario':
+            return User.objects.get(pk=id_objeto)
+        # Puedes agregar más tipos de objetos aquí según sea necesario
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tipo_objeto'] = self.kwargs['tipo_objeto']
         return context
