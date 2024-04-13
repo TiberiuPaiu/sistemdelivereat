@@ -16,6 +16,22 @@ class ArticleDetailView(ListView):
     template_name = 'admin/list_restaurante.html'
     context_object_name = 'restaurantes'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+
+
+        context['title_pagina'] = {'label_title': "Llistado de restaurantes",
+                                   'title_card': "Llistado de restaurantes  " ,
+                                   },
+        context['ruta_pagina'] = [ {
+            'button_text': "Crear restaurante",
+            'link': "myapp:add_restaurante",
+        }
+        ]
+
+        return context
+
 def post_add_restaurante(request):
     if request.method == 'POST':
         form = RestauranteForm(request.POST, request.FILES)
@@ -55,11 +71,9 @@ def post_add_restaurante(request):
                 for imagen in imagenes:
                     Imagen.objects.create(restaurante=restaurante, imagen=imagen)
 
-                return redirect('myapp:add_restaurante')
+                return redirect('myapp:list_restaurantes')
             else:
                 error = geocoder.error
-
-
 
     else:
         form = RestauranteForm()
@@ -82,6 +96,18 @@ def post_add_restaurante(request):
         'title_card': "Añadir el restaurante",
          }
     ]
+    ruta_pagina = [
+        {
+            'text': "Lista de restaurantes",
+            'link': "myapp:list_restaurantes",
+        },
+
+        {
+            'text': "Añadir restaurante ",
+            'link': "",
+        }
+    ]
+
     context = {
         'ruta_pagina': ruta_pagina,
         'title_pagina': title_pagina,

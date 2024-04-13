@@ -91,11 +91,17 @@
 
       {% for item in ruta_pagina %}
 
+          {% if item.button_text %}
+           <a href="{% url item.link %}"><button class="btn btn-primary">{{ item.button_text }}</button></a>
+         {% endif %}
+
           {% if item.link %}
           <li class="breadcrumb-item"><a href="{% url item.link %}">{{ item.text }}</a></li>
           {% else %}
           <li class="breadcrumb-item active"></li> {{ item.text }} </li>
           {% endif %}
+
+
      
       {% endfor %}
 </ol>
