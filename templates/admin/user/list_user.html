@@ -43,10 +43,10 @@
 
 
 
-
+ <div class="row">
     {% for user in usuarios %}
-         <div class="row">
-    <div class="col-md-5 mx-auto ">
+
+    <div class="col-md-4 ">
         <div class="card card-widget widget-user-2">
             <div class="widget-user-header bg-warning">
 
@@ -65,6 +65,12 @@
                         <a href="{% url 'myapp:reset_password'  user.id  restaurante_id %}" class="nav-link">
                             Restear Contraseña
                         </a>
+                         <a href="#" class="nav-link">
+                            Denegar acceso
+                        </a>
+                        <a href="{% url 'myapp:detalle_generico' tipo_objeto='usuario' id_objeto=user.id   %}" class="nav-link">
+                            Ver los datos
+                        </a>
                     </li>
 
                 </ul>
@@ -72,10 +78,10 @@
         </div>
     </div>
 
-</div>
+
 
             {% endfor %}
-
+</div>
 
         </div>
     </div>

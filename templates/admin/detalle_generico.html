@@ -61,6 +61,10 @@
                                     {% elif tipo_objeto == 'usuario' %}
                                         <p>Nombre de usuario: {{ object.username }}</p>
                                         <p>Correo electrónico: {{ object.email }}</p>
+                                         <p>Nombre: {{ object.get_full_name }}</p>
+                                        <p> Telfeono: {{ object.full_telefono }}</p>
+                                        <p> Rol: {{ oject.user_type }}</p>
+                                        
                                         <!-- Agrega más detalles específicos del usuario -->
                                     {% endif %}
                                 </div>

@@ -15,6 +15,7 @@ class ArticleDetailView(ListView):
     model = Restaurante
     template_name = 'admin/list_restaurante.html'
     context_object_name = 'restaurantes'
+    paginate_by = 3
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -232,6 +233,7 @@ def add_user_cocina(request, restaurante_id):
 class UsuariosRestauranteListView(ListView):
     template_name = 'admin/user/list_user.html'  # Nombre de tu plantilla
     context_object_name = 'usuarios'  # Nombre del objeto en el contexto
+
 
     def get_queryset(self):
         # Obtén el ID del restaurante de la URL

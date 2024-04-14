@@ -17,6 +17,10 @@ class User(AbstractUser):
     prefix_tel = models.CharField(max_length=5)
     telefono = models.CharField(max_length=30)
 
+    def full_telefono(self):
+        return self.prefix_tel + " " + self.telefono
+
+
 class Negocio(models.Model):
     nombre = models.CharField(max_length=255)
 
