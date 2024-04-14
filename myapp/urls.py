@@ -28,8 +28,8 @@ urlpatterns = [
     path('restaurante/agregar_plato/<int:restaurante_id>/', agregar_plato, name='agregar_plato'),
     path('restaurante/listar_plato/<int:restaurante_id>/', PlatosRestauranteListView.as_view() , name='list_platos'),
 
-
-
+    # resena
+    path('resena/<str:tipo_objeto>/<int:id_objeto>/', ResenasView.as_view(), name='resena_generico'),
 
 ]
 

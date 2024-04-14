@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
@@ -88,6 +90,23 @@ class Plato(models.Model):
 class Ingrediente(models.Model):
     nombre = models.CharField(max_length=100)
     plato =models.ForeignKey(Plato, on_delete=models.CASCADE, related_name='ingredientes')
+
+
+
+class Resena(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    comentario = models.TextField()
+    puntuacion = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    fecha_creacion = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        abstract = True
+
+class ResenaRestaurante(Resena):
+    restaurante = models.ForeignKey('Restaurante', on_delete=models.CASCADE, related_name='resenas')
+
+class ResenaPlato(Resena):
+    plato = models.ForeignKey('Plato', on_delete=models.CASCADE, related_name='resenas')
 
 
 
