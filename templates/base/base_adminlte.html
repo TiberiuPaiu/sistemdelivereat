@@ -95,11 +95,13 @@
            <a href="{% url item.link %}"><button class="btn btn-primary">{{ item.button_text }}</button></a>
          {% endif %}
 
-          {% if item.link %}
-          <li class="breadcrumb-item"><a href="{% url item.link %}">{{ item.text }}</a></li>
-          {% else %}
-          <li class="breadcrumb-item active"></li> {{ item.text }} </li>
-          {% endif %}
+            {% if item.link %}
+        <li class="breadcrumb-item"><a href="{% url item.link %}?">{{ item.text }}</a></li>
+            {% elif item.parametro %}
+                <li class="breadcrumb-item"><a href="{{ item.parametro }}">{{ item.text }}</a></li>
+            {% else %}
+                <li class="breadcrumb-item active">{{ item.text }}</li>
+            {% endif %}
 
 
      

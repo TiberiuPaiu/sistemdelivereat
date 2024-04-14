@@ -52,8 +52,8 @@ class ResenasView(DetailView):
                 'link': "myapp:list_restaurantes",
             },
                 {
-                    'text': "Listado platos del  " + plato.restaurante.nombre,
-                    'link': "",
+                    'text': "Lista de los platos  de " + plato.restaurante.nombre,
+                    'parametro': "/restaurante/listar_plato/"+ str(plato.restaurante.id)+"/",
                 },
                 {
                     'text': "Reseñas del plato " + plato.nombre,
