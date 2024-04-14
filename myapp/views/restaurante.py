@@ -339,6 +339,7 @@ def agregar_plato(request, restaurante_id):
         'ruta_pagina': ruta_pagina,
         'title_pagina': title_pagina,
         'form': "",
+        'restaurante_id':restaurante.id
     }
 
     return render(request, 'admin/platos/add_platos.html', context)

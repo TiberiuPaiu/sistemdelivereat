@@ -24,9 +24,35 @@
 <div class="content">
 <div class="container">
 
-<form class="form-horizontal"  method="POST">
-    {% csrf_token %}
+    <div class="row">
+
+        <div class="col-md-2 d-flex align-items-center">
+
+                   <div class="card">
+                        <!-- Contenido del menú lateral -->
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="{% url 'myapp:detalle_generico' tipo_objeto='restaurante' id_objeto=restaurante_id %}">Datos Restaurante</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:agregar_plato' restaurante_id=restaurante_id %}">Añadir Plato</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:list_platos' restaurante_id=restaurante_id %}">Platos</a></li>
+
+                            <li class="list-group-item"><a href="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante_id %}">Añadri Usuario</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante_id %}"> Usuarios</a></li>
+
+
+                            <!-- Agrega más opciones según sea necesario -->
+                        </ul>
+
+                   </div>
+
+         </div>
+
+        <div class="col-md-10">
+
+
+          
     <div class="card">
+         <form class="form-horizontal"  method="POST">
+    {% csrf_token %}
         <div class="card-header">
             <h3 class="card-title">Agregar Plato</h3>
         </div>
@@ -61,28 +87,17 @@
         <div class="card-footer">
             <button type="submit" class="btn btn-success">Guardar</button>
         </div>
+        </form>
     </div>
-</form>
 
-
+        
+        </div>
+    </div>
+</div>
 
 
 </div>
-
-    </section>
-
-</div>
-
-    </div>
-
-
-
-
-
-
-
-
-
+    
 {% endblock %}
 
 

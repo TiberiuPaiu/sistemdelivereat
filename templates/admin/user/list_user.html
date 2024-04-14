@@ -16,17 +16,43 @@
 <div class="content">
 <div class="container">
 
-  <div class="row">
+   <div class="row">
+
+        <div class="col-md-2 d-flex align-items-center">
+
+                   <div class="card">
+                        <!-- Contenido del menú lateral -->
+                        <ul class="list-group">
+                            <li class="list-group-item"><a href="{% url 'myapp:detalle_generico' tipo_objeto='restaurante' id_objeto=restaurante_id %}">Datos Restaurante</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:agregar_plato' restaurante_id=restaurante_id %}">Añadir Plato</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:list_platos' restaurante_id=restaurante_id %}">Platos</a></li>
+
+                            <li class="list-group-item"><a href="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante_id %}">Añadri Usuario</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante_id %}"> Usuarios</a></li>
+
+
+                            <!-- Agrega más opciones según sea necesario -->
+                        </ul>
+
+                   </div>
+
+         </div>
+
+        <div class="col-md-10">
+
+
+
 
 
     {% for user in usuarios %}
-    <div class="col-md-4">
+         <div class="row">
+    <div class="col-md-5 mx-auto ">
         <div class="card card-widget widget-user-2">
             <div class="widget-user-header bg-warning">
 
                 <h3 class="widget-user-username">{{ user.username }}</h3>
                 <h5 class="widget-user-desc">
-                    
+
                     {{ user.user_type }}
 
 
@@ -35,7 +61,7 @@
             </div>
             <div class="card-footer p-0">
                 <ul class="nav flex-column">
-                    <li class="nav-item"> 
+                    <li class="nav-item">
                         <a href="{% url 'myapp:reset_password'  user.id  restaurante_id %}" class="nav-link">
                             Restear Contraseña
                         </a>
@@ -45,8 +71,14 @@
             </div>
         </div>
     </div>
-    {% endfor %}
+
 </div>
+
+            {% endfor %}
+
+
+        </div>
+    </div>
 
 
 
