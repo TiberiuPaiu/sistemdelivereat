@@ -233,6 +233,7 @@ def add_user_cocina(request, restaurante_id):
 class UsuariosRestauranteListView(ListView):
     template_name = 'admin/user/list_user.html'  # Nombre de tu plantilla
     context_object_name = 'usuarios'  # Nombre del objeto en el contexto
+    paginate_by = 3
 
 
     def get_queryset(self):
