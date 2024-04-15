@@ -3,13 +3,13 @@ from django.shortcuts import render, redirect
 
 from myapp.forms import RegistroFormulario
 from myapp.models import User, Negocio, Partners, Archivo
-
+from django.contrib.auth.views import LoginView
 def index(request):
     return render(request, 'hola.html')
 
 
 def mi_pagina_registro(request):
-    return render(request, 'registro.html')
+    return render(request, 'registration/registro.html')
 
 def post_registro(request):
 
@@ -54,4 +54,9 @@ def post_registro(request):
     else:
         form = RegistroFormulario()
 
-    return render(request, 'registro.html', {'form': form,'titulo_pagina': titulo_pagina})
+    return render(request, 'registration/registro.html', {'form': form, 'titulo_pagina': titulo_pagina})
+
+
+
+class CustomLoginView(LoginView):
+    template_name = 'registration/login.html'

@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -105,9 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
+TIME_ZONE = 'Europe/Madrid'
 
-TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -134,5 +136,8 @@ AUTH_USER_MODEL = 'myapp.User'
 # Achivos media
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+LOGIN_REDIRECT_URL = reverse_lazy("myapp:list_restaurantes")
+LOGOUT_REDIRECT_URL = reverse_lazy("myapp:login")
 
 GLOBAL_PASSWORD ="Tiberiu.1234"

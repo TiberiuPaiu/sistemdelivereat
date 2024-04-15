@@ -5,11 +5,15 @@ from myapp.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.contrib.auth.views import LoginView, logout_then_login ,LogoutView
+
 app_name = "myapp"
 urlpatterns = [
 
-    path('', index, name='index'),
-    path('registrar/usuario/', post_registro, name='hacer_registro'),
+    path('', LoginView.as_view(), name='login'),
+    path('registro/', post_registro, name='hacer_registro'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+
     # DetalleGenerico
     path('detalle/<str:tipo_objeto>/<int:id_objeto>/', DetalleGenericoView.as_view(), name='detalle_generico'),
 
