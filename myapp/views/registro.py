@@ -4,8 +4,6 @@ from django.shortcuts import render, redirect
 from myapp.forms import RegistroFormulario
 from myapp.models import User, Negocio, Partners, Archivo
 from django.contrib.auth.views import LoginView
-def index(request):
-    return render(request, 'hola.html')
 
 
 def mi_pagina_registro(request):

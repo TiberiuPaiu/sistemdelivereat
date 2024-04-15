@@ -15,25 +15,25 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
 
     # DetalleGenerico
-    path('detalle/<str:tipo_objeto>/<int:id_objeto>/', DetalleGenericoView.as_view(), name='detalle_generico'),
+    path('detalle/<str:tipo_objeto>/<int:id_objeto>/', login_required(DetalleGenericoView.as_view()), name='detalle_generico'),
 
     #restaurante
-    path('lista/restaurantes/', ArticleDetailView.as_view(), name='list_restaurantes'),
-    path('anadir/restaurante/', post_add_restaurante, name='add_restaurante'),
+    path('lista/restaurantes/', login_required(ArticleDetailView.as_view()), name='list_restaurantes'),
+    path('anadir/restaurante/', login_required(post_add_restaurante), name='add_restaurante'),
 
     #user_repartidor_cocina
-    path('anadir/trabajdor/repartidor/<int:restaurante_id>', add_user_reparidor, name='add_user_reparidor'  ),
-    path('anadir/trabajdor/cocina/<int:restaurante_id>', add_user_cocina, name='add_user_cocina'  ),
+    path('anadir/trabajdor/repartidor/<int:restaurante_id>', login_required(add_user_reparidor), name='add_user_reparidor'  ),
+    path('anadir/trabajdor/cocina/<int:restaurante_id>', login_required(add_user_cocina), name='add_user_cocina'  ),
 
-    path('lista/trabajdores/<int:restaurante_id>', UsuariosRestauranteListView.as_view(), name='list_user_restaurant'),
+    path('lista/trabajdores/<int:restaurante_id>', login_required(UsuariosRestauranteListView.as_view()), name='list_user_restaurant'),
 
-    path('reset_password/<int:user_id>/<int:restaurante_id>/', reset_password, name='reset_password'),
+    path('reset_password/<int:user_id>/<int:restaurante_id>/', login_required(reset_password), name='reset_password'),
     #platos
-    path('restaurante/agregar_plato/<int:restaurante_id>/', agregar_plato, name='agregar_plato'),
-    path('restaurante/listar_plato/<int:restaurante_id>/', PlatosRestauranteListView.as_view() , name='list_platos'),
+    path('restaurante/agregar_plato/<int:restaurante_id>/', login_required(agregar_plato), name='agregar_plato'),
+    path('restaurante/listar_plato/<int:restaurante_id>/', login_required(PlatosRestauranteListView.as_view()) , name='list_platos'),
 
     # resena
-    path('resena/<str:tipo_objeto>/<int:id_objeto>/', ResenasView.as_view(), name='resena_generico'),
+    path('resena/<str:tipo_objeto>/<int:id_objeto>/', login_required(ResenasView.as_view()), name='resena_generico'),
 
 ]
 

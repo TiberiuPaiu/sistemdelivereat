@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import DetailView
@@ -9,10 +11,14 @@ from sistemdelivereat.utils.OpenStreetMap import Geocoder
 
 from django.views.generic.list import ListView
 
+from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
+from sistemdelivereat.utils.decorators import web_access_type_required
 
 
-class ArticleDetailView(ListView):
+
+class ArticleDetailView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Restaurante
+    user_type_required = 'partners'
     template_name = 'admin/list_restaurante.html'
     context_object_name = 'restaurantes'
     paginate_by = 3
@@ -33,6 +39,8 @@ class ArticleDetailView(ListView):
 
         return context
 
+@login_required
+@web_access_type_required("partners")
 def post_add_restaurante(request):
     if request.method == 'POST':
         form = RestauranteForm(request.POST, request.FILES)
@@ -117,6 +125,9 @@ def post_add_restaurante(request):
 
     return render(request, 'admin/add_restaurante.html',  context)
 
+
+@login_required
+@web_access_type_required("partners")
 def add_user_reparidor(request, restaurante_id):
     restaurante = Restaurante.objects.get(id=restaurante_id)
     if request.method == 'POST':
@@ -174,6 +185,8 @@ def add_user_reparidor(request, restaurante_id):
     return render(request, 'admin/user/add_user_repartidor.html', context)
 
 
+@login_required
+@web_access_type_required("partners")
 def add_user_cocina(request, restaurante_id):
     restaurante = Restaurante.objects.get(id=restaurante_id)
     if request.method == 'POST':
@@ -230,7 +243,8 @@ def add_user_cocina(request, restaurante_id):
     return render(request, 'admin/user/add_user_cocina.html', context)
 
 
-class UsuariosRestauranteListView(ListView):
+class UsuariosRestauranteListView(LoginRequiredMixin, RolRequiredMixin,ListView):
+    user_type_required = 'partners'
     template_name = 'admin/user/list_user.html'  # Nombre de tu plantilla
     context_object_name = 'usuarios'  # Nombre del objeto en el contexto
     paginate_by = 3
@@ -282,7 +296,8 @@ class UsuariosRestauranteListView(ListView):
         context['restaurante_id'] = restaurante.id
         return context
 
-
+@login_required
+@web_access_type_required("partners")
 def reset_password(request, user_id, restaurante_id):
     user = User.objects.get(id=user_id)
 
@@ -297,7 +312,8 @@ def reset_password(request, user_id, restaurante_id):
     return redirect(url)
 
 
-
+@login_required
+@web_access_type_required("partners")
 def agregar_plato(request, restaurante_id):
     restaurante = Restaurante.objects.get(id=restaurante_id)
 
@@ -348,8 +364,9 @@ def agregar_plato(request, restaurante_id):
     return render(request, 'admin/platos/add_platos.html', context)
 
 
-class PlatosRestauranteListView(ListView):
+class PlatosRestauranteListView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Plato
+    user_type_required = 'partners'
     template_name = 'admin/platos/listado_platos.html'  # Reemplaza 'tu_template.html' por la ruta a tu template
     context_object_name = 'platos'
     paginate_by = 10
@@ -383,8 +400,9 @@ class PlatosRestauranteListView(ListView):
         return context
 
 
-class DetalleGenericoView(DetailView):
+class DetalleGenericoView(LoginRequiredMixin, RolRequiredMixin, DetailView):
     template_name = 'admin/detalle_generico.html'
+    user_type_required = 'partners'
 
     def get_object(self):
         # Obtener el tipo de objeto y su ID desde la URL

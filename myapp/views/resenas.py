@@ -1,11 +1,14 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 
 from myapp.models import Restaurante, Plato
+from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 
 
-class ResenasView(DetailView):
+class ResenasView(LoginRequiredMixin, RolRequiredMixin, DetailView):
     template_name = 'admin/resenas.html'
+    user_type_required = 'partners'
 
     def get_object(self):
         # Obtener el tipo de objeto y su ID desde la URL
