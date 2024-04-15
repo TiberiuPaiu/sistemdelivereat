@@ -35,6 +35,11 @@ urlpatterns = [
     # resena
     path('resena/<str:tipo_objeto>/<int:id_objeto>/', login_required(ResenasView.as_view()), name='resena_generico'),
 
+
+    #admins
+    path('lista/partners', PartnersListView.as_view(),  name='list_partners' ),
+    path('acces/partners/<int:id_user>/', active_partners ,name='active_partners')
+
 ]
 
 # Agregar la configuracion para servir archivos de medios
