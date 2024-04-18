@@ -6,7 +6,8 @@ from django.urls import reverse
 from django.views.generic import DetailView
 
 from myapp.forms import RestauranteForm, AddUserFormulario
-from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente
+from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente, \
+    DiaFestivo, HorarioTrabajo
 from sistemdelivereat import settings
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
 
@@ -336,11 +337,11 @@ def agregar_plato(request, restaurante_id):
         # Guardar los ingredientes
         for ingrediente in ingredientes:
             Ingrediente.objects.create(nombre=ingrediente, plato=plato)
+
         messages.success(request, 'Podiste añadir un nuevo plato exitosamente ')
         url = reverse('myapp:list_platos', kwargs={'restaurante_id': restaurante_id})
         return redirect(url)
-    else :
-        form = RestauranteForm()
+
 
     ruta_pagina = [
         {
@@ -426,3 +427,42 @@ class DetalleGenericoView(LoginRequiredMixin, RolRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['tipo_objeto'] = self.kwargs['tipo_objeto']
         return context
+
+
+@login_required
+@web_access_type_required("partners")
+def add_horarios(request, restaurante_id):
+    restaurante = Restaurante.objects.get(id=restaurante_id)
+
+    if request.method == 'POST':
+        return redirect('myapp:list_restaurantes')
+
+    ruta_pagina = [
+            {
+                'text': "Lista de restaurantes",
+                'link': "myapp:list_restaurantes",
+            },
+
+            {
+                'text': "Añadir un horario al restaurante  " + restaurante.nombre,
+                'link': "",
+            }
+        ]
+
+    title_pagina = [
+            {
+                'label_title': "Añadir un horario ",
+                'title_card': "Añadir un horario al restaurante " + restaurante.nombre,
+            }
+        ]
+
+    context = {
+            'ruta_pagina': ruta_pagina,
+            'title_pagina': title_pagina,
+            'restaurante_id': restaurante.id
+    }
+
+    return render(request, 'admin/add_horario_restaurante.html', context)
+
+
+

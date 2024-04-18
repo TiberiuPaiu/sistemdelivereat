@@ -109,5 +109,34 @@ class ResenaPlato(Resena):
     plato = models.ForeignKey('Plato', on_delete=models.CASCADE, related_name='resenas')
 
 
+class HorarioTrabajo(models.Model):
+    DIA_CHOICES = [
+        ('lunes', 'Lunes'),
+        ('martes', 'Martes'),
+        ('miercoles', 'Miércoles'),
+        ('jueves', 'Jueves'),
+        ('viernes', 'Viernes'),
+        ('sabado', 'Sábado'),
+        ('domingo', 'Domingo'),
+    ]
+
+    dia = models.CharField(max_length=20, choices=DIA_CHOICES)
+    apertura = models.TimeField(null=True)
+    cierre = models.TimeField(null=True)
+    estado_local = models.CharField(max_length=20, choices=[('abierto', 'Abierto'), ('cerrado', 'Cerrado')],
+                                    default='abierto')
+    restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.dia} - {self.apertura} a {self.cierre} ({self.estado_local})"
+
+
+class DiaFestivo(models.Model):
+    fecha = models.DateField()
+    estado_local = models.CharField(max_length=20, choices=[('cerrado', 'Cerrado')],
+                                    default='cerrado')
+    restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
+
+
 
 
