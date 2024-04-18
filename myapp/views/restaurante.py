@@ -1,5 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import DetailView
@@ -80,6 +81,7 @@ def post_add_restaurante(request):
                 for imagen in imagenes:
                     Imagen.objects.create(restaurante=restaurante, imagen=imagen)
 
+                messages.success(request, 'El restaurante se creado exitosamente')
                 return redirect('myapp:list_restaurantes')
             else:
                 error = geocoder.error
@@ -152,6 +154,7 @@ def add_user_reparidor(request, restaurante_id):
             user.telefono = telefono
             user.save()
             Repartidor.objects.create(user=user, restaurante=restaurante )
+            messages.success(request, 'El usuario con el rol de repartidor se creado exitosamente')
 
             return redirect('myapp:list_restaurantes')
     else:
@@ -210,7 +213,7 @@ def add_user_cocina(request, restaurante_id):
             user.telefono = telefono
             user.save()
             Cocina.objects.create(user=user, restaurante=restaurante)
-
+            messages.success(request, 'El usuario con el rol de resoposable cocina se creado exitosamente')
             return redirect('myapp:list_restaurantes')
     else:
         form = RestauranteForm()
@@ -307,6 +310,8 @@ def reset_password(request, user_id, restaurante_id):
     user.save()
 
     # Construir la URL de redirección
+
+
     url = reverse('myapp:list_user_restaurant', kwargs={'restaurante_id': restaurante_id})
 
     return redirect(url)
@@ -331,8 +336,9 @@ def agregar_plato(request, restaurante_id):
         # Guardar los ingredientes
         for ingrediente in ingredientes:
             Ingrediente.objects.create(nombre=ingrediente, plato=plato)
-
-        return redirect('myapp:list_restaurantes')
+        messages.success(request, 'Podiste añadir un nuevo plato exitosamente ')
+        url = reverse('myapp:list_platos', kwargs={'restaurante_id': restaurante_id})
+        return redirect(url)
     else :
         form = RestauranteForm()
 

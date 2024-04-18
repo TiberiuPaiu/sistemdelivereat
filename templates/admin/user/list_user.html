@@ -14,6 +14,18 @@
   
 {% block content %}
 <div class="content">
+   {% if messages %}
+    <div class="alert alert-success alert-dismissible">
+<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+<h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
+    {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+      
+</div>
+</div>
+{% endif %}
+
 <div class="container">
 
    <div class="row">
@@ -39,10 +51,7 @@
          </div>
 
         <div class="col-md-10">
-
-
-
-
+        
  <div class="row">
     {% for user in usuarios %}
 
