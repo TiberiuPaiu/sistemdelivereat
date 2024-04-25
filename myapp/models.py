@@ -86,10 +86,15 @@ class Plato(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     descuento = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
+    def __str__(self):
+        return self.nombre
 
 class Ingrediente(models.Model):
     nombre = models.CharField(max_length=100)
     plato =models.ForeignKey(Plato, on_delete=models.CASCADE, related_name='ingredientes')
+
+    def __str__(self):
+        return self.nombre
 
 
 

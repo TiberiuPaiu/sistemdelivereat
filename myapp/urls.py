@@ -1,11 +1,15 @@
 
-from django.urls import path
+from django.urls import path ,include
+from rest_framework.routers import DefaultRouter
+
 from myapp.views import *
 
 from django.conf import settings
 from django.conf.urls.static import static
 
 from django.contrib.auth.views import LoginView, logout_then_login ,LogoutView
+
+
 
 app_name = "myapp"
 urlpatterns = [
@@ -42,7 +46,16 @@ urlpatterns = [
 
     #admins
     path('lista/partners', PartnersListView.as_view(),  name='list_partners' ),
-    path('acces/partners/<int:id_user>/', active_partners ,name='active_partners')
+    path('acces/partners/<int:id_user>/', active_partners ,name='active_partners'),
+
+    #api
+    path('api/lista/restaurantes/<str:ciudad>/', RestaurantesPorCiudad.as_view(), name='restaurantes_por_ciudad' ),
+    path('api/lista/restaurantes/<int:restaurante_id>/platos/', PlatosPorRestaurante.as_view(), name='platos_por_restaurante'),
+
+
+
+    #cliente
+    path('cliente/lista/restaurantes/', RestauranteListClienteView.as_view(), name='restaurantes_list_cliente'),
 
 ]
 

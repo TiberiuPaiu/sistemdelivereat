@@ -1,8 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
+from rest_framework import viewsets
 
 from myapp.models import Restaurante, Plato
+from myapp.serializers import RestauranteSerializer
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 
 
@@ -66,3 +68,7 @@ class ResenasView(LoginRequiredMixin, RolRequiredMixin, DetailView):
 
         context['tipo_objeto'] = tipo_objeto
         return context
+
+    # views.py
+
+

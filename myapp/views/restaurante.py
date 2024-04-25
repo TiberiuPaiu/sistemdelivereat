@@ -1,13 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import DetailView
+from rest_framework import generics
 
 from myapp.forms import RestauranteForm, AddUserFormulario
 from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente, \
     DiaFestivo, HorarioTrabajo
+from myapp.serializers import RestauranteSerializer, PlatoSerializer
 from sistemdelivereat import settings
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
 
@@ -27,6 +30,9 @@ class ArticleDetailView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+
+
 
 
 
@@ -464,5 +470,22 @@ def add_horarios(request, restaurante_id):
 
     return render(request, 'admin/add_horario_restaurante.html', context)
 
+
+class RestaurantesPorCiudad(generics.ListAPIView):
+    serializer_class = RestauranteSerializer
+
+    def get_queryset(self):
+        ciudad = self.kwargs['ciudad']
+        queryset = Restaurante.objects.filter(ubicacion__ciudad=ciudad)
+        return queryset
+
+
+class PlatosPorRestaurante(generics.ListAPIView):
+    serializer_class = PlatoSerializer
+
+    def get_queryset(self):
+        restaurante_id = self.kwargs['restaurante_id']
+        queryset = Plato.objects.filter(restaurante_id=restaurante_id)
+        return queryset
 
 
