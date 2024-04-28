@@ -1,0 +1,182 @@
+{% extends 'base/base.html' %}
+
+{% block style %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <!--<link rel="stylesheet" href="css/style.css">-->
+  <style>
+  body{background-color: #eee;}
+  </style>
+{% endblock %}
+
+
+<body>
+{% block content %}
+  <section class="vh-100">
+    <div class="container h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-12 col-xl-11 " >
+
+              <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                  <div class="card  " style="background-color: #fff;">
+                    <div class="card-body" >
+                  <h4 class="mb-4">Regístrate y pide comida a domicilio con DeliveEreat</h4>
+
+                  <form action="{% url 'myapp:hacer_registro_cliente' %}" class="mx-1 mx-md-7" method="POST" >
+                    {% csrf_token %}
+
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example3c">Nombre</label>
+                        <input type="text" id="form3Example3c" name="first_name" class="form-control" />
+
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example3c">Apleidos</label>
+                        <input type="text" id="form3Example3c"  name="last_name" class="form-control" />
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example3c">Dirección de correo electrónico</label>
+                        <input type="email" id="form3Example3c"  name="email" class="form-control" />
+                      </div>
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example3c">Teléfono </label>
+                        <div class="row">
+                          <div class="col-sm-3">
+                        <select class="form-select" name="prefix_tel" aria-label="Default select example">
+                          <option value="+34">+34</option>
+                          <option value="+40">+40 </option>
+                          <option value="+36">+36</option>
+                          <option value="+48">+48</option>
+                          <option value="+420">+420</option>
+                          <option value="+421">+421</option>
+                          <option value="+380">+380</option>
+
+                        </select>
+                      </div>
+                      <div class="col-sm">
+                        <input type="text" name="telefono"  id="form3Example3c" class="form-control" />
+                      </div>
+                    </div>
+                  </div>
+
+                    </div>
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example4c">Nombre de usuario</label>
+                        <input type="text" name="username" id="form3Example4c" class="form-control" />
+
+                      </div>
+                    </div>
+
+
+                    <div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example4c">Contraseña</label>
+                        <input type="password"  name="password" id="form3Example4c" class="form-control" />
+
+                      </div>
+                    </div>
+                      
+<div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example4c">Pais</label>
+                        <input type="text"  name="pais" id="form3Example4c" class="form-control" />
+
+                      </div>
+                    </div>
+<div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example4c">Ciudad</label>
+                        <input type="text"  name="ciudad" id="form3Example4c" class="form-control" />
+
+                      </div>
+                    </div>
+<div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example4c">Código postal</label>
+                        <input type="text"  name="codigo_postal" id="form3Example4c" class="form-control" />
+
+                      </div>
+                    </div>
+<div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example4c">Calle</label>
+                        <input type="text"  name="direcion" id="form3Example4c" class="form-control" />
+
+                      </div>
+                    </div>
+<div class="d-flex flex-row align-items-center mb-4">
+                      <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                      <div class="form-outline flex-fill mb-0">
+                        <label class="form-label" for="form3Example4c">Numero Calle</label>
+                        <input type="text"  name="numero" id="form3Example4c" class="form-control" />
+
+                      </div>
+                    </div>
+                      
+                      
+
+
+
+
+
+                    <div class="form-check d-flex justify-content-center mb-5">
+                      <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c" />
+                      <label class="form-check-label" for="form2Example3">
+                        I agree all statements in <a href="#!">Terms of service</a>
+                      </label>
+                    </div>
+
+                    <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                      <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                    </div>
+
+                  </form>
+                </div>
+                </div>
+                </div>
+                <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+
+                  <img src="/media/img/logo.png" alt="Logo">
+                </div>
+              </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+{% endblock %}
+
+
+{% block script %}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+{% endblock %}

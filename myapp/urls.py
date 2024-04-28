@@ -16,6 +16,9 @@ urlpatterns = [
 
     path('', LoginView.as_view(), name='login'),
     path('registro/', post_registro, name='hacer_registro'),
+    path('cliente/registro/', post_registro_cliente, name='hacer_registro_cliente'),
+
+
     path('logout/', LogoutView.as_view(), name='logout'),
 
     # DetalleGenerico

@@ -1,8 +1,9 @@
-from django.utils import timezone
-
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
+
+
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
         ('partners', 'Partners'),
@@ -27,10 +28,11 @@ class Negocio(models.Model):
     nombre = models.CharField(max_length=255)
 
 class Partners(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='rolpartner')
-    negocio = models.OneToOneField(Negocio, on_delete=models.CASCADE, null=True, related_name='negocio')
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='partners_role')
+    negocio = models.OneToOneField(Negocio, on_delete=models.CASCADE, null=True, related_name='partners')
 
-
+    def __str__(self):
+        return self.negocio.nombre
 
 
 
@@ -52,7 +54,12 @@ class Ubicacion(models.Model):
        return full_address
 
 
+class Cliente(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='cliente_role')
+    ubicacion = models.OneToOneField(Ubicacion, on_delete=models.CASCADE, null=True, related_name='cliente')
 
+    def __str__(self):
+        return self.ubicacion.ciudad
 class Restaurante(models.Model):
     negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE, related_name='restaurantes')
     nombre = models.CharField(max_length=255)
@@ -130,7 +137,6 @@ class DetalleCarrito(models.Model):
     plato = models.ForeignKey(Plato, on_delete=models.CASCADE)
     carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
-
 """
 class HorarioTrabajo(models.Model):
     DIA_CHOICES = [
