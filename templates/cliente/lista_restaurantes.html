@@ -40,7 +40,7 @@
 <div class="user-block">
 <img class="img-circle img-bordered-sm" src="{{ restaurante.imagens.first.imagen.url }}" alt="user image">
 <span class="username">
-<a href="#">{{ restaurante.nombre }}</a>
+<a href="{% url 'myapp:platos_list_cliente' restaurante_id=restaurante.id %}">{{ restaurante.nombre }}</a>
 <div class="float-right ">
 
      <div class="estrellas" data-puntuacion=" {{ restaurante.puntuacion_media }}"></div>
@@ -55,7 +55,7 @@
 <p>
 
 <span class="float-right">
-<a href="#" class="link-black text-sm">
+<a href="{% url 'myapp:resena_generico' tipo_objeto='restaurante' id_objeto=restaurante.id %}" class="link-black text-sm">
 <i class="far fa-comments mr-1"></i> Reseñas ({{ restaurante.resenas.count }})
 </a>
 </span>

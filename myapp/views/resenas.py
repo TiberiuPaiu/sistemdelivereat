@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 from rest_framework import viewsets
@@ -8,7 +9,7 @@ from myapp.serializers import RestauranteSerializer
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 
 
-class ResenasView(LoginRequiredMixin, RolRequiredMixin, DetailView):
+class ResenasView( DetailView):
     template_name = 'admin/resenas.html'
     user_type_required = 'partners'
 
@@ -37,18 +38,20 @@ class ResenasView(LoginRequiredMixin, RolRequiredMixin, DetailView):
             context['title_pagina'] = {'label_title': "Reseñas para restaurante",
                                        'title_card': "Reseñas del restaurante " + restaurante.nombre,
                                        },
+
             context['ruta_pagina'] = [{
-                'text': "Lista de restaurantes",
-                'link': "myapp:list_restaurantes",
+                    'text': "Lista de restaurantes",
+                    'link': "myapp:list_restaurantes",
             },
-                {
-                    'text': "Reseñas del restaurante " + restaurante.nombre,
-                    'link': "",
-                }
+                    {
+                        'text': "Reseñas del restaurante " + restaurante.nombre,
+                        'link': "",
+                    }
             ]
         elif tipo_objeto == 'plato':
             plato = context['object']
             context['resenas'] = plato.resenas.all()
+
             context['title_pagina'] = {'label_title': "Reseñas para plato",
                                        'title_card': "Reseñas del plato " + plato.nombre,
                                        },

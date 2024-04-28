@@ -48,7 +48,7 @@ def post_registro(request):
                 Archivo.objects.create(negocio=negocio, archivo=archivo)
 
 
-            return redirect('myapp:index')
+            return redirect('myapp:login')
     else:
         form = RegistroFormulario()
 

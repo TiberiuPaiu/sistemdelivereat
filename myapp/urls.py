@@ -37,7 +37,7 @@ urlpatterns = [
     path('restaurante/listar_plato/<int:restaurante_id>/', login_required(PlatosRestauranteListView.as_view()) , name='list_platos'),
 
     # resena
-    path('resena/<str:tipo_objeto>/<int:id_objeto>/', login_required(ResenasView.as_view()), name='resena_generico'),
+    path('resena/<str:tipo_objeto>/<int:id_objeto>/', ResenasView.as_view(), name='resena_generico'),
 
     #horarios res
     path('restaurante/add_horarios/<int:restaurante_id>/', login_required(add_horarios),name='add_horarios'),
@@ -48,14 +48,10 @@ urlpatterns = [
     path('lista/partners', PartnersListView.as_view(),  name='list_partners' ),
     path('acces/partners/<int:id_user>/', active_partners ,name='active_partners'),
 
-    #api
-    path('api/lista/restaurantes/<str:ciudad>/', RestaurantesPorCiudad.as_view(), name='restaurantes_por_ciudad' ),
-    path('api/lista/restaurantes/<int:restaurante_id>/platos/', PlatosPorRestaurante.as_view(), name='platos_por_restaurante'),
-
-
 
     #cliente
     path('cliente/lista/restaurantes/', RestauranteListClienteView.as_view(), name='restaurantes_list_cliente'),
+    path('cliente/lista/restaurante/<int:restaurante_id>/platos/', PlatosListClienteView.as_view(), name='platos_list_cliente'),
 
 ]
 

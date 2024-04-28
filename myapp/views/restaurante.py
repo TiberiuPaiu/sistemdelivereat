@@ -9,7 +9,7 @@ from rest_framework import generics
 
 from myapp.forms import RestauranteForm, AddUserFormulario
 from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente, \
-    DiaFestivo, HorarioTrabajo
+    TipoComida
 from myapp.serializers import RestauranteSerializer, PlatoSerializer
 from sistemdelivereat import settings
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
@@ -328,17 +328,20 @@ def reset_password(request, user_id, restaurante_id):
 @web_access_type_required("partners")
 def agregar_plato(request, restaurante_id):
     restaurante = Restaurante.objects.get(id=restaurante_id)
+    tipos_comida = TipoComida.objects.all()
 
     if request.method == 'POST':
         nombre = request.POST.get('nombre')
         precio = request.POST.get('precio')
         descuento = request.POST.get('descuento')
         ingredientes = request.POST.getlist('ingredientes')
+        imagen = request.FILES.get('imagen')
+        tipo_comida = TipoComida.objects.get(id=request.POST.get('tipo_comida'))
 
         print(ingredientes)
 
         # Guardar el plato
-        plato = Plato.objects.create(nombre=nombre, precio=precio, descuento=descuento ,restaurante=restaurante)
+        plato = Plato.objects.create(nombre=nombre, precio=precio, descuento=descuento ,restaurante=restaurante , tipo_comida=tipo_comida, imagen =imagen)
 
         # Guardar los ingredientes
         for ingrediente in ingredientes:
@@ -371,7 +374,8 @@ def agregar_plato(request, restaurante_id):
         'ruta_pagina': ruta_pagina,
         'title_pagina': title_pagina,
         'form': "",
-        'restaurante_id':restaurante.id
+        'restaurante_id':restaurante.id,
+        'tipos_comida':tipos_comida
     }
 
     return render(request, 'admin/platos/add_platos.html', context)
@@ -470,22 +474,5 @@ def add_horarios(request, restaurante_id):
 
     return render(request, 'admin/add_horario_restaurante.html', context)
 
-
-class RestaurantesPorCiudad(generics.ListAPIView):
-    serializer_class = RestauranteSerializer
-
-    def get_queryset(self):
-        ciudad = self.kwargs['ciudad']
-        queryset = Restaurante.objects.filter(ubicacion__ciudad=ciudad)
-        return queryset
-
-
-class PlatosPorRestaurante(generics.ListAPIView):
-    serializer_class = PlatoSerializer
-
-    def get_queryset(self):
-        restaurante_id = self.kwargs['restaurante_id']
-        queryset = Plato.objects.filter(restaurante_id=restaurante_id)
-        return queryset
 
 
