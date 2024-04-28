@@ -1,9 +1,10 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from django.db.models import F, ExpressionWrapper, DecimalField
-from django.db.models.functions import Round
-from myapp.models import Restaurante, Plato
+from django.db.models.functions import Round, Cast
+from myapp.models import Restaurante, Plato, Carrito, DetalleCarrito
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 
 
@@ -44,16 +45,21 @@ class PlatosListClienteView( ListView):
 
     def get_queryset(self):
         restaurante_id = self.kwargs['restaurante_id']
-        plato = Plato.objects.filter(restaurante_id=restaurante_id).annotate(
+
+        platos = Plato.objects.filter(restaurante_id=restaurante_id).annotate(
             puntuacion_media=Avg('resenas__puntuacion')
-        ).annotate(
-            precio_final=ExpressionWrapper(
-                Round(F('precio') - (F('precio') * F('descuento') / 100), 2),  # Calcula el precio final aplicando el descuento
-                output_field=DecimalField(),  # Tipo de campo para el resultado
-            )
         )
 
-        return plato
+        for plato in platos:
+            # Calcular el precio con descuento
+            precio_con_descuento = plato.precio - (plato.precio * plato.descuento / 100)
+            # Redondear el resultado a dos decimales
+            precio_final = round(precio_con_descuento, 2)
+            # Asignar el precio final al plato
+            plato.precio_final = precio_final
+
+
+        return platos
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -78,3 +84,31 @@ class PlatosListClienteView( ListView):
         context['restaurante_id'] = restaurante.id
         return context
 
+
+def agregar_al_carrito(request, plato_id):
+    plato = get_object_or_404(Plato, pk=plato_id)
+    carrito_item, created = Carrito.objects.get_or_create(usuario=request.user, plato=plato)
+
+    if request.method == 'POST':
+        cantidad = request.POST.get('cantidad')
+        carrito_item.cantidad = cantidad
+        carrito_item.save()
+        return redirect('carrito_lista')
+
+    context = {
+        'plato': plato,
+        'carrito_item': carrito_item,
+    }
+
+    return render(request, 'cliente/carito/agregar_al_carrito.html', context)
+
+
+def carrito_lista(request):
+    # Obtener todos los platos en el carrito del usuario actual
+    platos_carrito = Carrito.objects.filter(usuario=request.user)
+
+    context = {
+        'platos_carrito': platos_carrito
+    }
+
+    return render(request, 'cliente/carito/carrito_lista.html', context)

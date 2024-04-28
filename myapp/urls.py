@@ -53,6 +53,10 @@ urlpatterns = [
     path('cliente/lista/restaurantes/', RestauranteListClienteView.as_view(), name='restaurantes_list_cliente'),
     path('cliente/lista/restaurante/<int:restaurante_id>/platos/', PlatosListClienteView.as_view(), name='platos_list_cliente'),
 
+    #cliente-carito
+    path('agregaralcarrito/<int:plato_id>/', agregar_al_carrito, name='agregar_al_carrito'),
+    path('carrito/', carrito_lista, name='pagina_del_carrito'),
+
 ]
 
 # Agregar la configuracion para servir archivos de medios

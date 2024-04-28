@@ -122,6 +122,15 @@ class ResenaRestaurante(Resena):
 class ResenaPlato(Resena):
     plato = models.ForeignKey('Plato', on_delete=models.CASCADE, related_name='resenas')
 
+class Carrito(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    detalles = models.ManyToManyField(Plato, through='DetalleCarrito')
+
+class DetalleCarrito(models.Model):
+    plato = models.ForeignKey(Plato, on_delete=models.CASCADE)
+    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=1)
+
 """
 class HorarioTrabajo(models.Model):
     DIA_CHOICES = [
