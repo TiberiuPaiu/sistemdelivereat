@@ -1,11 +1,16 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
+
 from myapp.forms import RegistroFormulario
 from myapp.models import User, Negocio, Partners, Archivo, Ubicacion, Cliente
-from django.contrib.auth.views import LoginView
+
 
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
+
+from django.contrib.auth.views import LoginView
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 
 def mi_pagina_registro(request):
     return render(request, 'registration/registro.html')
@@ -128,7 +133,17 @@ def post_registro_cliente(request):
     return render(request, 'registration/registro_cliente.html', {'form': form, 'titulo_pagina': titulo_pagina})
 
 
-
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.is_authenticated:
+            if user.user_type == 'cliente':
+                return reverse_lazy('myapp:restaurantes_list_cliente')
+            elif user.user_type == 'partners':
+                return reverse_lazy('myapp:list_restaurantes')
+            # Otros casos según los roles
+        return super().get_success_url()
+
 

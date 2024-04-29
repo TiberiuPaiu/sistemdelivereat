@@ -14,7 +14,7 @@ from django.contrib.auth.views import LoginView, logout_then_login ,LogoutView
 app_name = "myapp"
 urlpatterns = [
 
-    path('', LoginView.as_view(), name='login'),
+    path('', CustomLoginView.as_view(), name='login'),
     path('registro/', post_registro, name='hacer_registro'),
     path('cliente/registro/', post_registro_cliente, name='hacer_registro_cliente'),
 
@@ -53,8 +53,8 @@ urlpatterns = [
 
 
     #cliente
-    path('cliente/lista/restaurantes/', RestauranteListClienteView.as_view(), name='restaurantes_list_cliente'),
-    path('cliente/lista/restaurante/<int:restaurante_id>/platos/', PlatosListClienteView.as_view(), name='platos_list_cliente'),
+    path('cliente/lista/restaurantes/', login_required(RestauranteListClienteView.as_view()), name='restaurantes_list_cliente'),
+    path('cliente/lista/restaurante/<int:restaurante_id>/platos/', login_required(PlatosListClienteView.as_view()), name='platos_list_cliente'),
 
     #cliente-carito
     path('agregaralcarrito/<int:plato_id>/', agregar_al_carrito, name='agregar_al_carrito'),

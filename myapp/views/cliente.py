@@ -8,9 +8,9 @@ from myapp.models import Restaurante, Plato, Carrito, DetalleCarrito
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 
 
-class RestauranteListClienteView( ListView):
+class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Restaurante
-    #user_type_required = 'partners'
+    user_type_required = 'cliente'
     template_name = 'cliente/lista_restaurantes.html'
     context_object_name = 'restaurantes'
     paginate_by = 10
@@ -35,9 +35,9 @@ class RestauranteListClienteView( ListView):
         return context
 
 
-class PlatosListClienteView( ListView):
+class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Plato
-    #user_type_required = 'partners'
+    user_type_required = 'cliente'
     template_name = 'cliente/lista_platos.html'
     context_object_name = 'platos'
     paginate_by = 10

@@ -138,7 +138,7 @@ AUTH_USER_MODEL = 'myapp.User'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-LOGIN_REDIRECT_URL = reverse_lazy("myapp:list_restaurantes")
+LOGIN_REDIRECT_URL = reverse_lazy("myapp:login")
 LOGOUT_REDIRECT_URL = reverse_lazy("myapp:login")
 
 GLOBAL_PASSWORD ="Tiberiu.1234"
