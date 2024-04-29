@@ -9,7 +9,7 @@ from rest_framework import generics
 
 from myapp.forms import RestauranteForm, AddUserFormulario
 from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente, \
-    TipoComida
+    TipoComida, Partners
 from myapp.serializers import RestauranteSerializer, PlatoSerializer
 from sistemdelivereat import settings
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
@@ -80,7 +80,7 @@ def post_add_restaurante(request):
                     longitud =longitud,
                 )
                 restaurante = Restaurante.objects.create(
-                    negocio=Negocio.objects.get(pk=1),
+                    partner= Partners.objects.get(user=request.user),
                     nombre=nombre_restaurante,
                     descripcion=descripcion,
                     ubicacion = ubicacion,

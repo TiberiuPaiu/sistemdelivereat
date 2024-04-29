@@ -57,8 +57,10 @@ urlpatterns = [
     path('cliente/lista/restaurante/<int:restaurante_id>/platos/', login_required(PlatosListClienteView.as_view()), name='platos_list_cliente'),
 
     #cliente-carito
-    path('agregaralcarrito/<int:plato_id>/', agregar_al_carrito, name='agregar_al_carrito'),
-    path('carrito/', carrito_lista, name='pagina_del_carrito'),
+    path('agregaralcarrito/<int:plato_id>/', login_required(agregar_al_carrito), name='agregar_carrito'),
+    path('carrito/',  login_required(carrito_lista), name='pagina_del_carrito'),
+    path('restablecer_carrito/',  login_required(restablecer_carrito), name='restablecer_carrito'),
+
 
 ]
 

@@ -4,8 +4,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from django.db.models import F, ExpressionWrapper, DecimalField
 from django.db.models.functions import Round, Cast
-from myapp.models import Restaurante, Plato, Carrito, DetalleCarrito
+from myapp.models import Restaurante, Plato, Carrito, DetalleCarrito, Cliente
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
+from sistemdelivereat.utils.decorators import web_access_type_required
+from django.contrib.auth.decorators import login_required
 
 
 class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
@@ -83,32 +85,54 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
         ]
         context['restaurante_id'] = restaurante.id
         return context
-
+@login_required
 
 def agregar_al_carrito(request, plato_id):
+
     plato = get_object_or_404(Plato, pk=plato_id)
-    carrito_item, created = Carrito.objects.get_or_create(usuario=request.user, plato=plato)
-
     if request.method == 'POST':
-        cantidad = request.POST.get('cantidad')
-        carrito_item.cantidad = cantidad
-        carrito_item.save()
-        return redirect('carrito_lista')
 
-    context = {
-        'plato': plato,
-        'carrito_item': carrito_item,
-    }
+        cantidad = int(request.POST.get('cantidad', 1))  # Obtener la cantidad del formulario
 
-    return render(request, 'cliente/carito/agregar_al_carrito.html', context)
+        # Verificar si el usuario tiene un carrito existente
+        carrito, creado = Carrito.objects.get_or_create(cliente=Cliente.objects.get(user =request.user))
+
+        # Verificar si el plato ya está en el carrito del usuario
+        detalle_carrito, creado = DetalleCarrito.objects.get_or_create(carrito=carrito, plato=plato)
+
+        if not creado:
+            # El plato ya está en el carrito, actualizar la cantidad
+            detalle_carrito.cantidad += cantidad
+            detalle_carrito.save()
+        else:
+            # El plato no está en el carrito, crear un nuevo detalle de carrito
+            DetalleCarrito.objects.create(carrito=carrito, plato=plato, cantidad=cantidad)
+
+        return redirect('myapp:pagina_del_carrito')
 
 
+    return render(request, 'cliente/carito/agregar_al_carrito.html' ,)
+
+@login_required
+@web_access_type_required("cliente")
 def carrito_lista(request):
     # Obtener todos los platos en el carrito del usuario actual
-    platos_carrito = Carrito.objects.filter(usuario=request.user)
+    carrito = Carrito.objects.filter(cliente=Cliente.objects.get(user =request.user))
 
     context = {
-        'platos_carrito': platos_carrito
+        'platos_carrito': carrito
     }
 
     return render(request, 'cliente/carito/carrito_lista.html', context)
+
+@login_required
+@web_access_type_required("cliente")
+def restablecer_carrito(request):
+    # Obtener el carrito del usuario actual
+    carrito = Carrito.objects.filter(cliente=Cliente.objects.get(user =request.user)).first()
+    if carrito:
+        # Eliminar todos los detalles del carrito asociados a ese usuario
+        carrito.detalles.all().delete()
+        return redirect('myapp:pagina_del_carrito')
+    else:
+        return redirect('myapp:pagina_del_carrito')

@@ -10,8 +10,10 @@
     <h1>Carrito de Compras</h1>
     <ul>
         {% for item in platos_carrito %}
-        <li>{{ item.platos.nombre }} - Cantidad: {{ item.cantidad }}</li>
+        <li>{{ item.detalles.plato }} - Cantidad: {{ item.cantidad }}</li>
         {% endfor %}
     </ul>
+
+<a href="{% url 'myapp:restablecer_carrito' %}">restablecer el carrito</a>
 </body>
 </html>

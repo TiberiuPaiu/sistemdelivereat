@@ -61,7 +61,7 @@ class Cliente(models.Model):
     def __str__(self):
         return self.ubicacion.ciudad
 class Restaurante(models.Model):
-    negocio = models.ForeignKey(Negocio, on_delete=models.CASCADE, related_name='restaurantes')
+    partner = models.ForeignKey(Partners, on_delete=models.CASCADE, related_name='partner_restaurantes')
     nombre = models.CharField(max_length=255)
     descripcion = models.CharField(max_length=255)
     ubicacion = models.OneToOneField(Ubicacion, on_delete=models.CASCADE, null=True, related_name='ubicaciones')
@@ -115,7 +115,7 @@ class Ingrediente(models.Model):
 
 
 class Resena(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     comentario = models.TextField()
     puntuacion = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
     fecha_creacion = models.DateTimeField(default=timezone.now)
@@ -130,13 +130,11 @@ class ResenaPlato(Resena):
     plato = models.ForeignKey('Plato', on_delete=models.CASCADE, related_name='resenas')
 
 class Carrito(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
-    detalles = models.ManyToManyField(Plato, through='DetalleCarrito')
-
-class DetalleCarrito(models.Model):
+    cliente = models.OneToOneField(Cliente, on_delete=models.CASCADE)
     plato = models.ForeignKey(Plato, on_delete=models.CASCADE)
-    carrito = models.ForeignKey(Carrito, on_delete=models.CASCADE)
-    cantidad = models.PositiveIntegerField(default=1)
+
+
+
 """
 class HorarioTrabajo(models.Model):
     DIA_CHOICES = [
