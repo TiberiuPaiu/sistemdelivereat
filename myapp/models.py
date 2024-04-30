@@ -129,10 +129,6 @@ class ResenaRestaurante(Resena):
 class ResenaPlato(Resena):
     plato = models.ForeignKey('Plato', on_delete=models.CASCADE, related_name='resenas')
 
-class Carrito(models.Model):
-    cliente = models.OneToOneField(Cliente, on_delete=models.CASCADE)
-    plato = models.ForeignKey(Plato, on_delete=models.CASCADE)
-
 
 
 """
