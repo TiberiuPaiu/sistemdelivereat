@@ -130,6 +130,32 @@ class ResenaPlato(Resena):
     plato = models.ForeignKey('Plato', on_delete=models.CASCADE, related_name='resenas')
 
 
+class Pedido(models.Model):
+    ESTADOS_TYPE = [
+        ('espera_preparacion', 'En espera la preparación'),
+        ('preparacion', 'En preparación'),
+        ('espera_repartidor', 'Pendiente para su recogida por el repartidor'),
+        ('en_camino', 'En camino'),
+        ('entregado', 'Entregado'),
+        ('cancelado', 'Cancelado'),
+        ('pendiente_pago', 'Pendiente de pago'),
+
+    ]
+
+    estado = models.CharField(
+        max_length=255,
+        choices=ESTADOS_TYPE,
+        default='espera_preparacion',
+    )
+    cliente = models.ForeignKey(User, on_delete=models.CASCADE)
+    platos = models.ManyToManyField(Plato)
+    direccion_entrega = models.CharField(max_length=255)
+
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
+    fecha_pedido = models.DateTimeField(auto_now_add=True)
+
+
 
 """
 class HorarioTrabajo(models.Model):
