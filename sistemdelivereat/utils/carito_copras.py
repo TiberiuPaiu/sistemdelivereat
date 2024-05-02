@@ -18,6 +18,14 @@ class CarritoDeCompras:
             self.carrito[plato_id]['cantidad'] += 1
         self.guardar_carrito()
 
+    def quitar_plato(self, plato_id):
+        plato_id = str(plato_id)
+        if self.carrito[plato_id]['cantidad'] <= 1:
+            self.eliminar_plato(plato_id)
+        else:
+            self.carrito[plato_id]['cantidad'] -= 1
+        self.guardar_carrito()
+
     def eliminar_plato(self, plato_id):
         # Eliminamos un plato del carrito
         if str(plato_id) in self.carrito:

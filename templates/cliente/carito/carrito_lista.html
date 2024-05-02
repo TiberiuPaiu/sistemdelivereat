@@ -1,4 +1,4 @@
-
+{% load custom_filters %}
 
 <!DOCTYPE html>
 <html>
@@ -8,16 +8,18 @@
 <body>
     <h1>Carrito de compras</h1>
     <ul>
-    {% for plato  in platos  %}
-        {% with myid = plato.id %}
-        {{ cantidades_por_plato.myid }}
-        {% endwith %}
-
-        <li>{{ plato.nombre }} - Precio: {{ plato.precio }} - Cantidad: {{ cantidades_por_plato }}</li>
-
+    {% for plato in platos %}
+        <li>
+            {{ plato.nombre }} - Precio: {{ plato.precio }} - Cantidad:
+           <a href="{% url 'myapp:quitar_plato_carrito' plato_id=plato.id %}">  <button type="button" onclick="">-</button></a>
+            {{ cantidades_por_plato|custom_get:plato.id }}
+             <a href="{% url 'myapp:agregar_carrito' plato_id=plato.id %}"><button type="button" onclick="">+</button></a>
+           <a href="{% url 'myapp:eliminar_plato_carrito' plato_id=plato.id %}"> <button type="button"  >Eliminar</button></a> 
+        </li>
     {% endfor %}
     </ul>
-    <p>Total: </p>
+    <p>Total: {{ total }}</p>
+
+
 </body>
-</html>
 </html>

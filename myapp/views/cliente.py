@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404, redirect
@@ -101,6 +103,12 @@ def carrito_lista(request):
     carrito = CarritoDeCompras(request).obtener_carrito()
     platos_en_carrito = Plato.objects.filter(id__in=carrito.keys())
 
+    # Calcular el total
+
+    total = sum((carrito[str(plato.id)]['cantidad'] * plato.precio * (1 - Decimal(str(plato.descuento)) / 100)) for plato in
+                platos_en_carrito)
+    total_formateado = total.quantize(Decimal('0.01'))
+
     # Crear un diccionario para almacenar las cantidades de cada plato en el carrito
     cantidades_por_plato = {}
     for plato in platos_en_carrito:
@@ -110,14 +118,23 @@ def carrito_lista(request):
         cantidades_por_plato[plato_id] = cantidad
 
     return render(request, 'cliente/carito/carrito_lista.html',
-                  {'platos': platos_en_carrito, 'cantidades_por_plato': cantidades_por_plato})
+                  {'platos': platos_en_carrito, 'cantidades_por_plato': cantidades_por_plato,'total':total_formateado})
 
 @login_required
 @web_access_type_required("cliente")
 def eliminar_plato_carrito(request, plato_id):
     carrito = CarritoDeCompras(request)
-    carrito.eliminar_plato(plato_id)
+    carrito.eliminar_plato(str(plato_id))
     return redirect('myapp:pagina_del_carrito')
+
+
+@login_required
+@web_access_type_required("cliente")
+def quitar_plato_carrito(request, plato_id):
+    carrito = CarritoDeCompras(request)
+    carrito.quitar_plato(str(plato_id))
+    return redirect('myapp:pagina_del_carrito')
+
 
 
 

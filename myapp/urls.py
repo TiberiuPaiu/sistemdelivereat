@@ -59,7 +59,11 @@ urlpatterns = [
     #cliente-carito
     path('agregaralcarrito/<int:plato_id>/', login_required(agregar_al_carrito), name='agregar_carrito'),
     path('carrito/',  login_required(carrito_lista), name='pagina_del_carrito'),
+    path('quitar_plato_carrito/<int:plato_id>/', login_required(quitar_plato_carrito),
+         name='quitar_plato_carrito'),
+
     path('eliminar/plato/carrito/<int:plato_id>/',  login_required(eliminar_plato_carrito), name='eliminar_plato_carrito'),
+
 
 
 ]
