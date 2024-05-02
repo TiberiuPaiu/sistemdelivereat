@@ -100,6 +100,7 @@ def agregar_al_carrito(request, plato_id):
 @login_required
 @web_access_type_required("cliente")
 def carrito_lista(request):
+    restaurante_actual_id=None
     carrito = CarritoDeCompras(request).obtener_carrito()
     platos_en_carrito = Plato.objects.filter(id__in=carrito.keys())
 
@@ -117,8 +118,21 @@ def carrito_lista(request):
         cantidad = carrito.get(plato_id, {'cantidad': 0})['cantidad']
         cantidades_por_plato[plato_id] = cantidad
 
+    title_pagina = {'label_title': "Carrito de compras",
+                               'title_card': "Carrito de compras ",
+                               },
+    ruta_pagina = [{
+        'text': "Lista de restaurantes",
+        'link': "myapp:restaurantes_list_cliente",
+    },
+    {
+            'text': "Carrito de compras",
+            'link': "",
+    }
+    ]
+
     return render(request, 'cliente/carito/carrito_lista.html',
-                  {'platos': platos_en_carrito, 'cantidades_por_plato': cantidades_por_plato,'total':total_formateado})
+                  {'platos': platos_en_carrito, 'cantidades_por_plato': cantidades_por_plato,'total':total_formateado,"title_pagina":title_pagina,"ruta_pagina":ruta_pagina,"restaurante_actual_id":restaurante_actual_id})
 
 @login_required
 @web_access_type_required("cliente")

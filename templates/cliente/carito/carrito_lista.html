@@ -1,25 +1,135 @@
+
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
 {% load custom_filters %}
+{% block style %}
+ <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+    <!--  iconas fas -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+{% endblock %}
+  
+{% block content %}
+<div class="content">
+   {% if messages %}
+    <div class="alert alert-success alert-dismissible">
+<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+<h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
+    {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+      
+</div>
+</div>
+{% endif %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Carrito de compras</title>
-</head>
-<body>
-    <h1>Carrito de compras</h1>
-    <ul>
-    {% for plato in platos %}
-        <li>
-            {{ plato.nombre }} - Precio: {{ plato.precio }} - Cantidad:
-           <a href="{% url 'myapp:quitar_plato_carrito' plato_id=plato.id %}">  <button type="button" onclick="">-</button></a>
-            {{ cantidades_por_plato|custom_get:plato.id }}
-             <a href="{% url 'myapp:agregar_carrito' plato_id=plato.id %}"><button type="button" onclick="">+</button></a>
-           <a href="{% url 'myapp:eliminar_plato_carrito' plato_id=plato.id %}"> <button type="button"  >Eliminar</button></a> 
-        </li>
-    {% endfor %}
-    </ul>
-    <p>Total: {{ total }}</p>
+<div class="container">
+
+   <div class="row">
+
+        
+
+        <div class="col-md-10">
+        
+
+  <div class="card">
+  
+   <div class="card-body">
+  
+        <table class="table table-bordered" width="900px" border="0" cellspacing="0" cellpadding="0">
+                    <thead>
+                        <tr>
+                            
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Cantidad</th>
+                            <th>Opción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for plato in platos %}
+                         
+                         {% if plato.restaurante.id != restaurante_actual_id %}
+                            <tr> 
+                                <td align="center" colspan="4">{{ plato.restaurante.nombre }}</td>
+                            </tr>
+                         {% endif %}
+                        
+                     <tr>
+                     
+                            <td>  
+                                <img class="img-circle img-bordered-sm" src="{{ plato.imagen.url }}" alt="user image" width="20%" height="20%" >
+
+                                {{ plato.nombre }}  
+                                
+                            </td> 
+                            <td> 
+                                 {% if plato.descuento > 0 %}
+            <del>{{ plato.precio }}</del> -  {{ plato.precio_final }}  € Descuento : {{ plato.descuento }}%
+
+            {% else %}
+               {{ plato.precio }}  €
+            {% endif %}
+                                
+                            
+                            </td> 
+                            <td>   
+                                <a href="{% url 'myapp:quitar_plato_carrito' plato_id=plato.id %}">  <button type="button" onclick="">-</button></a>
+                            {{ cantidades_por_plato|custom_get:plato.id }}
+                             <a href="{% url 'myapp:agregar_carrito' plato_id=plato.id %}"><button type="button" onclick="">+</button></a>
+                            </td> 
+                             <td>  
+                                 <a href="{% url 'myapp:eliminar_plato_carrito' plato_id=plato.id %}"> <button type="button"  >Eliminar</button></a> 
+                             </td> 
+          
+                       </tr>
+                        {% with plato.restaurante.id as restaurante_actual_id %}
+                            
+                        {% endwith %}
+                    {% endfor %}
+                </tbody>
+        </table>
+    </div>
+  </div>
+
+        
+       
+        </div>
+   <div class="col-md-2 d-flex align-items-center">
+
+                   <div class="card">
+                        <div class="card-body">
+                        <!-- Contenido del menú lateral -->
+                        
+<p>Total: {{ total }}</p>
+                             <button type="button"  >Realizar Pedido</button>
+                             </div>
+                   </div>
+
+         </div>
+    </div>
 
 
-</body>
-</html>
+
+</div>
+</div>
+    
+
+{% endblock %}
+
+
+{% block script %}
+
+<!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+{% endblock %}
