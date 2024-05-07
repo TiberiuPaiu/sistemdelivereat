@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
-
+import uuid
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
@@ -154,6 +154,15 @@ class Pedido(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
     fecha_pedido = models.DateTimeField(auto_now_add=True)
+
+    codigo_pedido = models.CharField(max_length=50, unique=True)
+
+    def save(self, *args, **kwargs):
+        if not self.codigo_pedido:
+            # Generar un código único para el pedido de 12 caracteres
+            unique_id = uuid.uuid4().hex[:12]
+            self.codigo_pedido = unique_id
+        super(Pedido, self).save(*args, **kwargs)
 
 
 
