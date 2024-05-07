@@ -1,12 +1,13 @@
 from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.db.models import Avg
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from django.db.models import F, ExpressionWrapper, DecimalField
 from django.db.models.functions import Round, Cast
-from myapp.models import Restaurante, Plato, Cliente
+from myapp.models import Restaurante, Plato, Cliente, Pedido, Ubicacion
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.carito_copras import CarritoDeCompras
 from sistemdelivereat.utils.decorators import web_access_type_required
@@ -89,6 +90,9 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
         context['restaurante_id'] = restaurante.id
         return context
 
+def descuento(plato):
+    return plato.precio * (1 - Decimal(str(plato.descuento)) / 100)
+
 @login_required
 @web_access_type_required("cliente")
 def agregar_al_carrito(request, plato_id):
@@ -106,7 +110,7 @@ def carrito_lista(request):
 
     # Calcular el total
 
-    total = sum((carrito[str(plato.id)]['cantidad'] * plato.precio * (1 - Decimal(str(plato.descuento)) / 100)) for plato in
+    total = sum((carrito[str(plato.id)]['cantidad'] * descuento(plato)) for plato in
                 platos_en_carrito)
     total_formateado = total.quantize(Decimal('0.01'))
 
@@ -151,4 +155,92 @@ def quitar_plato_carrito(request, plato_id):
 
 
 
+
+@login_required
+@web_access_type_required("cliente")
+def procesar_pedido(request):
+    try:
+        # Procesar el carrito de compras y crear un nuevo pedido para cada restaurante
+        carrito = CarritoDeCompras(request).obtener_carrito()
+        platos_por_restaurante = {}  # Diccionario para agrupar los platos por restaurante
+
+        # Agrupar los platos por restaurante
+        plato_ids = carrito.keys()
+        platos = Plato.objects.filter(id__in=plato_ids)
+        for plato in platos:
+            restaurante_id = plato.restaurante.id
+            if restaurante_id not in platos_por_restaurante:
+                platos_por_restaurante[restaurante_id] = {'platos': [], 'total': 0}
+            platos_por_restaurante[restaurante_id]['platos'].append(plato.id)
+            platos_por_restaurante[restaurante_id]['total'] += descuento(plato) * carrito[str(plato.id)]['cantidad']
+
+        # Crear los pedidos dentro de una transacción
+        with transaction.atomic():
+            for restaurante_id, data in platos_por_restaurante.items():
+                restaurante = Restaurante.objects.get(id=restaurante_id)
+                cliente = Cliente.objects.get(user=request.user)
+                platos_en_pedido = Plato.objects.filter(id__in=data['platos'])
+                total_pedido = data['total']
+
+                # Crear una nueva ubicación para cada pedido
+                ubicacion_pedido = Ubicacion.objects.create(
+                    direcion=cliente.ubicacion.direcion,
+                    numero=cliente.ubicacion.numero,
+                    codigo_postal=cliente.ubicacion.codigo_postal,
+                    pais=cliente.ubicacion.pais,
+                    ciudad=cliente.ubicacion.ciudad,
+                    latitud=cliente.ubicacion.latitud,
+                    longitud=cliente.ubicacion.longitud
+                )
+
+                # Crear el pedido con la ubicación única
+                pedido = Pedido.objects.create(
+                    cliente=cliente,
+                    ubicacion=ubicacion_pedido,
+                    total=total_pedido,
+                    restaurante=restaurante
+                )
+                pedido.platos.set(platos_en_pedido)
+
+        # Limpiar el carrito de compras después de realizar los pedidos
+        carrito.limpiar_carrito()
+
+        return redirect('myapp:pedidos_realizados')
+    except Exception as e:
+        # Manejo de excepciones
+        print(f"Error al procesar el pedido: {e}")
+        return redirect('myapp:pedidos_realizados')
+
+
+
+class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
+    model = Pedido
+    user_type_required = 'cliente'
+    template_name = 'cliente/pedido/listado_pedidos.html'
+    context_object_name = 'pedidos'
+    paginate_by = 10
+
+
+    def get_queryset(self):
+        return Pedido.objects.filter(cliente=Cliente.objects.get(user = self.request.user ))
+
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['title_pagina'] = {'label_title': "Llistat de pedidos realizados",
+                                   'title_card': "Llistat de pedidos realizados "
+                                   },
+        context['ruta_pagina'] = [{
+            'text': "Lista de restaurantes",
+            'link': "myapp:restaurantes_list_cliente",
+        },
+            {
+                'text': "Llistat de pedidos realizados ",
+                'link': "",
+            }
+        ]
+
+        return context
 

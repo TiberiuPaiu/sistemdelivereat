@@ -64,6 +64,11 @@ urlpatterns = [
 
     path('eliminar/plato/carrito/<int:plato_id>/',  login_required(eliminar_plato_carrito), name='eliminar_plato_carrito'),
 
+    path('procesar_pedido/',  login_required(procesar_pedido), name='procesar_pedido'),
+    path('pedidos_realizados/', login_required(Pedidos_realizadosView.as_view()) , name='pedidos_realizados'),
+
+
+
 
 
 ]

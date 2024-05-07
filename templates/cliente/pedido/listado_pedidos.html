@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listado de Pedidos</title>
+</head>
+<body>
+    <h1>Listado de Pedidos</h1>
+    <table>
+  <thead>
+    <tr>
+      <th>Estado</th>
+      <th>Platos</th>
+      <th>Total</th>
+      <th>Restaurante</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pedido in pedidos %}
+    <tr>
+      <td>{{ pedido.get_estado_display }}</td>
+      <td>
+        <ul>
+          {% for plato in pedido.platos.all %}
+          <li>{{ plato.nombre }}</li>
+          {% endfor %}
+        </ul>
+      </td>
+      <td>{{ pedido.total }} €</td>
+      <td>{{ pedido.restaurante.nombre }}</td>
+      <td>{{ pedido.fecha_pedido }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</body>
+</html>

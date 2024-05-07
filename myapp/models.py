@@ -147,9 +147,9 @@ class Pedido(models.Model):
         choices=ESTADOS_TYPE,
         default='espera_preparacion',
     )
-    cliente = models.ForeignKey(User, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     platos = models.ManyToManyField(Plato)
-    direccion_entrega = models.CharField(max_length=255)
+    ubicacion = models.OneToOneField(Ubicacion, on_delete=models.CASCADE, null=True, related_name='pedido_ubicacion')
 
     total = models.DecimalField(max_digits=10, decimal_places=2)
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
