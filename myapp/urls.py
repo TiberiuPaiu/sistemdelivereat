@@ -66,6 +66,7 @@ urlpatterns = [
 
     path('procesar_pedido/',  login_required(procesar_pedido), name='procesar_pedido'),
     path('pedidos_realizados/', login_required(Pedidos_realizadosView.as_view()) , name='pedidos_realizados'),
+    path('pedido/<int:pedido_id>/cancelar/', login_required(cancelar_pedido), name='cancelar_pedido'),
 
 
 

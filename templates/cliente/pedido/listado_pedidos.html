@@ -14,6 +14,7 @@
       <th>Total</th>
       <th>Restaurante</th>
       <th>Fecha</th>
+        <th>Opciónes</th>
     </tr>
   </thead>
   <tbody>
@@ -31,6 +32,15 @@
       <td>{{ pedido.total }} €</td>
       <td>{{ pedido.restaurante.nombre }}</td>
       <td>{{ pedido.fecha_pedido }}</td>
+         <td>
+             {% if pedido.estado == 'espera_preparacion' %}
+    <a  href="{% url 'myapp:cancelar_pedido' pedido.id %}">
+        
+        <button >Cancelar Pedido</button>
+    </a>
+{% endif %}
+         
+         </td>
     </tr>
     {% endfor %}
   </tbody>

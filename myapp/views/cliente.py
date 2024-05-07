@@ -244,3 +244,9 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
         return context
 
+def cancelar_pedido(request, pedido_id):
+    pedido = Pedido.objects.get(id=pedido_id)
+    if pedido.estado == 'espera_preparacion':
+        pedido.estado='cancelado'
+        pedido.save()
+    return redirect("myapp:pedidos_realizados")
