@@ -70,6 +70,12 @@ urlpatterns = [
 
 
 
+    #cocina
+    path('lista_pedidos_cocina/', login_required(ListPedidosCocina.as_view()), name='lista_pedidos_cocina'),
+
+
+
+
 
 
 ]

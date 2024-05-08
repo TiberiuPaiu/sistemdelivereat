@@ -3,3 +3,4 @@ from .restaurante import *
 from .resenas import *
 from .admin import *
 from .cliente import *
+from .cocina import *

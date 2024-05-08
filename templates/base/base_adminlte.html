@@ -104,6 +104,12 @@
 
         </ul>
 </nav>
+
+{% if user.user_type == 'cocina' %}
+    <div class="content-wrapper kanban">
+{% else %}
+    <div class="content-wrapper">
+{% endif %}
 <div class="content-wrapper">
 
 
