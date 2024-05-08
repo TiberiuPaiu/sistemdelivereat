@@ -22,14 +22,13 @@
    <div class="container-fluid h-100">
 
         {% for pedido in pedidos %}
+
       <div class="card card-row card-secondary">
          <div class="card-header">
             <h3 class="card-title">
                Pedido - {{ pedido.codigo_pedido }}
             </h3>
          </div>
-
-
 
          <div class="card-body">
                <p>{{ pedido.get_estado_display }}</p>
@@ -41,8 +40,8 @@
                </div>
 
                <div class="card-body">
-                
-               
+
+
                {% for ingrediente in plato.ingredientes.all %}
                                             <li>{{ ingrediente.nombre }}</li>
                                         {% endfor %}
@@ -51,11 +50,26 @@
 
 
 
-          {% endfor %}
 
+          {% endfor %}
+         
+         {% if pedido.estado == 'espera_preparacion' %}
+         
+         <a href="{% url 'myapp:preparacion_pedido' pedido.id %}" class="btn btn-primary">Empezar la elaboración</a>
+         
+         {% elif pedido.estado == 'preparacion'  %}
+         <a href="#" class="btn btn-primary">Listo para la entrega</a>
+        {% endif %}
          </div>
+
+
+
+
+
       </div>
+
        {% endfor %}
+
    </div>
 </section>
 

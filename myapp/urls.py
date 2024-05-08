@@ -72,6 +72,9 @@ urlpatterns = [
 
     #cocina
     path('lista_pedidos_cocina/', login_required(ListPedidosCocina.as_view()), name='lista_pedidos_cocina'),
+    path('pedido/<int:pedido_id>/preparacion/', login_required(preparacion_pedido), name='preparacion_pedido'),
+
+
 
 
 

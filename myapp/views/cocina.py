@@ -1,10 +1,11 @@
-
+from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from myapp.models import Pedido, Cocina
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
-
+from sistemdelivereat.utils.decorators import web_access_type_required
+from django.contrib.auth.decorators import login_required
 
 class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
@@ -41,5 +42,12 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
 
         return context
 
-
+@login_required
+@web_access_type_required("cocina")
+def preparacion_pedido(request, pedido_id):
+    pedido = Pedido.objects.get(id=pedido_id)
+    if pedido.estado == 'espera_preparacion':
+        pedido.estado='preparacion'
+        pedido.save()
+    return redirect("myapp:lista_pedidos_cocina")
     

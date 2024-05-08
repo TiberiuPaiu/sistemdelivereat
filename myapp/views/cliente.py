@@ -243,7 +243,8 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
         ]
 
         return context
-
+@login_required
+@web_access_type_required("cliente")
 def cancelar_pedido(request, pedido_id):
     pedido = Pedido.objects.get(id=pedido_id)
     if pedido.estado == 'espera_preparacion':
