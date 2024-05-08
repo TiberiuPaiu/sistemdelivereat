@@ -3,120 +3,80 @@
 {% load custom_filters %}
 
 {% block style %}
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
-    <!--  iconas fas -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
-          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-
+    <!-- AdminLTE -->
     <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
-
 {% endblock %}
 
 {% block content %}
+    <section class="content pb-3">
+        <div class="container-fluid h-100">
+            {% for pedido in pedidos %}
+                <div class="card card-row {% if pedido.estado == 'espera_preparacion' %}card-secondary{% elif pedido.estado == 'preparacion' %}card-primary{% endif %}" data-pedido-id="{{ pedido.id }}">
+                    <div class="card-header">
+                        <h3 class="card-title">Pedido - {{ pedido.codigo_pedido }}</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="estado">{{ pedido.get_estado_display }}</p>
+                        {% for plato in pedido.platos.all %}
+                            <div class="card card-info card-outline">
+                                <div class="card-header">
+                                    <h5 class="card-title">{{ plato.nombre }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    {% for ingrediente in plato.ingredientes.all %}
+                                        <li>{{ ingrediente.nombre }}</li>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
 
+                        {% if pedido.estado == 'espera_preparacion' %}
+                            <a href="{% url 'myapp:preparacion_pedido' pedido.id %}" class="btn btn-primary">Empezar la elaboración</a>
+                        {% elif pedido.estado == 'preparacion' %}
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default" data-pedido-id="{{ pedido.id }}">
+                                Listo para la entrega
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
 
-<section class="content pb-3">
-   <div class="container-fluid h-100">
-
-        {% for pedido in pedidos %}
-            
-            
-         {% if pedido.estado == 'espera_preparacion' %}
-
-        <div class="card card-row card-secondary">
-         {% elif pedido.estado == 'preparacion'  %}
-             <div class="card card-row card-primary">
-        {% endif %}
-            
-         <div class="card-header">
-            <h3 class="card-title">
-               Pedido - {{ pedido.codigo_pedido }}
-            </h3>
-         </div>
-
-         <div class="card-body">
-               <p>{{ pedido.get_estado_display }}</p>
-            {% for plato in pedido.platos.all %}
-            <div class="card card-info card-outline">
-               <div class="card-header">
-                  <h5 class="card-title">{{ plato.nombre }}</h5>
-
-               </div>
-
-               <div class="card-body">
-
-
-               {% for ingrediente in plato.ingredientes.all %}
-                                            <li>{{ ingrediente.nombre }}</li>
-                                        {% endfor %}
-               </div>
+    {% block alerta %}
+        <div class="modal fade" id="modal-default">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Asignar un repartidor para el pedido</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="asignarRepartidorForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="pedido_id" id="pedidoId">
+                            <div class="form-group">
+                                <label for="repartidor">Seleccionar Repartidor:</label>
+                                <select class="form-control" id="repartidor" name="repartidor">
+                                    {% for repartidor in repartidores %}
+                                        <option value="{{ repartidor.id }}">{{ repartidor.user.get_full_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Anular</button>
+                        <button type="button" class="btn btn-primary" id="realizarAsignacionBtn">Realizar</button>
+                    </div>
+                </div>
             </div>
-
-
-
-
-          {% endfor %}
-
-         {% if pedido.estado == 'espera_preparacion' %}
-
-         <a href="{% url 'myapp:preparacion_pedido' pedido.id %}" class="btn btn-primary">Empezar la elaboración</a>
-
-         {% elif pedido.estado == 'preparacion'  %}
-             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
-Listo para la entrega
-</button>
-        {% endif %}
-         </div>
-
-
-
-
-
-      </div>
-
-       {% endfor %}
-
-   </div>
-</section>
-
-
-
-
-{% endblock %}
-
-{% block alerta %}
-   <div class="modal fade" id="modal-default">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header">
-<h4 class="modal-title">Asignar un repartidor para el pedido </h4>
-<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-<span aria-hidden="true">&times;</span>
-</button>
-</div>
-<div class="modal-body">
-    
-    {% for repatidor in repatidores %}
-                                               <div class="custom-control custom-checkbox">
-<input class="custom-control-input" type="checkbox" id="customCheckbox1" >
-<label for="customCheckbox1" class="custom-control-label">{{ repatidor.user.get_full_name }}</label>
-</div>
-                                        {% endfor %}
-    
-  
-    
-    
-
-</div>
-<div class="modal-footer justify-content-between">
-<button type="button" class="btn btn-default" data-dismiss="modal">Anular</button>
-<button type="button" class="btn btn-primary">Realizar</button>
-</div>
-</div>
-
+        </div>
+    {% endblock %}
 {% endblock %}
 
 {% block script %}
@@ -126,4 +86,34 @@ Listo para la entrega
     <script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
     <!-- AdminLTE App -->
     <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+    <script>
+     
+
+        $(document).ready(function() {
+            $('#modal-default').on('show.bs.modal', function(event) {
+                var button = $(event.relatedTarget);
+                var pedidoId = button.data('pedido-id');
+                $('#pedidoId').val(pedidoId);
+            });
+
+            $('#realizarAsignacionBtn').click(function() {
+                var formData = $('#asignarRepartidorForm').serialize();
+                $.ajax({
+                    url: '{% url "myapp:asignar_repartidor" %}',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        // Manejar la respuesta del servidor después de asignar el repartidor al pedido
+                        console.log(response);
+                        $('#modal-default').modal('hide');
+                    },
+                    error: function(xhr, status, error) {
+                        // Manejar errores de la petición AJAX
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

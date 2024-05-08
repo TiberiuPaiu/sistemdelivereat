@@ -145,7 +145,7 @@ class CustomLoginView(LoginView):
                 return reverse_lazy('myapp:list_restaurantes')
             # Otros casos según los roles
             elif user.user_type == 'cocina':
-                return reverse_lazy('myapp:lista_pedidos_cocina')
+                return reverse_lazy('myapp:pedidos_actualizados')
 
         return super().get_success_url()
 

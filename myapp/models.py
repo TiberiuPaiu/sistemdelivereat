@@ -154,6 +154,7 @@ class Pedido(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2)
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
     fecha_pedido = models.DateTimeField(auto_now_add=True)
+    repartidor = models.ForeignKey(Repartidor, on_delete=models.CASCADE, null=True,  related_name='repartidor_asignado')
 
     codigo_pedido = models.CharField(max_length=50, unique=True)
 

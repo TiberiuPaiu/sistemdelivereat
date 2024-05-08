@@ -7,6 +7,9 @@ from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
 
+from django.http import JsonResponse, StreamingHttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
     user_type_required = 'cocina'
@@ -29,7 +32,7 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['repatidores'] = Repartidor.objects.filter(
+        context['repartidores'] = Repartidor.objects.filter(
             restaurante=Cocina.objects.get(user=self.request.user).restaurante,
         )
 
@@ -44,6 +47,12 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
         ]
 
         return context
+    # conexiones SSE y envíe actualizaciones de los pedidos.
+    """
+    Para actualizar los pedidos de manera inmediata sin necesidad de recargar la página, se necesita utilizar tecnologías de comunicación en tiempo real, como el  Server-Sent Events (SSE). 
+    Estas tecnologías permiten que el servidor envíe actualizaciones al cliente sin que este tenga que realizar una solicitud explícita.
+    """
+
 
 @login_required
 @web_access_type_required("cocina")
@@ -53,4 +62,34 @@ def preparacion_pedido(request, pedido_id):
         pedido.estado='preparacion'
         pedido.save()
     return redirect("myapp:lista_pedidos_cocina")
-    
+
+
+def asignar_repartidor(request):
+    if request.method == 'POST':
+        pedido_id = request.POST.get('pedido_id')
+        repartidor_id = request.POST.get('repartidor')
+
+        try:
+            pedido = Pedido.objects.get(id=pedido_id)
+            repartidor = Repartidor.objects.get(id=repartidor_id)
+
+            # Depuración: Imprimir los valores recibidos
+            print(f"Pedido ID: {pedido_id}")
+            print(f"Repartidor ID: {repartidor_id}")
+
+            # Lógica para asignar el repartidor al pedido y cabiar estado
+            pedido.repartidor = repartidor
+            pedido.estado = 'espera_repartidor'
+            pedido.save()
+
+            return JsonResponse({'message': 'Repartidor asignado correctamente'})
+        except Pedido.DoesNotExist:
+            return JsonResponse({'error': 'Pedido no encontrado'}, status=404)
+        except Repartidor.DoesNotExist:
+            return JsonResponse({'error': 'Repartidor no encontrado'}, status=404)
+        except Exception as e:
+            # Depuración: Imprimir el error
+            print(f"Error al asignar el repartidor: {str(e)}")
+            return JsonResponse({'error': 'Error al asignar el repartidor'}, status=500)
+    else:
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
