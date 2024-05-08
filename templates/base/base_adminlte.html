@@ -14,14 +14,14 @@
 
 <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
  <!-- Left navbar links -->
-
+{% if user.user_type == 'cliente' %}
     <ul class="navbar-nav">
 
 <li class="nav-item d-none d-sm-inline-block">
 <a href="{% url 'myapp:pedidos_realizados' %}" class="nav-link">Pedidos</a>
 </li>
         </ul>
-
+       {% endif %}
 
 
         <ul class="navbar-nav ml-auto">
@@ -37,24 +37,25 @@
 
             <!-- Messages Dropdown Menu -->
 
-            
+    {% if user.user_type == 'cliente' %}
     {% if total_carrito %}
             <li class="nav-item dropdown">
                 <a class="nav-link" href="{% url 'myapp:pagina_del_carrito' %}">
                     <i class="fa fa-shopping-cart"></i>
 
-                   
-         <span class="badge badge-primary navbar-badge"> {{ total_carrito }} </span> 
-    
-   
 
-                      
+         <span class="badge badge-primary navbar-badge"> {{ total_carrito }} </span>
+
+
+
+
                    <!-- numero de las notifaciones -->
                 </a>
 
 
             </li>
-          {% endif %}      
+          {% endif %}
+        {% endif %}
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     {{ user.username }}
