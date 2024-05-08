@@ -22,8 +22,15 @@
    <div class="container-fluid h-100">
 
         {% for pedido in pedidos %}
+            
+            
+         {% if pedido.estado == 'espera_preparacion' %}
 
-      <div class="card card-row card-secondary">
+        <div class="card card-row card-secondary">
+         {% elif pedido.estado == 'preparacion'  %}
+             <div class="card card-row card-primary">
+        {% endif %}
+            
          <div class="card-header">
             <h3 class="card-title">
                Pedido - {{ pedido.codigo_pedido }}
@@ -52,13 +59,15 @@
 
 
           {% endfor %}
-         
+
          {% if pedido.estado == 'espera_preparacion' %}
-         
+
          <a href="{% url 'myapp:preparacion_pedido' pedido.id %}" class="btn btn-primary">Empezar la elaboración</a>
-         
+
          {% elif pedido.estado == 'preparacion'  %}
-         <a href="#" class="btn btn-primary">Listo para la entrega</a>
+             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">
+Listo para la entrega
+</button>
         {% endif %}
          </div>
 
@@ -72,6 +81,41 @@
 
    </div>
 </section>
+
+
+
+
+{% endblock %}
+
+{% block alerta %}
+   <div class="modal fade" id="modal-default">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h4 class="modal-title">Asignar un repartidor para el pedido </h4>
+<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+<span aria-hidden="true">&times;</span>
+</button>
+</div>
+<div class="modal-body">
+    
+    {% for repatidor in repatidores %}
+                                               <div class="custom-control custom-checkbox">
+<input class="custom-control-input" type="checkbox" id="customCheckbox1" >
+<label for="customCheckbox1" class="custom-control-label">{{ repatidor.user.get_full_name }}</label>
+</div>
+                                        {% endfor %}
+    
+  
+    
+    
+
+</div>
+<div class="modal-footer justify-content-between">
+<button type="button" class="btn btn-default" data-dismiss="modal">Anular</button>
+<button type="button" class="btn btn-primary">Realizar</button>
+</div>
+</div>
 
 {% endblock %}
 

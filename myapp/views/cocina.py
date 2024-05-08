@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from myapp.models import Pedido, Cocina
+from myapp.models import Pedido, Cocina, Repartidor
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
@@ -29,6 +29,9 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['repatidores'] = Repartidor.objects.filter(
+            restaurante=Cocina.objects.get(user=self.request.user).restaurante,
+        )
 
         context['title_pagina'] = {'label_title': "Llistat de pedidos ",
                                    'title_card': "Llistat de pedidos  "
