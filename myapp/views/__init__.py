@@ -4,3 +4,4 @@ from .resenas import *
 from .admin import *
 from .cliente import *
 from .cocina import *
+from .repartidor import *

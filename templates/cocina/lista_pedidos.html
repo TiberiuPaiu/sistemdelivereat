@@ -10,15 +10,15 @@
     <!--  iconas fas -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
-    
+
     <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
 {% endblock %}
 
 {% block content %}
-    
+
      {% if pedidos %}
-    
-    
+
+
     <section class="content pb-3">
         <div class="container-fluid h-100">
             {% for pedido in pedidos %}
@@ -60,9 +60,9 @@
          <p> No hay ningún pedido de momento. </p>
           </div>
     </section>
-        
+
     {% endif%}
-    
+
 {% endblock %}
 
 {% block alerta %}
@@ -107,7 +107,7 @@
     <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
 
     <script>
-     
+
 
         $(document).ready(function() {
             $('#modal-default').on('show.bs.modal', function(event) {

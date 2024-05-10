@@ -75,7 +75,10 @@ urlpatterns = [
     path('pedido/<int:pedido_id>/preparacion/', login_required(preparacion_pedido), name='preparacion_pedido'),
     path('asignar_repartidor/', asignar_repartidor, name='asignar_repartidor'),
 
-
+    #repartidor
+    path('pedidos/pararecoger/', login_required(ListPedidosParaRecoger.as_view()), name='pedidos_para_recoger'),
+    path('pedidos/paraentregar/', login_required(ListPedidosRepartidor.as_view()), name='pedidos_para_entregar'),
+    #path('pedidos/entregados/', login_required(ListPedidosParaRecoger.as_view()), name='pedidos_para_recoger'),
 ]
 
 # Agregar la configuracion para servir archivos de medios

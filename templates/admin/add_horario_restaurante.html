@@ -1,0 +1,257 @@
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
+
+{% block style %}
+ <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+    <!--  iconas fas -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+    
+    
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+<div class="content">
+<div class="container">
+    
+    
+     <div class="row">
+         
+
+        <div class="col-md-12">
+            
+            <div class="card card-primary">
+                    <form action="{% url 'myapp:add_horarios' restaurante_id=restaurante_id %}"  method="POST" >
+                    {% csrf_token %}
+                  <div class="card-title">
+                      </div>
+
+                  <div class="card-body">
+                      
+                       <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Horario</label>
+                            <div class="col-sm-9">
+                                        <table class="horario">
+                                          <thead>
+                                            <tr>
+                                              <th>Día</th>
+                                              <th>Apertura</th>
+                                              <th>Cierre</th>
+                                              <th>Cierre</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr>
+                                              <td>Lunes</td>
+                                              <td><input class="form-control" name="lunes_apertura" type="time"></td>
+                                              <td><input class="form-control" name="lunes_cierre" type="time"></td>
+                                                <td>
+                                                    <select class="custom-select form-control-border" name="lunes_estado_local" aria-label="Default select example" onchange="actualizarEstado(this)">
+¡                                          <option value="abierto">Abierto</option>
+                                          <option value="cerrado">Cerrado  </option>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Martes</td>
+                                              <td><input class="form-control" name="martes_apertura" type="time"></td>
+                                              <td><input class="form-control" name="martes_cierre" type="time"></td>
+                                                 <td>
+                                                     <select class="custom-select form-control-border" name="martes_estado_local" aria-label="Default select example" onchange="actualizarEstado(this)">
+                                          <option value="abierto">Abierto</option>
+                                          <option value="cerrado">Cerrado  </option>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Miércoles</td>
+                                              <td><input class="form-control" name="miercoles_apertura" type="time"></td>
+                                              <td><input class="form-control" name="miercoles_cierre" type="time"></td>
+                                                 <td>
+                                                     <select class="custom-select form-control-border" name="miercoles_estado_local" aria-label="Default select example" onchange="actualizarEstado(this)">
+                                          <option value="abierto">Abierto</option>
+                                          <option value="cerrado">Cerrado  </option>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Jueves</td>
+                                              <td><input class="form-control"  name="jueves_apertura" type="time"></td>
+                                              <td><input class="form-control" name="jueves_cierre"  type="time"></td>
+                                                 <td>
+                                                     <select class="custom-select form-control-border" name="jueves_estado_local" aria-label="Default select example" onchange="actualizarEstado(this)">
+                                          <option value="abierto">Abierto</option>
+                                          <option value="cerrado">Cerrado  </option>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Viernes</td>
+                                              <td><input class="form-control" name="viernes_apertura" type="time"></td>
+                                              <td><input class="form-control" name="viernes_cierre" type="time"></td>
+                                                 <td>
+                                                     <select class="custom-select form-control-border" name="viernes_estado_local" aria-label="Default select example" onchange="actualizarEstado(this)">
+                                          <option value="abierto">Abierto</option>
+                                          <option value="cerrado">Cerrado  </option>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Sábado</td>
+                                              <td><input class="form-control" name="sabado_apertura" type="time"></td>
+                                              <td><input class="form-control" name="sabado_cierre" type="time"></td>
+                                                 <td>
+                                                     <select class="custom-select form-control-border" name="sabado_estado_local" aria-label="Default select example" onchange="actualizarEstado(this)">
+                                          <option value="abierto">Abierto</option>
+                                          <option value="cerrado">Cerrado  </option>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                              <td>Domingo</td>
+                                              <td><input class="form-control" name="domingo_apertura" type="time"></td>
+                                              <td><input class="form-control" name="domingo_cierre" type="time"></td>
+                                                 <td>
+<select class="custom-select form-control-border" name="domingo_estado_local" aria-label="Default select example" onchange="actualizarEstado(this)">                                          <option value="abierto">Abierto</option>
+                                          <option value="cerrado">Cerrado  </option>
+                                                </select>
+                                                </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                            </div>
+
+
+                         </div>
+
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Dias Festivos:</label>
+                            <div class="col-sm-9">
+                                <input id="btnAgregar" type="button" class="btn btn-primary" value="Agregar dias Festivos" /> <br><br>
+                    <div id="divAgregarInputs">
+                    </div>
+                            </div>
+
+
+                         </div>
+
+                 
+                  </div>
+                 
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Envia</button>
+                     </div>
+  </form>
+
+
+             </div>
+            
+        </div>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+    <script>
+    var btnAgregar = document.getElementById('btnAgregar');
+    var divAgregarInputs = document.getElementById('divAgregarInputs');
+    var index = 0;
+
+    btnAgregar.addEventListener('click', function() {
+        var divRow = document.createElement('div');
+        divRow.classList.add('row'); // Agregar clase de Bootstrap
+
+        var divColInput = document.createElement('div');
+        divColInput.classList.add('col-9'); // Agregar clase de Bootstrap
+
+        var nuevoInput = document.createElement('input');
+        nuevoInput.type = 'date';
+        nuevoInput.name = 'dias_festivos';
+        nuevoInput.classList.add('form-control'); // Agregar clase de Bootstrap
+
+        var divColBtn = document.createElement('div');
+        divColBtn.classList.add('col-3'); // Agregar clase de Bootstrap
+
+        // Crear un botón de eliminar
+        var btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.type = 'button';
+        btnEliminar.classList.add('btn', 'btn-danger', 'btn-sm', 'w-100'); // Agregar clases de Bootstrap
+
+        btnEliminar.addEventListener('click', function() {
+            divRow.parentNode.removeChild(divRow);
+        });
+
+        nuevoInput.classList.add('mb-1'); // Agregar clase de Bootstrap para margen inferior
+
+        divColInput.appendChild(nuevoInput);
+        divColBtn.appendChild(btnEliminar);
+
+        divRow.appendChild(divColInput);
+        divRow.appendChild(divColBtn);
+
+        divAgregarInputs.appendChild(divRow);
+
+        index++;
+    });
+</script>
+  <script>
+  // Función para habilitar o deshabilitar los campos de tiempo según el estado seleccionado
+  function actualizarEstado(elemento) {
+    // Obtener el elemento select
+    var selectEstado = elemento;
+    // Obtener la fila que contiene los campos de tiempo
+    var fila = selectEstado.parentElement.parentElement;
+    // Obtener los campos de tiempo dentro de la fila
+    var camposTiempo = fila.querySelectorAll('input[type="time"]');
+
+    // Verificar el valor seleccionado en el select
+    if (selectEstado.value === 'cerrado') {
+      // Si el estado es "cerrado", borrar el valor y deshabilitar los campos de tiempo
+      camposTiempo.forEach(function(input) {
+        input.value = ''; // Borrar el valor del campo de tiempo
+        input.disabled = true; // Deshabilitar el campo de tiempo
+      });
+    } else {
+      // Si el estado no es "cerrado", habilitar los campos de tiempo
+      camposTiempo.forEach(function(input) {
+        input.disabled = false; // Habilitar el campo de tiempo
+      });
+    }
+  }
+</script>
+
+<!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+    
+
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+
+
+{% endblock %}
