@@ -1,0 +1,166 @@
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block style %}
+<link rel="stylesheet"
+   href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+<!--  iconas fas -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+   integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+
+     <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+{% endblock %}
+{% block content %}
+<div class="content">
+   {% if messages %}
+   <div class="alert alert-success alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
+   </div>
+</div>
+{% endif %}
+
+<div class="container">
+   <div class="row">
+      <div class="col-md-12">
+         <div class="card card-primary card-tabs">
+   <div class="card-header p-0 pt-1">
+      <ul class="nav nav-tabs" >
+          
+          <li class="nav-item">
+            <a class="nav-link active" id="custom-tabs-one-home-tab"  href="{% url 'myapp:pedidos_para_recoger' %}" aria-selected="false">Pedidos para recoger</a>
+         </li>
+         <li class="nav-item">
+            <a class="nav-link" id="custom-tabs-one-profile-tab"  href="{% url 'myapp:pedidos_para_entregar' %}"  aria-selected="true">Pedidos para entregar</a>
+         </li>
+           <li class="nav-item">
+            <a class="nav-link" id="custom-tabs-one-profile-tab"  href=""  aria-selected="false">Pedidos entregados</a>
+         </li>
+           <li class="nav-item">
+            <a class="nav-link" id="custom-tabs-one-profile-tab"  href=""  aria-selected="false">Pedida devolución</a>
+         </li>
+      </ul>
+   </div>
+            <div class="card-body">
+               <div class="card-body p-0">
+               {% if pedidos %}
+                  <ul class="products-list product-list-in-card pl-2 pr-2">
+                      {% for pedido in pedidos %}
+                     <li class="item">
+                        <div class="product-img" style="">
+                        <div id="map_{{ pedido.id }}" style="height: 100px; width: 100px"></div><!-- Contenedor para el mapa de Leaflet -->
+                             <script>
+
+
+    var map = L.map('map_{{ pedido.id }}', {
+    zoomControl: false // Desactivar el control de zoom predeterminado
+}).setView([{{ pedido.ubicacion.latitud }} , {{ pedido.ubicacion.longitud }} ], 13);
+
+    // Inicializar el mapa en una ubicación y nivel de zoom específicos
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19, // Nivel máximo de zoom
+    }).addTo(map);
+
+    L.marker([{{ pedido.ubicacion.latitud }} , {{ pedido.ubicacion.longitud }} ]).addTo(map)
+</script>
+
+                        </div>
+                        <div class="product-info">
+                           <a href="javascript:void(0)" class="product-title">Pedido : {{ pedido.codigo_pedido }}
+                          </a> - {{ pedido.cliente.user.get_full_name}}
+
+                        <a href="{% url 'myapp:recoger_pedido' pedido.id  %}" class="link-black text-sm">
+<span class="badge badge-warning float-right">Recoger pedido
+</span>
+</a>
+                          <span class="product-description"> {{ pedido.ubicacion.full_address }}  </span>
+                        <ul>
+                             {% for plato in pedido.platos.all %}
+                        <li>{{ plato.nombre }}  </li>
+                          {% endfor %}
+
+                        </ul>
+
+
+
+
+                        </div>
+                     </li>
+
+
+                         {% endfor %}
+
+                   <ul class="pagination pagination-sm d-flex justify-content-end">
+                {% if is_paginated %}
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">&laquo;</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                        </li>
+                    {% endif %}
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                    </li>
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+
+            <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+
+                {% endif %}
+            </ul>
+
+                      {% else %}
+
+         <p> No hay ningún pedido de momento. </p>
+
+
+    {% endif%}
+
+
+                  </ul>
+               </div>
+
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+
+
+
+    <!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+
+{% endblock %}
