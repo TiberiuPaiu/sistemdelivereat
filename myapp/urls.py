@@ -73,7 +73,7 @@ urlpatterns = [
     #cocina
     path('pedidos_actualizados/', login_required(ListPedidosCocina.as_view()), name='pedidos_actualizados'),
     path('pedido/<int:pedido_id>/preparacion/', login_required(preparacion_pedido), name='preparacion_pedido'),
-    path('asignar_repartidor/', asignar_repartidor, name='asignar_repartidor'),
+    path('asignar_repartidor/<int:pedido_id>', asignar_repartidor, name='asignar_repartidor'),
 
     #repartidor
     path('pedidos/para/recoger/', login_required(ListPedidosParaRecoger.as_view()), name='pedidos_para_recoger'),

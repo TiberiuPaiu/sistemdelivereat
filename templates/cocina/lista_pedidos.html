@@ -44,15 +44,23 @@
                         {% if pedido.estado == 'espera_preparacion' %}
                             <a href="{% url 'myapp:preparacion_pedido' pedido.id %}" class="btn btn-primary">Empezar la elaboración</a>
                         {% elif pedido.estado == 'preparacion' %}
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default" data-pedido-id="{{ pedido.id }}">
+                             <a href="{% url 'myapp:asignar_repartidor' pedido.id %}" class="btn btn-primary">
                                 Listo para la entrega
-                            </button>
+                            </a>
                         {% endif %}
                     </div>
                 </div>
+
             {% endfor %}
+
         </div>
+
+
     </section>
+
+
+
+
 
      {% else %}
         <section class="content pb-3">
@@ -65,38 +73,6 @@
 
 {% endblock %}
 
-{% block alerta %}
-        <div class="modal fade" id="modal-default">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Asignar un repartidor para el pedido</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="asignarRepartidorForm">
-                            {% csrf_token %}
-                            <input type="hidden" name="pedido_id" id="pedidoId">
-                            <div class="form-group">
-                                <label for="repartidor">Seleccionar Repartidor:</label>
-                                <select class="form-control" id="repartidor" name="repartidor">
-                                    {% for repartidor in repartidores %}
-                                        <option value="{{ repartidor.id }}">{{ repartidor.user.get_full_name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer justify-content-between">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Anular</button>
-                        <button type="button" class="btn btn-primary" id="realizarAsignacionBtn">Realizar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endblock %}
 
 {% block script %}
     <!-- jQuery -->
@@ -106,33 +82,4 @@
     <!-- AdminLTE App -->
     <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
 
-    <script>
-
-
-        $(document).ready(function() {
-            $('#modal-default').on('show.bs.modal', function(event) {
-                var button = $(event.relatedTarget);
-                var pedidoId = button.data('pedido-id');
-                $('#pedidoId').val(pedidoId);
-            });
-
-            $('#realizarAsignacionBtn').click(function() {
-                var formData = $('#asignarRepartidorForm').serialize();
-                $.ajax({
-                    url: '{% url "myapp:asignar_repartidor" %}',
-                    type: 'POST',
-                    data: formData,
-                    success: function(response) {
-                        // Manejar la respuesta del servidor después de asignar el repartidor al pedido
-                        console.log(response);
-                        $('#modal-default').modal('hide');
-                    },
-                    error: function(xhr, status, error) {
-                        // Manejar errores de la petición AJAX
-                        console.error(error);
-                    }
-                });
-            });
-        });
-    </script>
 {% endblock %}

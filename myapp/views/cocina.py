@@ -1,4 +1,4 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -61,35 +61,46 @@ def preparacion_pedido(request, pedido_id):
     if pedido.estado == 'espera_preparacion':
         pedido.estado='preparacion'
         pedido.save()
-    return redirect("myapp:lista_pedidos_cocina")
+    return redirect("myapp:pedidos_actualizados")
 
 
-def asignar_repartidor(request):
+def asignar_repartidor(request,pedido_id):
+    pedido = Pedido.objects.get(id=pedido_id)
     if request.method == 'POST':
-        pedido_id = request.POST.get('pedido_id')
-        repartidor_id = request.POST.get('repartidor')
+        repartidor = Repartidor.objects.get(id=request.POST['repartidor_id'])
 
-        try:
-            pedido = Pedido.objects.get(id=pedido_id)
-            repartidor = Repartidor.objects.get(id=repartidor_id)
+        # Lógica para asignar el repartidor al pedido y cabiar estado
+        pedido.repartidor = repartidor
+        pedido.estado = 'espera_repartidor'
+        pedido.save()
 
-            # Depuración: Imprimir los valores recibidos
-            print(f"Pedido ID: {pedido_id}")
-            print(f"Repartidor ID: {repartidor_id}")
+        return redirect("myapp:pedidos_actualizados")
 
-            # Lógica para asignar el repartidor al pedido y cabiar estado
-            pedido.repartidor = repartidor
-            pedido.estado = 'espera_repartidor'
-            pedido.save()
 
-            return JsonResponse({'message': 'Repartidor asignado correctamente'})
-        except Pedido.DoesNotExist:
-            return JsonResponse({'error': 'Pedido no encontrado'}, status=404)
-        except Repartidor.DoesNotExist:
-            return JsonResponse({'error': 'Repartidor no encontrado'}, status=404)
-        except Exception as e:
-            # Depuración: Imprimir el error
-            print(f"Error al asignar el repartidor: {str(e)}")
-            return JsonResponse({'error': 'Error al asignar el repartidor'}, status=500)
-    else:
-        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    ruta_pagina = [
+        {
+            'text': "Lista pedidos ",
+            'link': "myapp:pedidos_actualizados",
+        },
+
+        {
+            'text': "Asignar repartidor  ",
+            'link': "",
+        }
+    ]
+
+    title_pagina = [
+        {
+            'label_title': "VAsignar repartidor ",
+            'title_card': "Asignar repartidor para la etrega de pedido "+pedido.codigo_pedido,
+        }
+    ]
+
+    context = {
+        'ruta_pagina': ruta_pagina,
+        'title_pagina': title_pagina,
+        'repardidores': Repartidor.objects.filter(restaurante=Cocina.objects.get(user=request.user).restaurante),
+
+    }
+
+    return render(request, 'cocina/asignar_repartidor.html', context)
