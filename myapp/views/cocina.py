@@ -7,6 +7,8 @@ from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
 
+from django.contrib import messages
+
 from django.http import JsonResponse, StreamingHttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
@@ -59,6 +61,7 @@ def preparacion_pedido(request, pedido_id):
     if pedido.estado == 'espera_preparacion':
         pedido.estado='preparacion'
         pedido.save()
+        messages.success(request, "El pedido se paso se paso en estado de preparacion")
     return redirect("myapp:pedidos_actualizados")
 
 
@@ -71,6 +74,8 @@ def asignar_repartidor(request,pedido_id):
         pedido.repartidor = repartidor
         pedido.estado = 'espera_repartidor'
         pedido.save()
+        messages.success(request, "El pedido se asignó correctamente.")
+
 
         return redirect("myapp:pedidos_actualizados")
 

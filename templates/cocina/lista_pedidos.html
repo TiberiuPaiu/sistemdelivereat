@@ -14,13 +14,27 @@
     <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
 {% endblock %}
 
+{% block messages %}
+  {% if messages %}
+                <div class="alert alert-success alert-dismissible">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
+                        {% for message in messages %}
+                                <p>{{ message }}</p>
+                            {% endfor %}
+            
+                    </div>
+                
+            {% endif %}
+{% endblock %}
 {% block content %}
-
+    
      {% if pedidos %}
-
-
+         
     <section class="content pb-3">
         <div class="container-fluid h-100">
+        
+        
             {% for pedido in pedidos %}
                 <div class="card card-row {% if pedido.estado == 'espera_preparacion' %}card-secondary{% elif pedido.estado == 'preparacion' %}card-primary{% endif %}" data-pedido-id="{{ pedido.id }}">
                     <div class="card-header">
