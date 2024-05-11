@@ -157,12 +157,15 @@ class Pedido(models.Model):
     repartidor = models.ForeignKey(Repartidor, on_delete=models.CASCADE, null=True,  related_name='repartidor_asignado')
 
     codigo_pedido = models.CharField(max_length=50, unique=True)
+    codigo_validacio = models.CharField(max_length=50, unique=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.codigo_pedido:
             # Generar un código único para el pedido de 12 caracteres
-            unique_id = uuid.uuid4().hex[:12]
-            self.codigo_pedido = unique_id
+            unique_id_pedido = uuid.uuid4().hex[:12]
+            unique_id_validacio = uuid.uuid4().hex[:12]
+            self.codigo_pedido = unique_id_pedido
+            self.codigo_validacio = unique_id_validacio
         super(Pedido, self).save(*args, **kwargs)
 
 

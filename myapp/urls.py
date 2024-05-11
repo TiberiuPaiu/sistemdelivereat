@@ -81,6 +81,9 @@ urlpatterns = [
     #path('pedidos/entregados/', login_required(ListPedidosParaRecoger.as_view()), name='pedidos_para_recoger'),
     path('pedidos/<int:pedido_id>/recoger_pedido/', login_required(recoger_pedido), name='recoger_pedido'),
     path('pedido/<int:pk>/map', login_required(Map_Rpartidor.as_view()), name='map_rpartidor'),
+    path('pedidos/<int:pedido_id>/validar_pedido/', login_required(validar_pedido), name='validar_pedido'),
+
+
 
 
 ]

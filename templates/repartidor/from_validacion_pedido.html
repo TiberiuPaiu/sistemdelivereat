@@ -1,0 +1,81 @@
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block style %}
+<link rel="stylesheet"
+   href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+<!--  iconas fas -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+   integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+
+     <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+
+{% endblock %}
+{% block content %}
+<div class="content">
+   {% if messages %}
+   <div class="alert alert-success alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
+   </div>
+</div>
+{% endif %}
+
+<div class="container  h-100">
+   <div class="row  h-100 justify-content-center align-items-center">
+      <div class="col-md-12">
+          
+    <div class="card text-center">
+             
+                   <form>
+<div class="card-body">
+<div class="form-group">
+<label for="exampleInputEmail1">Código de validación de pedido</label>
+<input type="text" class="form-control" name="codigo" >
+</div>
+
+
+
+</div>
+
+<div class="card-footer">
+<button type="submit" class="btn btn-primary">Validar</button>
+</div>
+</form>
+
+               </div>
+
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+
+
+
+    <!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+
+{% endblock %}
+
+
+

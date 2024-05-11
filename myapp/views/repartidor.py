@@ -1,5 +1,5 @@
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.views.generic import ListView, DetailView ,TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -81,6 +81,46 @@ def recoger_pedido(request, pedido_id):
         pedido.estado='en_camino'
         pedido.save()
     return redirect("myapp:pedidos_para_entregar")
+
+
+@login_required
+@web_access_type_required("repartidor")
+def validar_pedido(request, pedido_id):
+    pedido = Pedido.objects.get(id=pedido_id)
+
+    if request.method == 'POST':
+            # Procesar los datos del formulario si son válidos
+        username = request.POST.get('codigo')
+        return redirect('myapp:pedidos_para_entregar')
+
+    ruta_pagina = [
+        {
+            'text': "Lista de pedidos para entregar ",
+            'link': "myapp:list_restaurantes",
+        },
+
+        {
+            'text': "Validar Pedido  " + pedido.codigo_pedido,
+            'link': "",
+        }
+    ]
+
+    title_pagina = [
+        {
+            'label_title': "Validar Pedido ",
+            'title_card': "Validar Pedido con el cliente "+pedido.cliente.user.get_full_name(),
+        }
+    ]
+
+    context = {
+        'ruta_pagina': ruta_pagina,
+        'title_pagina': title_pagina
+
+    }
+
+
+    return render(request, 'repartidor/from_validacion_pedido.html', context)
+
 
 class Map_Rpartidor(LoginRequiredMixin, RolRequiredMixin, DetailView):
     model = Pedido

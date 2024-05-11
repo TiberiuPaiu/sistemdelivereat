@@ -81,7 +81,7 @@
                            <a href="javascript:void(0)" class="product-title">Pedido : {{ pedido.codigo_pedido }}
                           </a> - {{ pedido.cliente.user.get_full_name}}
 
-                        <span class="badge badge-warning float-right"> {{ pedido.total}} € </span>
+                       <a href="{% url 'myapp:validar_pedido' pedido.pk %} " > <span class="badge badge-warning float-right"> Entregar </span>    </a> 
                           <span class="product-description"> {{ pedido.ubicacion.full_address }}  </span>
                         <ul>
                              {% for plato in pedido.platos.all %}
@@ -92,14 +92,6 @@
                           {% endfor %}
 
                         </ul>
-
-       
-  <span class="float-right"> 
-                   
-                    <a href="" class="link-black text-sm">
-                    <i class="far fa-comments mr-1"></i> Entregar
-                    </a>
-</span>
 
                         </div>
                      
