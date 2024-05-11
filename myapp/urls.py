@@ -79,7 +79,9 @@ urlpatterns = [
     path('pedidos/para/recoger/', login_required(ListPedidosParaRecoger.as_view()), name='pedidos_para_recoger'),
     path('pedidos/para/entregar/', login_required(ListPedidosRepartidor.as_view()), name='pedidos_para_entregar'),
     #path('pedidos/entregados/', login_required(ListPedidosParaRecoger.as_view()), name='pedidos_para_recoger'),
-    path('pedidos/<int:pedido_id>/recoger_pedido', login_required(recoger_pedido), name='recoger_pedido'),
+    path('pedidos/<int:pedido_id>/recoger_pedido/', login_required(recoger_pedido), name='recoger_pedido'),
+    path('pedido/<int:pk>/map', login_required(Map_Rpartidor.as_view()), name='map_rpartidor'),
+
 
 ]
 

@@ -1,115 +1,90 @@
 {% extends 'base/base_adminlte.html' %}
 {% load static %}
-
+{% load custom_filters %}
 {% block style %}
- <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
-    <!--  iconas fas -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
-          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<link rel="stylesheet"
+   href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+<!--  iconas fas -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+   integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+<link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
 
-    <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+     <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 
 {% endblock %}
-
-
 {% block content %}
-
-
-
-
 <div class="content">
+   {% if messages %}
+   <div class="alert alert-success alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
+      {% for message in messages %}
+      <p>{{ message }}</p>
+      {% endfor %}
+   </div>
+</div>
+{% endif %}
+
 <div class="container">
+   <div class="row">
+      <div class="col-md-12">
+         <div class="card card-primary card-tabs">
+
+            <div class="card-body">
+               <div class="card-body p-0">
+                  
+                   <div id="map" style="height: 480px; width: 100%"></div><!-- Contenedor para el mapa de Leaflet -->
+                             <script> 
 
 
-     <div class="row">
+var map = L.map('map').setView([{{ pedido.ubicacion.latitud }}, {{ pedido.ubicacion.longitud }}], 13);
+
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+L.marker([{{pedido.restaurante.ubicacion.latitud}}, {{pedido.restaurante.ubicacion.longitud}}]).addTo(map)
+    .bindPopup('Restaurante -{{pedido.restaurante.nombre}}')
+    .openPopup();
+
+L.marker([{{ pedido.ubicacion.latitud }}, {{ pedido.ubicacion.longitud }}]).addTo(map)
+    .bindPopup('Ubicacion del Pedido-{{ pedido.codigo_pedido }}')
+    .openPopup();
 
 
-        <div class="col-md-12">
-
-            <div class="card card-primary">
-                    <form action=""  method="POST" enctype="multipart/form-data" >
-                    {% csrf_token %}
-                  <div class="card-title">
-                      </div>
-
-                  <div class="card-body">
-
-                         <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Nombre:</label>
-                            <div class="col-sm-9">
-                              <input type="text" class="form-control" id="first_name"  name=""  placeholder="">
-                            </div>
-                         </div>
-                      
-                      <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Apellido:</label>
-                            <div class="col-sm-9">
-                              <input type="text" class="form-control" id="first_name"  name=""  placeholder="">
-                            </div>
-                         </div>
-                      
-                      <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Teléfono :</label>
-                            <div class="col-sm-9">
-                              <input type="text" class="form-control" id="first_name"  name="" value="" placeholder="">
-                            </div>
-                         </div>
-                      
-                      <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Dirección :</label>
-                            
-                         </div>
-                      
-                      <div class="form-group row">
-                            <label for="first_name" class="col-sm-3 col-form-label">Tarjeta de crédito :</label>
-                            
-                         </div>
-
-                        
 
 
-                  </div>
+</script>
 
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Envia</button>
-                     </div>
-  </form>
+               </div>
 
-
-             </div>
-
-        </div>
-
+            </div>
+         </div>
+      </div>
+   </div>
 </div>
 </div>
-
-
-
-
-
-
-
 
 
 {% endblock %}
-
-
-
 {% block script %}
 
-<!-- jQuery -->
+
+
+    <!-- jQuery -->
 <script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
 <!-- Bootstrap 4 -->
 <script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
-
-
 <!-- AdminLTE App -->
 <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
 
 
-
 {% endblock %}
+
+
+

@@ -36,12 +36,12 @@
          <div class="card card-primary card-tabs">
    <div class="card-header p-0 pt-1">
       <ul class="nav nav-tabs" >
-          
+
          <li class="nav-item">
-            <a class="nav-link active" id="custom-tabs-one-home-tab"  href="{% url 'myapp:pedidos_para_recoger' %}" aria-selected="true">Pedidos para recoger</a>
+            <a class="nav-link " id="custom-tabs-one-home-tab"  href="{% url 'myapp:pedidos_para_recoger' %}" aria-selected="false">Pedidos para recoger</a>
          </li>
          <li class="nav-item">
-            <a class="nav-link" id="custom-tabs-one-profile-tab"  href="{% url 'myapp:pedidos_para_entregar' %}"  aria-selected="false">Pedidos para entregar</a>
+            <a class="nav-link active" id="custom-tabs-one-profile-tab"  href="{% url 'myapp:pedidos_para_entregar' %}"  aria-selected="true">Pedidos para entregar</a>
          </li>
            <li class="nav-item">
             <a class="nav-link" id="custom-tabs-one-profile-tab"  href=""  aria-selected="false">Pedidos entregados</a>
@@ -57,7 +57,7 @@
                   <ul class="products-list product-list-in-card pl-2 pr-2">
                       {% for pedido in pedidos %}
                      <li class="item">
-                        <div class="product-img" style="">
+                        <a href=" {% url 'myapp:map_rpartidor' pedido.pk %} " > <div class="product-img" style="">
                         <div id="map_{{ pedido.id }}" style="height: 100px; width: 100px"></div><!-- Contenedor para el mapa de Leaflet -->
                              <script>
 
@@ -76,6 +76,7 @@
 </script>
 
                         </div>
+                     </a>
                         <div class="product-info">
                            <a href="javascript:void(0)" class="product-title">Pedido : {{ pedido.codigo_pedido }}
                           </a> - {{ pedido.cliente.user.get_full_name}}
@@ -85,14 +86,23 @@
                         <ul>
                              {% for plato in pedido.platos.all %}
                         <li>{{ plato.nombre }}  </li>
+                          
+                                 
+                                 
                           {% endfor %}
 
                         </ul>
 
-
-
+       
+  <span class="float-right"> 
+                   
+                    <a href="" class="link-black text-sm">
+                    <i class="far fa-comments mr-1"></i> Entregar
+                    </a>
+</span>
 
                         </div>
+                     
                      </li>
 
 

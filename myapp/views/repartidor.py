@@ -1,6 +1,6 @@
 
 from django.shortcuts import redirect
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView ,TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from myapp.models import Pedido, Cocina, Repartidor
@@ -81,3 +81,19 @@ def recoger_pedido(request, pedido_id):
         pedido.estado='en_camino'
         pedido.save()
     return redirect("myapp:pedidos_para_entregar")
+
+class Map_Rpartidor(LoginRequiredMixin, RolRequiredMixin, DetailView):
+    model = Pedido
+    user_type_required = 'repartidor'
+    template_name = 'repartidor/GPS.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+
+        context['title_pagina'] = {'label_title': "Ubicación pedido ",
+                                   'title_card': "Ubicación pedido"
+                                   },
+
+        return context
