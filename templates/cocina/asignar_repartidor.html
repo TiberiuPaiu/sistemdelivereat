@@ -20,30 +20,29 @@
 {% block content %}
 <div class="content">
 
-<div class="container  h-100">
+<div class="container ">
    <div class="row ">
       <div class="col-md-12">
-          
-    <div class="card text-center">
+        <div class="card ">
              
                    <form method="post">
                    {% csrf_token %}
-<div class="card-body">
-<div class="form-group">
-<label for="exampleInputEmail1">Selecionar un repartidor</label>
-<select class="form-control" id="repartidor" name="repartidor_id">
-                                    {% for repartidor in repardidores %}
-                                        <option value="{{ repartidor.id }}">{{ repartidor.user.get_full_name }}</option>
-                                    {% endfor %}
-                                </select>
-</div>
-
-</div>
-
-<div class="card-footer">
-<button type="submit" class="btn btn-primary">Realizar</button>
-</div>
-</form>
+                    <div class="card-body">
+                    <div class="form-group">
+                    <label for="exampleInputEmail1">Selecionar un repartidor</label>
+                    <select class="form-control" id="repartidor" name="repartidor_id">
+                                                        {% for repartidor in repardidores %}
+                                                            <option value="{{ repartidor.id }}">{{ repartidor.user.get_full_name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                    </div>
+                    
+                    </div>
+                    
+                    <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Realizar</button>
+                    </div>
+                    </form>
 
                </div>
 
@@ -51,8 +50,6 @@
          </div>
       </div>
    </div>
-</div>
-</div>
 
 
 {% endblock %}

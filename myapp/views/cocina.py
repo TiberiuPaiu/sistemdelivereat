@@ -32,9 +32,7 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['repartidores'] = Repartidor.objects.filter(
-            restaurante=Cocina.objects.get(user=self.request.user).restaurante,
-        )
+        context['kanban'] = True;
 
         context['title_pagina'] = {'label_title': "Llistat de pedidos ",
                                    'title_card': "Llistat de pedidos  "
@@ -79,7 +77,7 @@ def asignar_repartidor(request,pedido_id):
 
     ruta_pagina = [
         {
-            'text': "Lista pedidos ",
+            'text': "Llistat de pedidos ",
             'link': "myapp:pedidos_actualizados",
         },
 
