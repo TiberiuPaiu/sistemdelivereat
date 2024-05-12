@@ -1,4 +1,4 @@
-
+from django.http import Http404
 from django.shortcuts import redirect, render, get_object_or_404
 from django.views.generic import ListView, DetailView ,TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,38 +13,6 @@ from django.contrib import messages
 class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
     user_type_required = 'repartidor'
-    template_name = 'repartidor/lista_pedidos_recoger.html'
-    context_object_name = 'pedidos'
-    paginate_by = 10
-
-
-    def get_queryset(self):
-        # Obtener el restaurante al que pertenece el usuario repartidor
-        user_repartidor = Repartidor.objects.get(user=self.request.user)
-
-        # Filtrar los pedidos por restaurante y estados específicos y para el repatidor corespondiente
-
-        pedidos = Pedido.objects.filter(
-                restaurante=user_repartidor.restaurante,
-                estado__in=['espera_repartidor'],
-                repartidor=user_repartidor
-        )
-
-        return pedidos
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-
-        context['title_pagina'] = {'label_title': "Llistat de pedidos para recoger ",
-                                   'title_card': "Llistat de pedidos para recoger  "
-                                   },
-
-        return context
-
-class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
-    model = Pedido
-    user_type_required = 'repartidor'
     template_name = 'repartidor/lista_pedidos.html'
     context_object_name = 'pedidos'
     paginate_by = 10
@@ -52,38 +20,58 @@ class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_queryset(self):
         # Obtener el restaurante al que pertenece el usuario repartidor
-        user_repartidor = Repartidor.objects.get(user=self.request.user)
+        user_repartidor = get_object_or_404 (Repartidor, user=self.request.user )
 
+        tipo_objeto = self.kwargs['tipo_objeto']
         # Filtrar los pedidos por restaurante y estados específicos y para el repatidor corespondiente
 
-        pedidos = Pedido.objects.filter(
+        if tipo_objeto == 'recoger':
+            return Pedido.objects.filter(
+                    restaurante=user_repartidor.restaurante,
+                    estado__in=['espera_repartidor'],
+                    repartidor=user_repartidor
+            )
+        elif tipo_objeto == 'entregar':
+            return Pedido.objects.filter(
                 restaurante=user_repartidor.restaurante,
                 estado__in=['en_camino'],
                 repartidor=user_repartidor
-        )
-
-        return pedidos
+            )
+        else:
+            raise Http404('Pagina no encontrado')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        tipo_objeto = self.kwargs['tipo_objeto']
 
-        context['title_pagina'] = {'label_title': "Llistat de pedidos para entregar ",
+        if tipo_objeto == 'recoger':
+            context['title_pagina'] = {'label_title': "Llistat de pedidos para recoger ",
+                                   'title_card': "Llistat de pedidos para recoger  "
+                                   },
+            return context
+        elif tipo_objeto == 'entregar':
+            context['title_pagina'] = {'label_title': "Llistat de pedidos para entregar ",
                                    'title_card': "Llistat de pedidos para entregar  "
                                    },
+            return context
 
-        return context
 
 @login_required
 @web_access_type_required("repartidor")
 def recoger_pedido(request, pedido_id):
-    pedido = Pedido.objects.get(id=pedido_id)
+    pedido = get_object_or_404(Pedido, id=pedido_id)
     if pedido.estado == 'espera_repartidor':
-        pedido.estado='en_camino'
-        pedido.save()
-        messages.success(request, "El pedido a sido recogido con exito")
+        try:
+            pedido.estado = 'en_camino'
+            pedido.save()
+            messages.success(request, "El pedido a sido recogido con exito")
+            return redirect('myapp:pedidos_repartidor', tipo_objeto='entregar')
+        except Exception as e:
+            messages.error(request, e)
+            return redirect('myapp:pedidos_repartidor', tipo_objeto='recoger')
 
-    return redirect("myapp:pedidos_para_entregar")
+    return redirect("myapp:pedidos_repartidor", tipo_objeto='recoger')
 
 
 @login_required
@@ -101,7 +89,7 @@ def validar_pedido(request, pedido_id):
                 pedido.estado = 'entregado'
                 pedido.save()
                 messages.success(request, "El pedido a sido entregado corectamente.")
-                return redirect('myapp:pedidos_realizados')
+                return redirect('myapp:pedidos_realizados', tipo_objeto='entregar')
             except Exception as e:
                 messages.error(request,e)
                 return redirect('myapp:validar_pedido', pedido_id=pedido_id)
