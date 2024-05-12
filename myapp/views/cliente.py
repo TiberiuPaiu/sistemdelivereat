@@ -22,7 +22,8 @@ class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView)
     paginate_by = 10
 
     def get_queryset(self):
-        restaurantes = Restaurante.objects.annotate(
+        cliente_ciudad=get_object_or_404(Cliente, user=self.request.user).ubicacion.ciudad
+        restaurantes = Restaurante.objects.filter(ubicacion__ciudad=cliente_ciudad).annotate(
             puntuacion_media=Avg('resenas__puntuacion')
         )
         return restaurantes
