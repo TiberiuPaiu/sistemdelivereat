@@ -19,18 +19,19 @@
 {% endblock %}
 {% block content %}
 <div class="content">
-   {% if messages %}
-   <div class="alert alert-success alert-dismissible">
-      <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
-      {% for message in messages %}
-      <p>{{ message }}</p>
-      {% endfor %}
-   </div>
-</div>
-{% endif %}
-
 <div class="container">
+            {% if messages %}
+                
+            {% for message in messages %}
+                  <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}> 
+                         <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                         <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+                            {{ message }}
+                </div>
+            {% endfor %}
+                
+            {% endif %}
+
    <div class="row">
       <div class="col-md-12">
          <div class="card card-primary card-tabs">
