@@ -1,4 +1,5 @@
 {% extends 'base/base_adminlte.html' %}
+{% load custom_tags %}
 {% load static %}
 {% block style %}
  <link rel="stylesheet"
@@ -52,18 +53,19 @@
                     
                      <li class="nav-item">
                         <a href="{% url 'myapp:detalle_generico' tipo_objeto='restaurante' id_objeto=restaurante.id %}" class="nav-link">
-                            Datos Restaurante <span class="float-right badge bg-info">5</span>
+                            Datos Restaurante 
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a href="{% url 'myapp:agregar_plato' restaurante_id=restaurante.id %}" class="nav-link">
-                            Añadir Plato <span class="float-right badge bg-info">5</span>
+                            Añadir Plato
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'myapp:list_platos' restaurante_id=restaurante.id %}" class="nav-link">
-                           Plato
+                            {% platos_count_ddbb restaurante.id  as platos_count %}
+                           Plato <span class="float-right badge bg-info"> {{ platos_count }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -73,17 +75,19 @@
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante.id %}" class="nav-link">
-                            Usuario <span class="float-right badge bg-info">5</span>
+                            {% user_count_ddbb restaurante.id  as user_count %} 
+                            Usuario <span class="float-right badge bg-info">{{ user_count }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'myapp:resena_generico' tipo_objeto='restaurante' id_objeto=restaurante.id %}" class="nav-link">
-                            Reseñas <span class="float-right badge bg-info">5</span>
+                            {% resena_count_ddbb restaurante.id  as resena_count %} 
+                            Reseñas <span class="float-right badge bg-info">{{ resena_count }}</span>
                         </a>
                     </li>
                      <li class="nav-item">
                         <a href="{% url 'myapp:add_horarios' restaurante_id=restaurante.id %}" class="nav-link">
-                            Horarios <span class="float-right badge bg-info">5</span>
+                            Horarios 
                         </a>
                     </li>
                     
