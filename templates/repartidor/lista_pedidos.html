@@ -19,7 +19,7 @@
    <div class="container">
       {% if messages %}
       {% for message in messages %}
-      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}> 
+      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
       <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
       <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
       {{ message }}
@@ -81,9 +81,9 @@
                         {% endfor %}
                      </tbody>
                   </table>
-                  </thead>  
-                  </table> 
-                  {% else %}   
+                  </thead>
+                  </table>
+                  {% else %}
                   <ul class="products-list product-list-in-card pl-2 pr-2">
                      {% for pedido in pedidos %}
                      <li class="item">
@@ -95,13 +95,13 @@
                                  var map = L.map('map_{{ pedido.id }}', {
                                  zoomControl: false // Desactivar el control de zoom predeterminado
                                  }).setView([{{ pedido.ubicacion.latitud }} , {{ pedido.ubicacion.longitud }} ], 13);
-                                 
+
                                  // Inicializar el mapa en una ubicación y nivel de zoom específicos
-                                 
+
                                  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                      maxZoom: 19, // Nivel máximo de zoom
                                  }).addTo(map);
-                                 
+
                                  L.marker([{{ pedido.ubicacion.latitud }} , {{ pedido.ubicacion.longitud }} ]).addTo(map)
                               </script>
                            </div>

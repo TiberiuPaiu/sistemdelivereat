@@ -13,21 +13,18 @@
 
     <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
 {% endblock %}
-
-{% block messages %}
-  {% if messages %}
-                <div class="alert alert-success alert-dismissible">
-                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                        <h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
-                        {% for message in messages %}
-                                <p>{{ message }}</p>
-                            {% endfor %}
-            
-                    </div>
-                
-            {% endif %}
-{% endblock %}
 {% block content %}
+    
+     {% if messages %}
+      {% for message in messages %}
+      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
+      <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+      {{ message }}
+   </div>
+   {% endfor %}
+   {% endif %}
+    
     
      {% if pedidos %}
          
@@ -84,8 +81,39 @@
     </section>
 
     {% endif%}
+    
 
 {% endblock %}
+
+{% block paginacion %}
+        <ul class="pagination pagination-sm d-flex justify-content-end">
+                        {% if is_paginated %}
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                           <a class="page-link" href="?page=1">&laquo;</a>
+                        </li>
+                        <li class="page-item">
+                           <a class="page-link" href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+                        </li>
+                        {% endif %}
+                        <li class="page-item active">
+                           <a class="page-link" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+                        </li>
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                           <a class="page-link" href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+                        </li>
+                        <li class="page-item">
+                           <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">&raquo;</a>
+                        </li>
+                        {% endif %}
+                        {% else %}
+                        <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
+                        {% endif %}
+                     </ul>
+    {% endblock %}
 
 
 {% block script %}

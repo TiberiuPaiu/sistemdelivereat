@@ -20,7 +20,7 @@ class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_queryset(self):
         # Obtener el restaurante al que pertenece el usuario repartidor
-        user_repartidor = get_object_or_404 (Repartidor, user=self.request.user )
+        user_repartidor = get_object_or_404(Repartidor, user=self.request.user )
 
         tipo_objeto = self.kwargs['tipo_objeto']
         # Filtrar los pedidos por restaurante y estados específicos y para el repatidor corespondiente
