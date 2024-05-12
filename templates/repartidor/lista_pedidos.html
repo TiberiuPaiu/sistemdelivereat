@@ -40,7 +40,8 @@
                      <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'myapp:pedidos_repartidor' 'entregar' %}" aria-selected="{% if request.path == url %}true{% else %}false{% endif %}">Pedidos para entregar</a>
                   </li>
                   <li class="nav-item">
-                     <a class="nav-link" id="custom-tabs-one-profile-tab"  href=""  aria-selected="false">Pedidos entregados</a>
+                     {% url 'myapp:pedidos_repartidor' 'entregado' as url %}
+                     <a class="nav-link {% if request.path == url %}active{% endif %}" href="{% url 'myapp:pedidos_repartidor' 'entregado' %}" aria-selected="{% if request.path == url %}true{% else %}false{% endif %}">Pedidos entregados</a>
                   </li>
                   <li class="nav-item">
                      <a class="nav-link" id="custom-tabs-one-profile-tab"  href=""  aria-selected="false">Pedida devolución</a>
@@ -50,6 +51,39 @@
             <div class="card-body">
                <div class="card-body p-0">
                   {% if pedidos %}
+                  {% url 'myapp:pedidos_repartidor' 'entregado' as url %}
+                  {% if request.path == url %}
+                  <table class="table table-bordered" width="900px" border="0" cellspacing="0" cellpadding="0">
+                     <thead>
+                        <tr>
+                           <th>Codigo del pedido</th>
+                           <th>Cliente</th>
+                           <th>Direcion Clinete</th>
+                           <th>Contenido del pedido</th>
+                           <th>Fecha</th>
+                        </tr>
+                     </thead>
+                     <tbody>
+                        {% for pedido in pedidos %}
+                        <tr>
+                           <td>{{ pedido.codigo_pedido }}</td>
+                           <td>{{ pedido.cliente.user.get_full_name }}</td>
+                           <td>{{pedido.ubicacion.full_address}}</td>
+                           <td>
+                              <ul>
+                                 {% for plato in pedido.platos.all %}
+                                 <li>{{ plato.nombre }}</li>
+                                 {% endfor %}
+                              </ul>
+                           </td>
+                           <td>{{ pedido.fecha_pedido }}</td>
+                        </tr>
+                        {% endfor %}
+                     </tbody>
+                  </table>
+                  </thead>  
+                  </table> 
+                  {% else %}   
                   <ul class="products-list product-list-in-card pl-2 pr-2">
                      {% for pedido in pedidos %}
                      <li class="item">
@@ -89,6 +123,7 @@
                         </div>
                      </li>
                      {% endfor %}
+                     {% endif %}
                      <ul class="pagination pagination-sm d-flex justify-content-end">
                         {% if is_paginated %}
                         {% if page_obj.has_previous %}

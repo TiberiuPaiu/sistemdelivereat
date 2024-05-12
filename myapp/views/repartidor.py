@@ -37,6 +37,12 @@ class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
                 estado__in=['en_camino'],
                 repartidor=user_repartidor
             )
+        elif tipo_objeto == 'entregado':
+            return Pedido.objects.filter(
+                restaurante=user_repartidor.restaurante,
+                estado__in=['entregado'],
+                repartidor=user_repartidor
+            )
         else:
             raise Http404('Pagina no encontrado')
 
@@ -53,6 +59,11 @@ class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
         elif tipo_objeto == 'entregar':
             context['title_pagina'] = {'label_title': "Llistat de pedidos para entregar ",
                                    'title_card': "Llistat de pedidos para entregar  "
+                                   },
+            return context
+        elif tipo_objeto == 'entregado':
+            context['title_pagina'] = {'label_title': "Llistat de pedidos etregados ",
+                                   'title_card': "Llistat de pedidos etregados  "
                                    },
             return context
 
@@ -89,7 +100,7 @@ def validar_pedido(request, pedido_id):
                 pedido.estado = 'entregado'
                 pedido.save()
                 messages.success(request, "El pedido a sido entregado corectamente.")
-                return redirect('myapp:pedidos_realizados', tipo_objeto='entregar')
+                return redirect('myapp:pedidos_repartidor', tipo_objeto='entregado')
             except Exception as e:
                 messages.error(request,e)
                 return redirect('myapp:validar_pedido', pedido_id=pedido_id)
