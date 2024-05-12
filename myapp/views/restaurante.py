@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import DetailView
 from rest_framework import generics
@@ -28,13 +28,19 @@ class ArticleDetailView(LoginRequiredMixin, RolRequiredMixin, ListView):
     context_object_name = 'restaurantes'
     paginate_by = 3
 
+    def get_queryset(self):
+        # Obtener el restaurante al que pertenece el usuario de cocina
+        user_partners = get_object_or_404(Partners, user=self.request.user)
+
+        # Filtrar los pedidos por restaurante y estados específicos
+
+        restarantes = Restaurante.objects.filter(
+            partner=user_partners,
+        )
+        return restarantes
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-
-
-
-
 
         context['title_pagina'] = {'label_title': "Llistado de restaurantes",
                                    'title_card': "Llistado de restaurantes  " ,
