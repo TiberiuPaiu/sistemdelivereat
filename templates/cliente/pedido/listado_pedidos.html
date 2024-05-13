@@ -49,12 +49,15 @@
       <td>
         <ul>
           {% for plato in pedido.platos.all %}
-          <li>{{ plato.nombre }}</li>
+          <li>{{ plato.nombre }}  <a href=""> Deja una Reseña</a> </li>
           {% endfor %}
         </ul>
       </td>
       <td>{{ pedido.total }} €</td>
-      <td>{{ pedido.restaurante.nombre }}</td>
+      <td>
+          {{ pedido.restaurante.nombre }}
+            <a href=""> Deja una Reseña</a>
+      </td>
       <td>{{ pedido.fecha_pedido }}</td>
          <td>
              {% if pedido.estado == 'espera_preparacion' %}

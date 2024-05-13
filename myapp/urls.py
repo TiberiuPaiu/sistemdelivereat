@@ -41,15 +41,17 @@ urlpatterns = [
 
     # resena
     path('resena/<str:tipo_objeto>/<int:id_objeto>/', ResenasView.as_view(), name='resena_generico'),
+    path('resena/crear/<str:tipo_objeto>/<int:id_objeto>/', crear_resena, name='crear_una_resena'),
+
 
     #horarios res
-    path('restaurante/add_horarios/<int:restaurante_id>/', login_required(add_horarios),name='add_horarios'),
+    path('restaurante/add_horarios/<int:restaurante_id>/', login_required(add_horarios), name='add_horarios'),
 
 
 
     #admins
     path('lista/partners', PartnersListView.as_view(),  name='list_partners' ),
-    path('acces/partners/<int:id_user>/', active_partners ,name='active_partners'),
+    path('acces/partners/<int:id_user>/', active_partners,name='active_partners'),
 
 
     #cliente

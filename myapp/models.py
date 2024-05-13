@@ -98,10 +98,11 @@ class Plato(models.Model):
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     descuento = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
     imagen = models.ImageField(upload_to='imagenes_plato/')
-    tipo_comida = models.ForeignKey(TipoComida, on_delete=models.CASCADE, related_name='platos')
+    tipo_comida = models.ForeignKey(TipoComida, on_delete=models.CASCADE, related_name='platos_tipo_comida')
 
     def __str__(self):
         return self.nombre
+
 
 class Ingrediente(models.Model):
     nombre = models.CharField(max_length=100)

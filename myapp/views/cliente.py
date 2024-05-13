@@ -7,7 +7,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from django.db.models import F, ExpressionWrapper, DecimalField
 from django.db.models.functions import Round, Cast
-from myapp.models import Restaurante, Plato, Cliente, Pedido, Ubicacion
+from myapp.models import Restaurante, Plato, Cliente, Pedido, Ubicacion, TipoComida
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.carito_copras import CarritoDeCompras
 from sistemdelivereat.utils.decorators import web_access_type_required
@@ -30,8 +30,6 @@ class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-
 
         context['title_pagina'] = {'label_title': "Llistado de restaurantes",
                                    'title_card': "Llistado de restaurantes " ,
@@ -72,6 +70,9 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
         # Obtén el ID del restaurante de la URL
         restaurante_id = self.kwargs['restaurante_id']
+
+
+        context['tipos_comida'] = TipoComida.objects.filter(platos_tipo_comida__in=self.get_queryset()).distinct()
 
         # Obtén el restaurante
         restaurante = Restaurante.objects.get(pk=restaurante_id)

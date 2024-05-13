@@ -10,22 +10,39 @@
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
     
     <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+
+ <style>
+        div.clasificacion {
+          position: relative;
+          overflow: hidden;
+          display: inline-block;
+          font-size: 30px;
+        }
+
+        div.clasificacion input {
+          position: absolute;
+          top: -100px;
+        }
+
+        div.clasificacion label {
+          float: right;
+          color: #333;
+          margin-right: 15px;
+        }
+
+        div.clasificacion label:hover,
+        div.clasificacion label:hover ~ label,
+        div.clasificacion input:checked ~ label {
+          color: #ffcc00;
+        }
+    </style>
+
 {% endblock %}
   
 {% block content %}
     
 <div class="content">
- {% if messages %}
-    <div class="alert alert-success alert-dismissible">
-<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-<h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
-    {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-      
-</div>
-</div>
-{% endif %}
+
 <div class="container">
 
 
@@ -70,8 +87,56 @@
 
 
 </div>
+
+
                            
                             {% endfor %}
+
+      {% if not user_has_reviewed %}
+
+
+
+
+
+
+
+
+
+    <hr>
+        
+   <form class="form-horizontal" action="{% url 'crear_una_resena' tipo_objeto id_objeto %}"  method="post">
+
+
+     <!-- https://es.stackoverflow.com/questions/126046/valoracion-estrellas-1-5-dise%C3%B1o-estrellas-php-html !-->
+   <div class="input-group input-group-sm mb-3">
+
+          <div class="clasificacion">
+              <input id="radio1" type="radio" name="estrellas" value="5">
+              <label for="radio1">★</label>
+              <input id="radio2" type="radio" name="estrellas" value="4">
+              <label for="radio2">★</label>
+              <input id="radio3" type="radio" name="estrellas" value="3">
+              <label for="radio3">★</label>
+              <input id="radio4" type="radio" name="estrellas" value="2">
+              <label for="radio4">★</label>
+              <input id="radio5" type="radio" name="estrellas" value="1">
+              <label for="radio5">★</label>
+        </div>
+
+    </div>
+
+
+<div class="input-group input-group-sm mb-0">
+    <input class="form-control form-control-sm" placeholder="Deja tu comentario para la reseña">
+<div class="input-group-append">
+<button type="submit" class="btn btn-primary">Enviar</button>
+</div>
+</div>
+</form>
+
+{% else %}
+  <p>Ya has dejado una reseña para este restaurante.</p>
+{% endif %}
     
      </div>
   </div>
@@ -93,6 +158,8 @@
 
 {% block script %}
     <script>
+
+
     function dibujarEstrellas(elemento) {
          const puntuacion = parseFloat(elemento.getAttribute('data-puntuacion'));
         // Tu código para dibujar las estrellas
@@ -125,6 +192,8 @@
     elementosEstrellas.forEach(function(elemento) {
         dibujarEstrellas(elemento);
     });
+
+
     
     </script>
 
