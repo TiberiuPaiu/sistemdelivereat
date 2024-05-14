@@ -27,6 +27,20 @@
    {% endfor %}
    {% endif %}
    <div class="row">
+   <div class="col-md-12">
+    <form action="" method="get"  name="prodsubmit" >
+  <div class="input-group mb-3">
+    
+      <input type="text" name="direcion" class="form-control" placeholder="Escribe la direcion que desea buscar" value="{{ request.GET.direcion }}" autocomplete="off">
+      <a href="javascript:document.prodsubmit.submit()" style="text-decoration:none;">
+        <span class="input-group-text" id="basic-addon1">Buscar</span>
+      </a>
+  
+    </div>
+  </form>
+   
+   </div>
+   
       <div class="col-md-12">
          <div class="card card-primary card-tabs">
             <div class="card-header p-0 pt-1">

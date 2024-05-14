@@ -10,6 +10,20 @@ from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
 
+
+class PedidoFiltrar:
+    @staticmethod
+    def filtrar_pedidos(tipo_objeto, user_repartidor):
+        if tipo_objeto == 'recoger':
+            return Pedido.objects.filter(restaurante=user_repartidor.restaurante, estado__in=['espera_repartidor'], repartidor=user_repartidor)
+        elif tipo_objeto == 'entregar':
+            return Pedido.objects.filter(restaurante=user_repartidor.restaurante, estado__in=['en_camino'], repartidor=user_repartidor)
+        elif tipo_objeto == 'entregado':
+            return Pedido.objects.filter(restaurante=user_repartidor.restaurante, estado__in=['entregado'], repartidor=user_repartidor)
+        else:
+            raise Http404('Página no encontrada')
+
+
 class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
     user_type_required = 'repartidor'
@@ -24,27 +38,13 @@ class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
 
         tipo_objeto = self.kwargs['tipo_objeto']
         # Filtrar los pedidos por restaurante y estados específicos y para el repatidor corespondiente
+        pedidos = PedidoFiltrar.filtrar_pedidos(tipo_objeto, user_repartidor)
+        query = self.request.GET.get('direcion')
 
-        if tipo_objeto == 'recoger':
-            return Pedido.objects.filter(
-                    restaurante=user_repartidor.restaurante,
-                    estado__in=['espera_repartidor'],
-                    repartidor=user_repartidor
-            )
-        elif tipo_objeto == 'entregar':
-            return Pedido.objects.filter(
-                restaurante=user_repartidor.restaurante,
-                estado__in=['en_camino'],
-                repartidor=user_repartidor
-            )
-        elif tipo_objeto == 'entregado':
-            return Pedido.objects.filter(
-                restaurante=user_repartidor.restaurante,
-                estado__in=['entregado'],
-                repartidor=user_repartidor
-            )
-        else:
-            raise Http404('Pagina no encontrado')
+        if query:
+            pedidos = pedidos.filter(ubicacion__direcion__icontains=query)
+
+        return pedidos
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,3 +154,6 @@ class Map_Rpartidor(LoginRequiredMixin, RolRequiredMixin, DetailView):
                                    },
 
         return context
+
+
+
