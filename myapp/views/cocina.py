@@ -30,6 +30,12 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
             restaurante=user_cocina.restaurante,
             estado__in=['preparacion', 'espera_preparacion']
         )
+
+        query = self.request.GET.get('codigo_pedido')
+
+        if query:
+            pedidos = pedidos.filter(codigo_pedido__icontains=query)
+
         return pedidos
 
     def get_context_data(self, **kwargs):
