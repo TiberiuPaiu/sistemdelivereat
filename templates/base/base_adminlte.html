@@ -122,22 +122,33 @@
 <div class="col-sm-6">
 
 {% if kanban  %}
-        <div class="row">
-         <div class="col-md-1"></div>
-         <div class="col-md-10">
+      
+         
             <form action="" method="get"  name="prodsubmit" >
             <div class="input-group mb-3">
-        
+                
+                 <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar per estado </button>
+                    <div class="dropdown-menu">
+                        
+                          <a class="dropdown-item" href="{% url 'myapp:pedidos_actualizados'%}?estado=espera_preparacion">En espera la preparación </a>
+                           <a class="dropdown-item" href="{% url 'myapp:pedidos_actualizados'%}?estado=preparacion">En preparación </a>
+                        
+                    
+                        <div role="separator" class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'myapp:pedidos_actualizados' %}">Mostrar tot</a>
+                      </div>
+                    </div>
+
                   <input type="text" name="codigo_pedido" class="form-control" placeholder="Escribe el codigo del pedido que desea buscar" value="{{ request.GET.codigo_pedido }}" autocomplete="off">
                   <a href="javascript:document.prodsubmit.submit()" style="text-decoration:none;">
                     <span class="input-group-text" id="basic-addon1">Buscar</span>
                   </a>
-      
+
              </div>
         </form>
-       
-       </div>
-        </div>
+
+      
 {% else %}
 
 <ol class="breadcrumb float-sm-right">

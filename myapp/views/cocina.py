@@ -36,6 +36,13 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
         if query:
             pedidos = pedidos.filter(codigo_pedido__icontains=query)
 
+        if 'estado' in self.request.GET:
+            search_query = self.request.GET.get('estado')
+            if search_query is None:
+                raise pedidos
+            else:
+                return pedidos.filter(estado=search_query)
+
         return pedidos
 
     def get_context_data(self, **kwargs):
