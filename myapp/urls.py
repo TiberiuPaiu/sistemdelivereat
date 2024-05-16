@@ -65,7 +65,9 @@ urlpatterns = [
          name='quitar_plato_carrito'),
 
     path('eliminar/plato/carrito/<int:plato_id>/',  login_required(eliminar_plato_carrito), name='eliminar_plato_carrito'),
+    path('carrito/borrar/', login_required(borrar_carrito), name='borrar_carrito'),
 
+    #pedidos
     path('procesar_pedido/',  login_required(procesar_pedido), name='procesar_pedido'),
     path('pedidos_realizados/', login_required(Pedidos_realizadosView.as_view()) , name='pedidos_realizados'),
     path('pedido/<int:pedido_id>/cancelar/', login_required(cancelar_pedido), name='cancelar_pedido'),

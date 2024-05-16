@@ -175,7 +175,12 @@ def quitar_plato_carrito(request, plato_id):
     return redirect('myapp:pagina_del_carrito')
 
 
-
+@login_required
+@web_access_type_required("cliente")
+def borrar_carrito(request):
+    carrito = CarritoDeCompras(request)
+    carrito.borrar_carrito()
+    return redirect('myapp:pagina_del_carrito')
 
 @login_required
 @web_access_type_required("cliente")
@@ -272,3 +277,5 @@ def cancelar_pedido(request, pedido_id):
         pedido.estado='cancelado'
         pedido.save()
     return redirect("myapp:pedidos_realizados")
+
+

@@ -42,3 +42,7 @@ class CarritoDeCompras:
     def obtener_carrito(self):
         # Obtenemos el carrito actual
         return self.carrito
+
+    def borrar_carrito(self):
+        self.session['carrito'] = {}
+        self.session.modified = True
