@@ -38,14 +38,14 @@
             <!-- Messages Dropdown Menu -->
 
     {% if user.user_type == 'cliente' %}
-    {% if total_carrito %}
+    
             <li class="nav-item dropdown">
                 <a class="nav-link" href="{% url 'myapp:pagina_del_carrito' %}">
                     <i class="fa fa-shopping-cart"></i>
 
-
+ {% if total_carrito %}
          <span class="badge badge-primary navbar-badge"> {{ total_carrito }} </span>
-
+ {% endif %}
 
 
 
@@ -54,7 +54,7 @@
 
 
             </li>
-          {% endif %}
+        
         {% endif %}
             <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">

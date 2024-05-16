@@ -2,6 +2,7 @@
 {% extends 'base/base_adminlte.html' %}
 {% load static %}
 {% load custom_filters %}
+
 {% block style %}
  <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -34,7 +35,7 @@
 
         
 
-        <div class="col-md-10">
+        <div class="col-md-9">
         
 
   <div class="card">
@@ -46,19 +47,16 @@
                         <tr>
                             
                             <th>Nombre</th>
+                            <th>Restaurante</th>
                             <th>Precio</th>
                             <th>Cantidad</th>
                             <th>Opción</th>
                         </tr>
                     </thead>
                     <tbody>
+                     {% if platos %}
                     {% for plato in platos %}
-                         
-                         {% if plato.restaurante.id != restaurante_actual_id %}
-                            <tr> 
-                                <td align="center" colspan="4">{{ plato.restaurante.nombre }}</td>
-                            </tr>
-                         {% endif %}
+                        
                         
                      <tr>
                      
@@ -68,9 +66,10 @@
                                 {{ plato.nombre }}  
                                 
                             </td> 
+                      <td>{{ plato.restaurante.nombre }}</td>
                             <td> 
                                  {% if plato.descuento > 0 %}
-            <del>{{ plato.precio }}</del> -  {{ plato.precio_final }}  € Descuento : {{ plato.descuento }}%
+            <del>{{ plato.precio }}</del> -  {{ plato|descuento }}  € Descuento : {{ plato.descuento }}%
 
             {% else %}
                {{ plato.precio }}  €
@@ -88,10 +87,14 @@
                              </td> 
           
                        </tr>
-                        {% with plato.restaurante.id as restaurante_actual_id %}
-                            
-                        {% endwith %}
+                        
                     {% endfor %}
+                    
+                     {% else %}
+                                    <tr>
+                                        <td colspan="5">No hay elementos en el carrito</td>
+                                    </tr>
+                                {% endif %}
                 </tbody>
         </table>
     </div>
@@ -100,14 +103,19 @@
         
        
         </div>
-   <div class="col-md-2 d-flex align-items-center">
+   <div class="col-md-3 d-flex align-items-center">
 
                    <div class="card">
                         <div class="card-body">
                         <!-- Contenido del menú lateral -->
                         
-<p>Total: {{ total }}</p>
+{% for restaurante_id, data in totales_por_restaurante.items %}
+    <p>Total {{ data.nombre }}: {{ data.total}} €</p>
+{% endfor %}
+        <p>Total : {{ total }} €</p>                 
+                         {% if platos %}
                             <a  href="{% url 'myapp:procesar_pedido'%}" >  <button type="button"  >Realizar Pedido</button> </a>
+                               {% endif %}  
                              </div>
                    </div>
 

@@ -93,7 +93,8 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
         return context
 
 def descuento(plato):
-    return plato.precio * (1 - Decimal(str(plato.descuento)) / 100)
+    precio_con_descuento = plato.precio * (1 - Decimal(str(plato.descuento)) / 100)
+    return precio_con_descuento.quantize(Decimal('0.00'))
 
 @login_required
 @web_access_type_required("cliente")
@@ -106,40 +107,58 @@ def agregar_al_carrito(request, plato_id):
 @login_required
 @web_access_type_required("cliente")
 def carrito_lista(request):
-    restaurante_actual_id=None
     carrito = CarritoDeCompras(request).obtener_carrito()
     platos_en_carrito = Plato.objects.filter(id__in=carrito.keys())
 
-    # Calcular el total
 
-    total = sum((carrito[str(plato.id)]['cantidad'] * descuento(plato)) for plato in
-                platos_en_carrito)
-    total_formateado = total.quantize(Decimal('0.01'))
+    # Verificar si el carrito está vacío
+    if not platos_en_carrito:
+        total_formateado = Decimal('0.00')
+        totales_por_restaurante = {}
+    else:
+        # Calcular el total por restaurante
+        totales_por_restaurante = {}
+        for plato in platos_en_carrito:
+            restaurante_id = plato.restaurante.id
+            plato_id = str(plato.id)
+            cantidad = carrito.get(plato_id, {'cantidad': 0})['cantidad']
+            precio_final = descuento(plato)
+
+            if restaurante_id not in totales_por_restaurante:
+                totales_por_restaurante[restaurante_id] = {
+                    'nombre': plato.restaurante.nombre,
+                    'total': 0
+                }
+
+            totales_por_restaurante[restaurante_id]['total'] += cantidad * precio_final
+
+        # Calcular el total general
+        total_general = sum(restaurante['total'] for restaurante in totales_por_restaurante.values())
+        total_formateado = Decimal(str(total_general)).quantize(Decimal('0.01'))
 
     # Crear un diccionario para almacenar las cantidades de cada plato en el carrito
     cantidades_por_plato = {}
     for plato in platos_en_carrito:
         plato_id = str(plato.id)
-        # Obtener la cantidad del plato en el carrito, si existe, de lo contrario establecer en 0
         cantidad = carrito.get(plato_id, {'cantidad': 0})['cantidad']
         cantidades_por_plato[plato_id] = cantidad
 
+
     title_pagina = {'label_title': "Carrito de compras",
-                               'title_card': "Carrito de compras ",
-                               },
-    ruta_pagina = [{
-        'text': "Lista de restaurantes",
-        'link': "myapp:restaurantes_list_cliente",
-    },
-    {
-            'text': "Carrito de compras",
-            'link': "",
-    }
+                    'title_card': "Carrito de compras "}
+    ruta_pagina = [
+        {'text': "Lista de restaurantes", 'link': "myapp:restaurantes_list_cliente"},
+        {'text': "Carrito de compras", 'link': ""}
     ]
 
-    return render(request, 'cliente/carito/carrito_lista.html',
-                  {'platos': platos_en_carrito, 'cantidades_por_plato': cantidades_por_plato,'total':total_formateado,"title_pagina":title_pagina,"ruta_pagina":ruta_pagina,"restaurante_actual_id":restaurante_actual_id})
-
+    return render(request, 'cliente/carito/carrito_lista.html', {
+        'platos': platos_en_carrito,
+        'cantidades_por_plato': cantidades_por_plato,
+        'total': total_formateado,
+        'totales_por_restaurante': totales_por_restaurante,
+        'title_pagina': title_pagina,
+        'ruta_pagina': ruta_pagina,
+    })
 @login_required
 @web_access_type_required("cliente")
 def eliminar_plato_carrito(request, plato_id):
