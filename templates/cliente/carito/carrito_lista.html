@@ -68,12 +68,12 @@
 
                             </td>
                             <td>
-                                <a href="{% url 'myapp:quitar_plato_carrito' plato_id=plato.id %}">  <button type="button" onclick="">-</button></a>
+                                <a href="{% url 'myapp:quitar_plato_carrito' plato_id=plato.id %}">  <button type="button" class="btn btn-sm btn-warning" onclick="">-</button></a>
                             {{ cantidades_por_plato|custom_get:plato.id }}
-                             <a href="{% url 'myapp:agregar_carrito' plato_id=plato.id %}"><button type="button" onclick="">+</button></a>
+                             <a href="{% url 'myapp:agregar_carrito' plato_id=plato.id %}"><button type="button" class="btn btn-sm btn-warning" onclick="">+</button></a>
                             </td>
                              <td>
-                                 <a href="{% url 'myapp:eliminar_plato_carrito' plato_id=plato.id %}"> <button type="button"  >Eliminar</button></a>
+                                 <a href="{% url 'myapp:eliminar_plato_carrito' plato_id=plato.id %}"> <button type="button" class="btn btn-sm btn-danger" >Eliminar</button></a>
                              </td>
 
                        </tr>
@@ -104,8 +104,8 @@
 {% endfor %}
         <p>Total : {{ total }} €</p>
                          {% if platos %}
-                             <a href="{% url 'myapp:borrar_carrito' %}"><button type="button">Borrar Carrito</button></a>
-                            <a  href="{% url 'myapp:procesar_pedido'%}" >  <button type="button "  >Realizar Pedido</button> </a>
+                             <a href="{% url 'myapp:borrar_carrito' %}"><button type="button" class="btn btn-sm btn-danger">Borrar Carrito</button></a>
+                            <a  href="{% url 'myapp:procesar_pedido'%}" >  <button type="button " class="btn btn-sm btn-primary" >Realizar Pedido</button> </a>
 
                          {% endif %}
                              </div>
