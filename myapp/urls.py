@@ -40,8 +40,10 @@ urlpatterns = [
     path('restaurante/listar_plato/<int:restaurante_id>/', login_required(PlatosRestauranteListView.as_view()) , name='list_platos'),
 
     # resena
-    path('resena/<str:tipo_objeto>/<int:id_objeto>/', ResenasView.as_view(), name='resena_generico'),
+    path('resena/<str:tipo_objeto>/<int:id_objeto>/',  login_required(ResenasView.as_view()), name='resena_generico'),
     path('resena/crear/<str:tipo_objeto>/<int:id_objeto>/', login_required(crear_resena), name='crear_una_resena'),
+
+    path('resena/<str:tipo_objeto>/<int:id_objeto>/admin/',  login_required(ResenasAdminView.as_view()), name='resena_generico_admin'),
 
     path('resenas/<str:tipo_objeto>/<int:id_objeto>/borrar/<int:pk>/', login_required(BorrarResenaView.as_view()), name='borrar_resena'),
 

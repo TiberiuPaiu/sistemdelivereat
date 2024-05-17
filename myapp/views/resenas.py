@@ -14,8 +14,8 @@ from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
 
 class ResenasView( DetailView):
-    template_name = 'admin/resenas.html'
-    user_type_required = 'partners'
+    template_name = 'cliente/resenas.html'
+    user_type_required = 'cliente'
 
     def get_object(self):
         # Obtener el tipo de objeto y su ID desde la URL
@@ -157,5 +157,63 @@ class BorrarResenaView(LoginRequiredMixin, RolRequiredMixin, DeleteView):
             return redirect('myapp:resena_generico', tipo_objeto='plato', id_objeto=id_objeto)
         else:
             raise Http404('Página no encontrada')
+
+
+
+class ResenasAdminView( DetailView):
+    template_name = 'admin/resenas.html'
+    user_type_required = 'partners'
+
+    def get_object(self):
+        # Obtener el tipo de objeto y su ID desde la URL
+        tipo_objeto = self.kwargs['tipo_objeto']
+        id_objeto = self.kwargs['id_objeto']
+
+        # Determinar qué modelo se está solicitando y obtener el objeto correspondiente
+        if tipo_objeto == 'restaurante':
+            return get_object_or_404(Restaurante, pk=id_objeto)
+        elif tipo_objeto == 'plato':
+            return get_object_or_404(Plato, pk=id_objeto)
+        # Puedes agregar más tipos de objetos aquí según sea necesario
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tipo_objeto = self.kwargs['tipo_objeto']
+        id_objeto = self.kwargs['id_objeto']
+        context['objeto_id'] = id_objeto
+
+        # Obtener todas las reseñas asociadas al restaurante o plato
+        if tipo_objeto == 'restaurante':
+            restaurante = context['object']
+            context['resenas'] = restaurante.resenas.all()
+            context['tipo'] ='restaurante'
+
+
+            context['title_pagina'] = {'label_title': "Reseñas para restaurante",
+                                       'title_card': "Reseñas del restaurante " + restaurante.nombre,
+                                       },
+
+            context['ruta_pagina'] = [{
+                    'text': "Lista de restaurantes",
+                    'link': "myapp:restaurantes_list_cliente",
+            },
+                    {
+                        'text': "Reseñas del restaurante " + restaurante.nombre,
+                        'link': "",
+                    }
+            ]
+        elif tipo_objeto == 'plato':
+            plato = context['object']
+            context['resenas'] = plato.resenas.all()
+            context['tipo'] = 'plato'
+
+            context['title_pagina'] = {'label_title': "Reseñas para plato",
+                                       'title_card': "Reseñas del plato " + plato.nombre,
+                                       }
+
+
+        context['tipo_objeto'] = tipo_objeto
+        return context
+
 
 

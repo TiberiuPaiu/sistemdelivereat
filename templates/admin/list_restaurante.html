@@ -80,7 +80,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{% url 'myapp:resena_generico' tipo_objeto='restaurante' id_objeto=restaurante.id %}" class="nav-link">
+                        <a href="{% url 'myapp:resena_generico_admin' tipo_objeto='restaurante' id_objeto=restaurante.id %}" class="nav-link">
                             {% resena_count_ddbb restaurante.id  as resena_count %} 
                             Reseñas <span class="float-right badge bg-info">{{ resena_count }}</span>
                         </a>

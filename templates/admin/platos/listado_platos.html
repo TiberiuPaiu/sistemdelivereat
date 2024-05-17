@@ -1,6 +1,6 @@
 {% extends 'base/base_adminlte.html' %}
 {% load static %}
-
+{% load custom_tags %}
 {% block style %}
  <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -69,6 +69,7 @@
                             <th>Precio</th>
                             <th>Descuento (%)</th>
                             <th>Ingredientes</th>
+                              <th>Opciónes</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -83,6 +84,15 @@
                                     <li>{{ ingrediente.nombre }}</li>
                                     {% endfor %}
                                 </ul>
+                            </td>
+                        
+                            <td> 
+                                <a href="{% url 'myapp:resena_generico_admin' tipo_objeto='plato' id_objeto=plato.id %}"  class="link-black text-sm">
+
+                            {% resena_plato_count_ddbb plato.id  as resena_count %} 
+                            
+                                    <i class="far fa-comments mr-1"></i> Reseñas ({{ resena_count }})
+                                 </a>
                             </td>
                         </tr>
                         {% endfor %}
