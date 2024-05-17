@@ -1,6 +1,6 @@
 from django import template
 
-from myapp.models import Plato, Restaurante, Repartidor, Cocina, ResenaRestaurante, ResenaPlato
+from myapp.models import Plato, Restaurante, Repartidor, Cocina, ResenaRestaurante, ResenaPlato, Pedido
 from sistemdelivereat.utils.carito_copras import CarritoDeCompras
 
 register = template.Library()
@@ -25,5 +25,10 @@ def resena_count_ddbb(restaurante_id):
 @register.simple_tag
 def resena_plato_count_ddbb(plato_id):
      return ResenaPlato.objects.filter(plato_id=plato_id).count()
+
+
+@register.simple_tag
+def historial_pedidos_restaurante_count_ddbb(restaurante_id):
+     return Pedido.objects.filter(restaurante_id=restaurante_id).count()
 
 

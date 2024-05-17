@@ -86,8 +86,10 @@
                         </a>
                     </li>
                      <li class="nav-item">
-                        <a href="{% url 'myapp:add_horarios' restaurante_id=restaurante.id %}" class="nav-link">
-                            Horarios 
+                        <a href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante.id %}" class="nav-link">
+                            {% historial_pedidos_restaurante_count_ddbb restaurante.id  as historial_pedidos_count %}
+                            Historial de pedidos <span class="float-right badge bg-info">{{ historial_pedidos_count }}</span>
+
                         </a>
                     </li>
                     

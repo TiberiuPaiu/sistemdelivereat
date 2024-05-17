@@ -9,7 +9,7 @@ from rest_framework import generics
 
 from myapp.forms import RestauranteForm, AddUserFormulario
 from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente, \
-    TipoComida, Partners
+    TipoComida, Partners, Pedido
 from myapp.serializers import RestauranteSerializer, PlatoSerializer
 from sistemdelivereat import settings
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
@@ -481,4 +481,38 @@ def add_horarios(request, restaurante_id):
     return render(request, 'admin/add_horario_restaurante.html', context)
 
 
+
+
+class ListPedidosAdmin(LoginRequiredMixin, RolRequiredMixin, ListView):
+    model = Pedido
+    user_type_required = 'partners'
+    template_name = 'admin/lista_pedidos.html'
+    context_object_name = 'pedidos'
+    paginate_by = 10
+
+
+    def get_queryset(self, **kwargs):
+        # Obtén el ID del restaurante de la URL
+        restaurante_id = self.kwargs['restaurante_id']
+        return Pedido.objects.filter(restaurante_id=restaurante_id).order_by('-fecha_pedido')
+
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['title_pagina'] = {'label_title': "Historial de pedidos",
+                                   'title_card': "Historial de pedidos "
+                                   },
+        context['ruta_pagina'] = [{
+            'text': "Lista de restaurantes",
+            'link': "myapp:list_restaurantes",
+        },
+            {
+                'text': "Historial de pedidos ",
+                'link': "",
+            }
+        ]
+
+        return context
 

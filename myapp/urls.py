@@ -24,6 +24,8 @@ urlpatterns = [
     # DetalleGenerico
     path('detalle/<str:tipo_objeto>/<int:id_objeto>/', login_required(DetalleGenericoView.as_view()), name='detalle_generico'),
 
+
+    path('historial/pedidos/restaurante/<int:restaurante_id>', login_required(ListPedidosAdmin.as_view()), name='historial_pedidos_restaurante'),
     #restaurante
     path('lista/restaurantes/', login_required(ArticleDetailView.as_view()), name='list_restaurantes'),
     path('anadir/restaurante/', login_required(post_add_restaurante), name='add_restaurante'),
