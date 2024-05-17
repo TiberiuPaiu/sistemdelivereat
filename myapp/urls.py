@@ -41,8 +41,9 @@ urlpatterns = [
 
     # resena
     path('resena/<str:tipo_objeto>/<int:id_objeto>/', ResenasView.as_view(), name='resena_generico'),
-    path('resena/crear/<str:tipo_objeto>/<int:id_objeto>/', crear_resena, name='crear_una_resena'),
+    path('resena/crear/<str:tipo_objeto>/<int:id_objeto>/', login_required(crear_resena), name='crear_una_resena'),
 
+    path('resenas/<str:tipo_objeto>/<int:id_objeto>/borrar/<int:pk>/', login_required(BorrarResenaView.as_view()), name='borrar_resena'),
 
     #horarios res
     path('restaurante/add_horarios/<int:restaurante_id>/', login_required(add_horarios), name='add_horarios'),

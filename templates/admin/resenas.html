@@ -44,7 +44,15 @@
 <div class="content">
 
 <div class="container">
-
+   {% if messages %}
+      {% for message in messages %}
+      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
+      <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+      {{ message }}
+   </div>
+   {% endfor %}
+   {% endif %}
 
 
   <div class="row">
@@ -57,7 +65,7 @@
 <div class="user-block">
 <img class="img-circle img-bordered-sm" src="" alt="user image">
 <span class="username">
-<a href="#">{{ resena.cliente.usuario }}</a>
+<a href="#">{{ resena.cliente.user.username }}</a>
 <div class="float-right ">
 
      <div class="estrellas" data-puntuacion=" {{ resena.puntuacion }}"></div>
@@ -69,8 +77,13 @@
 <p>
  {{ resena.comentario }}
 </p>
-
-
+         {% if resena.cliente.user.username ==  user.username   %}
+<span class="float-right">
+<a href="{% url 'myapp:borrar_resena' tipo_objeto='restaurante' id_objeto=objeto_id pk=resena.pk %}" class="link-black text-sm">
+<i class="fas fa-trash mr-1"></i>
+</a>
+</span>
+        {% endif   %}
 
 
 </div>
@@ -92,20 +105,12 @@
                            
                             {% endfor %}
 
-      {% if not user_has_reviewed %}
-
-
-
-
-
-
-
-
+      {% if user_has_reviewed %}
 
     <hr>
-        
-   <form class="form-horizontal" action="{% url 'crear_una_resena' tipo_objeto id_objeto %}"  method="post">
 
+   <form class="form-horizontal" action="{% url 'myapp:crear_una_resena' tipo_objeto=tipo id_objeto=objeto_id %}"  method="post">
+   {% csrf_token %}
 
      <!-- https://es.stackoverflow.com/questions/126046/valoracion-estrellas-1-5-dise%C3%B1o-estrellas-php-html !-->
    <div class="input-group input-group-sm mb-3">
@@ -127,15 +132,14 @@
 
 
 <div class="input-group input-group-sm mb-0">
-    <input class="form-control form-control-sm" placeholder="Deja tu comentario para la reseña">
+    <input type="text" class="form-control form-control-sm" name="comentario" placeholder="Deja tu comentario para la reseña">
 <div class="input-group-append">
 <button type="submit" class="btn btn-primary">Enviar</button>
 </div>
 </div>
 </form>
 
-{% else %}
-  <p>Ya has dejado una reseña para este restaurante.</p>
+
 {% endif %}
     
      </div>

@@ -248,7 +248,7 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
 
     def get_queryset(self):
-        return Pedido.objects.filter(cliente=Cliente.objects.get(user = self.request.user ))
+        return Pedido.objects.filter(cliente=Cliente.objects.get(user = self.request.user )).order_by('-fecha_pedido')
 
 
 
