@@ -13,6 +13,7 @@ from sistemdelivereat.utils.carito_copras import CarritoDeCompras
 from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
 
+from django.contrib import messages
 
 class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Restaurante
@@ -144,8 +145,10 @@ def carrito_lista(request):
         cantidades_por_plato[plato_id] = cantidad
 
 
-    title_pagina = {'label_title': "Carrito de compras",
-                    'title_card': "Carrito de compras "}
+    title_pagina = [
+        {'label_title': "Carrito de compras",
+         'title_card': "Carrito de compras "}
+    ]
     ruta_pagina = [
         {'text': "Lista de restaurantes", 'link': "myapp:restaurantes_list_cliente"},
         {'text': "Carrito de compras", 'link': ""}
@@ -229,12 +232,16 @@ def procesar_pedido(request):
                 pedido.platos.set(platos_en_pedido)
 
         # Limpiar el carrito de compras después de realizar los pedidos
-        carrito.limpiar_carrito()
+        carrito.clear()
+        # Actualizar la sesión con el carrito vacío
+        request.session['carrito'] = {}
+        request.session.modified = True
 
+        messages.success(request, "Se ha realizado la comada.")
         return redirect('myapp:pedidos_realizados')
     except Exception as e:
         # Manejo de excepciones
-        print(f"Error al procesar el pedido: {e}")
+        messages.error(request, "Error al procesar el pedido:"+str(e))
         return redirect('myapp:pedidos_realizados')
 
 
@@ -272,10 +279,17 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
 @login_required
 @web_access_type_required("cliente")
 def cancelar_pedido(request, pedido_id):
-    pedido = Pedido.objects.get(id=pedido_id)
+    pedido = get_object_or_404(Pedido, id=pedido_id)
     if pedido.estado == 'espera_preparacion':
-        pedido.estado='cancelado'
-        pedido.save()
+        try:
+            pedido.estado = 'cancelado'
+            pedido.save()
+            messages.success(request, "El pedido se a cancelado exitosamente.")
+            return redirect("myapp:pedidos_realizados")
+        except Exception as e:
+            messages.error(request, e)
+            return redirect("myapp:pedidos_realizados")
+    messages.warning(request, "Se ha producido un error en el momento de cancelar el pedido.")
     return redirect("myapp:pedidos_realizados")
 
 
