@@ -101,7 +101,7 @@ def descuento(plato):
 def agregar_al_carrito(request, plato_id):
     carrito = CarritoDeCompras(request)
     carrito.agregar_plato(str(plato_id))
-    return redirect('myapp:pagina_del_carrito')
+    return redirect(request.META.get('HTTP_REFERER', '/'))
 
 
 @login_required
