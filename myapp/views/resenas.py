@@ -6,7 +6,6 @@ from django.views.generic import DetailView, DeleteView
 from rest_framework import viewsets
 
 from myapp.models import Restaurante, Plato, ResenaRestaurante, ResenaPlato, Cliente, Pedido, Resena
-from myapp.serializers import RestauranteSerializer
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from django.contrib import messages
 
@@ -214,6 +213,4 @@ class ResenasAdminView( DetailView):
 
         context['tipo_objeto'] = tipo_objeto
         return context
-
-
 

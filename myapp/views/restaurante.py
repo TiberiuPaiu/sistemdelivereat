@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
+from django.db.models import Q
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -10,7 +11,6 @@ from rest_framework import generics
 from myapp.forms import RestauranteForm, AddUserFormulario
 from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente, \
     TipoComida, Partners, Pedido
-from myapp.serializers import RestauranteSerializer, PlatoSerializer
 from sistemdelivereat import settings
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
 

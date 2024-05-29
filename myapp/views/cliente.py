@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.db.models import Avg
+from django.db.models import Avg, Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView
 from django.db.models import F, ExpressionWrapper, DecimalField
@@ -26,7 +26,16 @@ class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView)
         cliente_ciudad=get_object_or_404(Cliente, user=self.request.user).ubicacion.ciudad
         restaurantes = Restaurante.objects.filter(ubicacion__ciudad=cliente_ciudad).annotate(
             puntuacion_media=Avg('resenas__puntuacion')
-        )
+        ).order_by('-puntuacion_media')
+
+        query = self.request.GET.get('query')
+
+        if query:
+            restaurantes = restaurantes.filter(
+                Q(nombre=query) |
+                Q(ubicacion__direcion__icontains=query)
+
+            )
         return restaurantes
 
     def get_context_data(self, **kwargs):
@@ -54,7 +63,7 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
         platos = Plato.objects.filter(restaurante_id=restaurante_id).annotate(
             puntuacion_media=Avg('resenas__puntuacion')
-        )
+        ).order_by('-puntuacion_media')
 
         for plato in platos:
             # Calcular el precio con descuento
@@ -64,14 +73,25 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
             # Asignar el precio final al plato
             plato.precio_final = precio_final
 
+        query = self.request.GET.get('query')
+        tipo_comida = self.request.GET.get('tipo_comida')
+        if query:
+            platos = platos.filter(
+                Q(nombre__icontains=query)
 
+            )
+        if tipo_comida:
+            platos = platos.filter(
+                Q(tipo_comida__nombre=tipo_comida)
+
+            )
         return platos
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Obtén el ID del restaurante de la URL
         restaurante_id = self.kwargs['restaurante_id']
-
 
         context['tipos_comida'] = TipoComida.objects.filter(platos_tipo_comida__in=self.get_queryset()).distinct()
 
