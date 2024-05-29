@@ -61,17 +61,21 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
     def get_queryset(self):
         restaurante_id = self.kwargs['restaurante_id']
 
-        platos = Plato.objects.filter(restaurante_id=restaurante_id).annotate(
-            puntuacion_media=Avg('resenas__puntuacion')
-        ).order_by('-puntuacion_media')
+        order_by = self.request.GET.get('order_by')
+        order_direction = self.request.GET.get('order_direction')
 
-        for plato in platos:
-            # Calcular el precio con descuento
-            precio_con_descuento = plato.precio - (plato.precio * plato.descuento / 100)
-            # Redondear el resultado a dos decimales
-            precio_final = round(precio_con_descuento, 2)
-            # Asignar el precio final al plato
-            plato.precio_final = precio_final
+        platos = Plato.objects.filter(restaurante_id=restaurante_id).annotate(
+            puntuacion_media=Avg('resenas__puntuacion'),
+            precio_final=(F('precio') - (F('precio') * F('descuento') / 100))
+        )
+
+        if order_by == "precio":
+            if order_direction == "asc":
+                platos = platos.order_by('precio_final')
+            elif order_direction == "desc":
+                platos = platos.order_by('-precio_final')
+        else:
+            platos = platos.order_by('-puntuacion_media')
 
         query = self.request.GET.get('query')
         tipo_comida = self.request.GET.get('tipo_comida')
