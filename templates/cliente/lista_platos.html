@@ -17,6 +17,16 @@
 <div class="content">
 <div class="container">
 
+  {% if messages %}
+      {% for message in messages %}
+      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
+      <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+      {{ message }}
+   </div>
+   {% endfor %}
+   {% endif %}
+
   <div class="row">
   
    <div class="col-md-12">
@@ -33,9 +43,30 @@
                          <a class="dropdown-item" href="{% url 'myapp:platos_list_cliente' restaurante_id=restaurante_id  %}"> Puntuación <i class="fas fa-arrow-up mr-1 float-right"></i>  </a>
                       </div>
                     </div>
+
+                 <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por precios </button>
+                    <div class="dropdown-menu">
+                          <div class="p-2">
+<div class="input-group-prepend">
+    Precio desde
+</div>
+<input type="number" name="precio_min" class="form-control" placeholder="Precio mínimo" value="{{ request.GET.precio_min }}"  min="1" max="999">
+
+<div class="input-group-prepend">
+   Precio hasta
+</div>
+<input type="number" name="precio_max" class="form-control" placeholder="Precio máximo" value="{{ request.GET.precio_max }}"  min="1" max="999" >
+<br>
+                         <a href="javascript:document.prodsubmit.submit()" style="text-decoration:none;">
+                    <span class="input-group-text" id="basic-addon1">Buscar</span>
+                  </a>
+ </div>
+                      </div>
+                    </div>
                 
                  <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar per tipos </button>
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por tipos </button>
                     <div class="dropdown-menu">
                         {% for tipos in tipos_comida %}
 
@@ -60,7 +91,7 @@
     <div class="col-md-12">
 <div class="card">
     <div class="card-body">
-
+             {% if platos %}
           {% for plato in platos %}
         <div class="post clearfix">
 <div class="user-block" >
@@ -110,8 +141,17 @@
 
 
 </div>
-
+            
           {% endfor %}
+    
+                    {% else %}
+                     <p> No hay ningún plato de momento. </p>
+                     {% endif%}
+    
+            
+    
+    
+    
      </div>
  <div class="card-footer">
        <ul class="pagination pagination-sm d-flex justify-content-center">

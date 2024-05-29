@@ -63,6 +63,19 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
         order_by = self.request.GET.get('order_by')
         order_direction = self.request.GET.get('order_direction')
+        precio_min = self.request.GET.get('precio_min')
+        precio_max = self.request.GET.get('precio_max')
+
+        if precio_min and precio_max:
+            try:
+                precio_min = float(precio_min)
+                precio_max = float(precio_max)
+                if precio_min > precio_max:
+                    messages.error(self.request, 'El precio mínimo no puede ser mayor que el precio máximo.')
+                    return Plato.objects.none()
+            except ValueError:
+                messages.error(self.request, 'Los valores de precio deben ser números válidos.')
+                return Plato.objects.none()
 
         platos = Plato.objects.filter(restaurante_id=restaurante_id).annotate(
             puntuacion_media=Avg('resenas__puntuacion'),
@@ -76,6 +89,11 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
                 platos = platos.order_by('-precio_final')
         else:
             platos = platos.order_by('-puntuacion_media')
+
+        if precio_min:
+            platos = platos.filter(precio_final__gte=precio_min)
+        if precio_max:
+            platos = platos.filter(precio_final__lte=precio_max)
 
         query = self.request.GET.get('query')
         tipo_comida = self.request.GET.get('tipo_comida')
