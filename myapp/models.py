@@ -4,6 +4,9 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 import uuid
 
+from sistemdelivereat.settings import MEDIA_URL, STATIC_URL
+
+
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
         ('partners', 'Partners'),
@@ -19,9 +22,16 @@ class User(AbstractUser):
     )
     prefix_tel = models.CharField(max_length=5)
     telefono = models.CharField(max_length=30)
+    #path_profile_photo = models.FileField(upload_to='profile_photo', null=True)
 
     def full_telefono(self):
         return self.prefix_tel + " " + self.telefono
+
+    #def get_img(self):
+    #    if self.path_profile_photo == None:
+    #        return STATIC_URL + "user-150x150.png"
+    #   else:
+    #       return MEDIA_URL + "/profile_photo/" + str(self.path_profile_photo)
 
 
 class Negocio(models.Model):

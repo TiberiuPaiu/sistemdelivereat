@@ -66,8 +66,11 @@
                     <a href="#" class="dropdown-item">
 
                         <div class="media">
-                           
+                           <img src="{% static 'user-150x150.png' %}" alt="User Avatar {{ user.get_full_name }}"
+                                 class="img-size-50 mr-3 img-circle">
                             <div class="media-body">
+                                
+                                
                                 <h3 class="dropdown-item-title">
                                    {{ user.get_full_name }}
                                 </h3>
