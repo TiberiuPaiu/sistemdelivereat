@@ -15,17 +15,15 @@
 {% block content %}
     
 <div class="content">
- {% if messages %}
-    <div class="alert alert-success alert-dismissible">
-<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-<h5><i class="icon fas fa-check"></i> La operación se realizó correctamente.</h5>
-    {% for message in messages %}
-            <p>{{ message }}</p>
-        {% endfor %}
-      
-</div>
-</div>
-{% endif %}
+{% if messages %}
+      {% for message in messages %}
+      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
+      <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+      {{ message }}
+   </div>
+   {% endfor %}
+   {% endif %}
 <div class="container">
 
 
@@ -63,6 +61,19 @@
 </div>
 </span>
 <span class="description"> {{ restaurante.ubicacion.full_address }}</span>
+       
+<div class="row">
+
+     {% for tipo_comida in restaurante.tipos_comida %}
+         <div class="col">
+             <small class="badge badge-info"> {{ tipo_comida }}  </small>
+              
+        </div>
+           {% endfor %}
+     
+</div>
+
+
 </div>
 
 <p>

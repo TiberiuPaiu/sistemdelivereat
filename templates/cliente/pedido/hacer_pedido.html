@@ -1,0 +1,165 @@
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
+
+{% block style %}
+ <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+    <!--  iconas fas -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+
+
+{% endblock %}
+
+
+{% block content %}
+
+
+
+
+<div class="content">
+<div class="container">
+
+
+{% if messages %}
+      {% for message in messages %}
+      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
+      <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+      <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+      {{ message }}
+   </div>
+   {% endfor %}
+   {% endif %}
+
+     <div class="row">
+
+
+        <div class="col-md-10">
+
+            <div class="card card-primary">
+                    <form action=""  method="POST" >
+                    {% csrf_token %}
+                  <div class="card-title">
+                      </div>
+
+                  <div class="card-body">
+
+                         <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Nombre:</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="first_name"    placeholder="{{ user.first_name }}" disabled>
+                            </div>
+                         </div>
+                      
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Apellido:</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="first_name" placeholder="{{ user.last_name }}" disabled>
+                            </div>
+                         </div>
+                      
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Teléfono :</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="first_name"    placeholder="{{ user.full_telefono }}" disabled>
+                            </div>
+                         </div>
+
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Pais :</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="pais"  name="pais" value="{{ cliente.ubicacion.pais }}" >
+                            </div>
+                         </div>
+
+
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Ciudad :</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="ciudad"  name="ciudad" value="{{ cliente.ubicacion.ciudad }}" placeholder="">
+                            </div>
+                         </div>
+
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Código postal :</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="codigo_postal"  name="codigo_postal" value="{{ cliente.ubicacion.codigo_postal }}" placeholder="">
+                            </div>
+                         </div>
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Calle :</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="direcion"  name="direcion" value="{{ cliente.ubicacion.direcion }}" placeholder="">
+                            </div>
+                         </div>
+                      <div class="form-group row">
+                            <label for="first_name" class="col-sm-3 col-form-label">Numero Calle :</label>
+                            <div class="col-sm-9">
+                              <input type="text" class="form-control" id="numero"  name="numero" value="{{ cliente.ubicacion.numero }}" placeholder="">
+                            </div>
+                         </div>
+
+                  </div>
+
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-primary">Envia</button>
+                     </div>
+  </form>
+
+
+             </div>
+
+        </div>
+
+         <div class="col-md-2 ">
+
+                   <div class="card">
+                        <div class="card-body">
+                        <!-- Contenido del menú lateral -->
+
+{% for restaurante_id, data in totales_por_restaurante.items %}
+    <p>Total {{ data.nombre }}: {{ data.total}} €</p>
+{% endfor %}
+        <p>Total : {{ total }} €</p>
+
+
+
+                             </div>
+                   </div>
+
+         </div>
+    </div>
+
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block script %}
+
+<!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+
+
+{% endblock %}

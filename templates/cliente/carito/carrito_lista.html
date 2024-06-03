@@ -105,7 +105,7 @@
         <p>Total : {{ total }} €</p>
                          {% if platos %}
                              <a href="{% url 'myapp:borrar_carrito' %}"><button type="button" class="btn btn-sm btn-danger">Borrar Carrito</button></a>
-                            <a  href="{% url 'myapp:procesar_pedido'%}" >  <button type="button " class="btn btn-sm btn-primary" >Realizar Pedido</button> </a>
+                            <a  href="{% url 'myapp:procesar_pedido_form'%}" >  <button type="button " class="btn btn-sm btn-primary" >Realizar Pedido</button> </a>
 
                          {% endif %}
                              </div>

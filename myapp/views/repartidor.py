@@ -26,7 +26,7 @@ class PedidoFiltrar:
 
 class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
-    user_type_required = 'repartidor'
+    user_type_required = ['repartidor']
     template_name = 'repartidor/lista_pedidos.html'
     context_object_name = 'pedidos'
     paginate_by = 10
@@ -141,7 +141,7 @@ def validar_pedido(request, pedido_id):
 
 class Map_Rpartidor(LoginRequiredMixin, RolRequiredMixin, DetailView):
     model = Pedido
-    user_type_required = 'repartidor'
+    user_type_required = ['repartidor']
     template_name = 'repartidor/GPS.html'
 
 

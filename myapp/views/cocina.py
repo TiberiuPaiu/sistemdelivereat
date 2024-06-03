@@ -14,7 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
-    user_type_required = 'cocina'
+    user_type_required = ['cocina']
     template_name = 'cocina/lista_pedidos.html'
     context_object_name = 'pedidos'
     paginate_by = 10

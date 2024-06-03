@@ -2,12 +2,14 @@ from decimal import Decimal
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
-from django.db.models import Avg, Q
+from django.db.models import Avg, Q, Subquery, OuterRef, Sum
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 from django.db.models import F, ExpressionWrapper, DecimalField
 from django.db.models.functions import Round, Cast
 from myapp.models import Restaurante, Plato, Cliente, Pedido, Ubicacion, TipoComida
+from sistemdelivereat.utils.OpenStreetMap import Geocoder
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.carito_copras import CarritoDeCompras
 from sistemdelivereat.utils.decorators import web_access_type_required
@@ -17,7 +19,7 @@ from django.contrib import messages
 
 class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Restaurante
-    user_type_required = 'cliente'
+    user_type_required = ['cliente']
     template_name = 'cliente/lista_restaurantes.html'
     context_object_name = 'restaurantes'
     paginate_by = 10
@@ -27,6 +29,8 @@ class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView)
         restaurantes = Restaurante.objects.filter(ubicacion__ciudad=cliente_ciudad).annotate(
             puntuacion_media=Avg('resenas__puntuacion')
         ).order_by('-puntuacion_media')
+
+
 
         query = self.request.GET.get('query')
 
@@ -52,7 +56,7 @@ class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView)
 
 class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Plato
-    user_type_required = 'cliente'
+    user_type_required = ['cliente']
     template_name = 'cliente/lista_platos.html'
     context_object_name = 'platos'
     paginate_by = 10
@@ -227,70 +231,13 @@ def borrar_carrito(request):
     carrito.borrar_carrito()
     return redirect('myapp:pagina_del_carrito')
 
-@login_required
-@web_access_type_required("cliente")
-def procesar_pedido(request):
-    try:
-        # Procesar el carrito de compras y crear un nuevo pedido para cada restaurante
-        carrito = CarritoDeCompras(request).obtener_carrito()
-        platos_por_restaurante = {}  # Diccionario para agrupar los platos por restaurante
 
-        # Agrupar los platos por restaurante
-        plato_ids = carrito.keys()
-        platos = Plato.objects.filter(id__in=plato_ids)
-        for plato in platos:
-            restaurante_id = plato.restaurante.id
-            if restaurante_id not in platos_por_restaurante:
-                platos_por_restaurante[restaurante_id] = {'platos': [], 'total': 0}
-            platos_por_restaurante[restaurante_id]['platos'].append(plato.id)
-            platos_por_restaurante[restaurante_id]['total'] += descuento(plato) * carrito[str(plato.id)]['cantidad']
-
-        # Crear los pedidos dentro de una transacción
-        with transaction.atomic():
-            for restaurante_id, data in platos_por_restaurante.items():
-                restaurante = Restaurante.objects.get(id=restaurante_id)
-                cliente = Cliente.objects.get(user=request.user)
-                platos_en_pedido = Plato.objects.filter(id__in=data['platos'])
-                total_pedido = data['total']
-
-                # Crear una nueva ubicación para cada pedido
-                ubicacion_pedido = Ubicacion.objects.create(
-                    direcion=cliente.ubicacion.direcion,
-                    numero=cliente.ubicacion.numero,
-                    codigo_postal=cliente.ubicacion.codigo_postal,
-                    pais=cliente.ubicacion.pais,
-                    ciudad=cliente.ubicacion.ciudad,
-                    latitud=cliente.ubicacion.latitud,
-                    longitud=cliente.ubicacion.longitud
-                )
-
-                # Crear el pedido con la ubicación única
-                pedido = Pedido.objects.create(
-                    cliente=cliente,
-                    ubicacion=ubicacion_pedido,
-                    total=total_pedido,
-                    restaurante=restaurante
-                )
-                pedido.platos.set(platos_en_pedido)
-
-        # Limpiar el carrito de compras después de realizar los pedidos
-        carrito.clear()
-        # Actualizar la sesión con el carrito vacío
-        request.session['carrito'] = {}
-        request.session.modified = True
-
-        messages.success(request, "Se ha realizado la comada.")
-        return redirect('myapp:pedidos_realizados')
-    except Exception as e:
-        # Manejo de excepciones
-        messages.error(request, "Error al procesar el pedido:"+str(e))
-        return redirect('myapp:pedidos_realizados')
 
 
 
 class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
-    user_type_required = 'cliente'
+    user_type_required = ['cliente']
     template_name = 'cliente/pedido/listado_pedidos.html'
     context_object_name = 'pedidos'
     paginate_by = 10
@@ -333,5 +280,100 @@ def cancelar_pedido(request, pedido_id):
             return redirect("myapp:pedidos_realizados")
     messages.warning(request, "Se ha producido un error en el momento de cancelar el pedido.")
     return redirect("myapp:pedidos_realizados")
+
+
+@login_required
+@web_access_type_required("cliente")
+def procesar_pedido_from(request):
+
+    cliente = Cliente.objects.get(user=request.user)
+
+    title_pagina = [
+        {'label_title': "Realizar el pedido",
+         'title_card': "Realizar el pedido",}
+    ]
+    ruta_pagina = [
+        {'text': "Lista de restaurantes", 'link': "myapp:restaurantes_list_cliente"},
+        {'text': "Carrito de compras", 'link': "myapp:pagina_del_carrito"},
+        {'text': "Realizar el pedido", 'link': ""},
+    ]
+
+    if request.method == 'POST':
+            # Procesar los datos del formulario si son válidos
+
+            geocoder = Geocoder()
+            full_address = f"{request.POST.get('direcion')} {str(request.POST.get('numero'))}, {request.POST.get('ciudad')}, {request.POST.get('codigo_postal')}, {request.POST.get('pais')}"
+
+            coordenadas = geocoder.obtener_coordenadas(full_address)
+
+            if coordenadas:
+                latitud, longitud = coordenadas
+            else:
+                messages.error(request, "No se encontró la dirección. Por favor ingrese la dirección.")
+                return redirect('myapp:procesar_pedido_form')
+
+            try:
+                # Procesar el carrito de compras y crear un nuevo pedido para cada restaurante
+                carrito = CarritoDeCompras(request).obtener_carrito()
+                platos_por_restaurante = {}  # Diccionario para agrupar los platos por restaurante
+
+                # Agrupar los platos por restaurante
+                plato_ids = carrito.keys()
+                platos = Plato.objects.filter(id__in=plato_ids)
+                for plato in platos:
+                    restaurante_id = plato.restaurante.id
+                    if restaurante_id not in platos_por_restaurante:
+                        platos_por_restaurante[restaurante_id] = {'platos': [], 'total': 0}
+                    platos_por_restaurante[restaurante_id]['platos'].append(plato.id)
+                    platos_por_restaurante[restaurante_id]['total'] += descuento(plato) * carrito[str(plato.id)][
+                        'cantidad']
+
+                # Crear los pedidos dentro de una transacción
+                with transaction.atomic():
+                    for restaurante_id, data in platos_por_restaurante.items():
+                        restaurante = Restaurante.objects.get(id=restaurante_id)
+                        cliente = Cliente.objects.get(user=request.user)
+                        platos_en_pedido = Plato.objects.filter(id__in=data['platos'])
+                        total_pedido = data['total']
+
+                        # Crear una nueva ubicación para cada pedido
+                        ubicacion_pedido = Ubicacion.objects.create(
+                            direcion=request.POST.get('direcion'),
+                            numero=request.POST.get('numero'),
+                            codigo_postal=request.POST.get('codigo_postal'),
+                            pais=request.POST.get('pais'),
+                            ciudad=request.POST.get('ciudad'),
+                            latitud=latitud,
+                            longitud=longitud
+                        )
+                        # Crear el pedido con la ubicación única
+                        pedido = Pedido.objects.create(
+                            cliente=cliente,
+                            ubicacion=ubicacion_pedido,
+                            total=total_pedido,
+                            restaurante=restaurante
+                        )
+                        pedido.platos.set(platos_en_pedido)
+
+                # Limpiar el carrito de compras después de realizar los pedidos
+                carrito.clear()
+                # Actualizar la sesión con el carrito vacío
+                request.session['carrito'] = {}
+                request.session.modified = True
+
+                messages.success(request, "El proceso de pedido se realizado exitosamente.")
+                return redirect('myapp:pedidos_realizados')
+            except Exception as e:
+                # Manejo de excepciones
+                messages.error(request, "Error al procesar el pedido:" + str(e))
+                return redirect('myapp:pedidos_realizados')
+
+    return render(request,'cliente/pedido/hacer_pedido.html',{
+                       'cliente': cliente,
+                       'title_pagina': title_pagina,
+                       'ruta_pagina': ruta_pagina,
+                   }
+    )
+
 
 

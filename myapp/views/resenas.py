@@ -14,7 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 class ResenasView( DetailView):
     template_name = 'cliente/resenas.html'
-    user_type_required = 'cliente'
+    user_type_required = ['cliente']
 
     def get_object(self):
         # Obtener el tipo de objeto y su ID desde la URL
@@ -121,7 +121,7 @@ def crear_resena(request, tipo_objeto, id_objeto):
             return redirect('myapp:resena_generico', tipo_objeto='plato', id_objeto=id_objeto)
 
 class BorrarResenaView(LoginRequiredMixin, RolRequiredMixin, DeleteView):
-    user_type_required = 'cliente'
+    user_type_required = ['cliente']
 
     def get_object(self, queryset=None):
         tipo_objeto = self.kwargs['tipo_objeto']
@@ -161,7 +161,7 @@ class BorrarResenaView(LoginRequiredMixin, RolRequiredMixin, DeleteView):
 
 class ResenasAdminView( DetailView):
     template_name = 'admin/resenas.html'
-    user_type_required = 'partners'
+    user_type_required = ['partners']
 
     def get_object(self):
         # Obtener el tipo de objeto y su ID desde la URL

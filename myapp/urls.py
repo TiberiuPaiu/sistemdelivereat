@@ -63,6 +63,7 @@ urlpatterns = [
     path('cliente/lista/restaurantes/', login_required(RestauranteListClienteView.as_view()), name='restaurantes_list_cliente'),
     path('cliente/lista/restaurante/<int:restaurante_id>/platos/', login_required(PlatosListClienteView.as_view()), name='platos_list_cliente'),
 
+
     #cliente-carito
     path('agregaralcarrito/<int:plato_id>/', login_required(agregar_al_carrito), name='agregar_carrito'),
     path('carrito/',  login_required(carrito_lista), name='pagina_del_carrito'),
@@ -73,9 +74,9 @@ urlpatterns = [
     path('carrito/borrar/', login_required(borrar_carrito), name='borrar_carrito'),
 
     #pedidos
-    path('procesar_pedido/',  login_required(procesar_pedido), name='procesar_pedido'),
     path('pedidos_realizados/', login_required(Pedidos_realizadosView.as_view()) , name='pedidos_realizados'),
     path('pedido/<int:pedido_id>/cancelar/', login_required(cancelar_pedido), name='cancelar_pedido'),
+    path('procesar_pedido/form/', login_required(procesar_pedido_from), name='procesar_pedido_form'),
 
 
 

@@ -60,18 +60,19 @@
       <td>
         <ul>
           {% for plato in pedido.platos.all %}
-          <li>{{ plato.nombre }}  <a href=""> Deja una Reseña</a> </li>
+          <li>{{ plato.nombre }}  </li>
           {% endfor %}
         </ul>
       </td>
       <td>{{ pedido.total }} €</td>
       <td>
           {{ pedido.restaurante.nombre }}
-            <a href=""> Deja una Reseña</a>
+            
       </td>
       <td>{{ pedido.fecha_pedido }}</td>
          <td>
              {% if pedido.estado == 'espera_preparacion' %}
+                 
     <a  href="{% url 'myapp:cancelar_pedido' pedido.id %}">
         
         <button class="btn btn-sm btn-danger">Cancelar Pedido</button>
