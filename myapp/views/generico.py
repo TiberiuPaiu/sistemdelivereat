@@ -7,7 +7,7 @@ from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 
 class DetalleGenericoView(LoginRequiredMixin, RolRequiredMixin, DetailView):
     template_name = 'admin/detalle_generico.html'
-    user_type_required = 'partners'
+    user_type_required = ['partners', 'cliente']
 
     def get_object(self):
         # Obtener el tipo de objeto y su ID desde la URL
@@ -20,7 +20,7 @@ class DetalleGenericoView(LoginRequiredMixin, RolRequiredMixin, DetailView):
         elif tipo_objeto == 'usuario':
             return User.objects.get(pk=id_objeto)
         elif tipo_objeto == 'pedido':
-            return Pedido.objects.get(pk=id_objeto)
+            return Pedido.objects.get(id=id_objeto)
         # Puedes agregar más tipos de objetos aquí según sea necesario
 
     def get_context_data(self, **kwargs):

@@ -1,0 +1,67 @@
+/* Cambiar el color de los botones primarios */
+.btn-primary {
+    background-color: #F49941; /* Nuevo color de fondo */
+    border-color: #F49941; /* Nuevo color de borde */
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active,
+.open > .dropdown-toggle.btn-primary {
+    background-color: #e38b37; /* Color de fondo al pasar el ratón */
+    border-color: #e38b37; /* Color de borde al pasar el ratón */
+}
+
+/* Cambiar el color de los enlaces primarios */
+a {
+    color: #F49941; /* Nuevo color del texto */
+}
+
+a:hover,
+a:focus {
+    color: #e38b37; /* Color del texto al pasar el ratón */
+}
+
+
+.page-link {
+    color: #F49941; /* Color del texto */
+    background-color: #ffffff; /* Color del fondo */
+
+}
+
+/* Cambiar el color del enlace al pasar el ratón */
+.page-link:hover {
+    color: #ffffff; /* Color del texto al pasar el ratón */
+    background-color: #F49941; /* Color del fondo al pasar el ratón */
+
+}
+
+/* Cambiar el color de la página actual */
+.page-item.active .page-link {
+    color: #ffffff; /* Color del texto */
+    background-color: #F49941; /* Color del fondo */
+    border-color: #F49941; /* Color del borde */
+
+}
+
+.main-footer {
+    background-color: #ffffff; /* Color de fondo negro */
+    color: #F49941; /* Color de la letra blanca */
+}
+
+.main-footer-kamba {
+    background-color: #ffffff; /* Color de fondo negro */
+}
+
+h1 {
+    color:#47525E;
+}
+
+.card-header {
+    background-color:#969FAA;
+    color:white;
+}
+
+
+

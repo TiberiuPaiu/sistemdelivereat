@@ -35,7 +35,7 @@
     {% for restaurante in restaurantes %}
     <div class="col-md-4">
         <div class="card card-widget widget-user-2">
-            <div class="widget-user-header bg-warning">
+            <div class="widget-user-header " style="background-color: #F49941; color:white">
                 <div class="widget-user-image">
                     <img class="img-circle elevation-2" src="{{ restaurante.imagens.first.imagen.url }}" alt="User Avatar">
                 </div>
@@ -65,7 +65,7 @@
                     <li class="nav-item">
                         <a href="{% url 'myapp:list_platos' restaurante_id=restaurante.id %}" class="nav-link">
                             {% platos_count_ddbb restaurante.id  as platos_count %}
-                           Plato <span class="float-right badge bg-info"> {{ platos_count }}</span>
+                           Plato <span class="float-right badge" style="background-color: #F49941; color:white" > {{ platos_count }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -76,19 +76,19 @@
                     <li class="nav-item">
                         <a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante.id %}" class="nav-link">
                             {% user_count_ddbb restaurante.id  as user_count %} 
-                            Usuario <span class="float-right badge bg-info">{{ user_count }}</span>
+                            Usuario <span class="float-right badge " style="background-color: #F49941; color:white" >{{ user_count }}</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{% url 'myapp:resena_generico_admin' tipo_objeto='restaurante' id_objeto=restaurante.id %}" class="nav-link">
                             {% resena_count_ddbb restaurante.id  as resena_count %} 
-                            Reseñas <span class="float-right badge bg-info">{{ resena_count }}</span>
+                            Reseñas <span class="float-right badge " style="background-color: #F49941; color:white">{{ resena_count }}</span>
                         </a>
                     </li>
                      <li class="nav-item">
                         <a href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante.id %}" class="nav-link">
                             {% historial_pedidos_restaurante_count_ddbb restaurante.id  as historial_pedidos_count %}
-                            Historial de pedidos <span class="float-right badge bg-info">{{ historial_pedidos_count }}</span>
+                            Historial de pedidos <span class="float-right badge " style="background-color: #F49941; color:white">{{ historial_pedidos_count }}</span>
 
                         </a>
                     </li>

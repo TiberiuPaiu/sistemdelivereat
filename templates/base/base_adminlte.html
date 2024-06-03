@@ -1,24 +1,25 @@
 <!DOCTYPE html>
-
+{% load static %}
 <head>
   <meta charset="UTF-8">
   <title>{% block title %}{{title_pagina.0.title_card}}{% endblock %}</title>
    <link rel="shortcut icon" href="/media/img/icono_app.ico" />
   <!--<link rel="stylesheet" href="css/style.css">-->
   {% block style %} {% endblock %}
+     <link rel="stylesheet" href="{% static 'adminlte/css/custom.css' %}">
 
 </head>
 <body class="hold-transition layout-top-nav">
 <div class="wrapper">
 
 
-<nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+<nav class="main-header navbar navbar-expand-md navbar-light navbar-white" style="background-color: #F49941;">
  <!-- Left navbar links -->
 {% if user.user_type == 'cliente' %}
     <ul class="navbar-nav">
 
-<li class="nav-item d-none d-sm-inline-block">
-<a href="{% url 'myapp:pedidos_realizados' %}" class="nav-link">Pedidos</a>
+<li class="nav-item d-none d-sm-inline-block" >
+<a href="{% url 'myapp:pedidos_realizados' %}" class="nav-link"  style="color: white">Pedidos</a>
 </li>
         </ul>
        {% endif %}
@@ -41,10 +42,10 @@
     
             <li class="nav-item dropdown">
                 <a class="nav-link" href="{% url 'myapp:pagina_del_carrito' %}">
-                    <i class="fa fa-shopping-cart"></i>
+                    <i class="fa fa-shopping-cart" style="color: white"></i>
 
  {% if total_carrito %}
-         <span class="badge badge-primary navbar-badge"> {{ total_carrito }} </span>
+         <span class="badge  navbar-badge" style="background-color: white; color:#F49941"> {{ total_carrito }} </span>
  {% endif %}
 
 
@@ -57,7 +58,7 @@
         
         {% endif %}
             <li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" href="#">
+                <a class="nav-link" data-toggle="dropdown" href="#" style="color: white">
                     {{ user.username }}
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-lg">
@@ -189,7 +190,7 @@
 </div>
 
 {% if kanban  %}
-     <footer class="main-footer" >
+     <footer class="main-footer" style="background-color: white" >
      {% block paginacion %}
     {% endblock %}
      </footer>

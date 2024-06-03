@@ -55,7 +55,11 @@
   {% if pedidos %}
     {% for pedido in pedidos %}
     <tr>
-    <td>{{ pedido.codigo_pedido }}</td>
+    <td> <a  href="{% url 'myapp:detalle_generico' 'pedido' pedido.id %}">
+
+        {{ pedido.codigo_pedido }} </a>
+
+    </td>
       <td>{{ pedido.get_estado_display }}</td>
       <td>
         <ul>
@@ -67,12 +71,12 @@
       <td>{{ pedido.total }} €</td>
       <td>
           {{ pedido.restaurante.nombre }}
-            
+
       </td>
       <td>{{ pedido.fecha_pedido }}</td>
          <td>
              {% if pedido.estado == 'espera_preparacion' %}
-                 
+
     <a  href="{% url 'myapp:cancelar_pedido' pedido.id %}">
         
         <button class="btn btn-sm btn-danger">Cancelar Pedido</button>

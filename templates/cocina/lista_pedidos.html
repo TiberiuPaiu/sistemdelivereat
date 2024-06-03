@@ -33,15 +33,15 @@
         
         
             {% for pedido in pedidos %}
-                <div class="card card-row {% if pedido.estado == 'espera_preparacion' %}card-secondary{% elif pedido.estado == 'preparacion' %}card-primary{% endif %}" data-pedido-id="{{ pedido.id }}">
-                    <div class="card-header">
+                <div class="card card-row " data-pedido-id="{{ pedido.id }}">
+                    <div class="card-header"  style="{% if pedido.estado == 'espera_preparacion' %}background-color:#969FAA; color:white; {% elif pedido.estado == 'preparacion' %}background-color:#F49941; color:white; {% endif %}">
                         <h3 class="card-title">Pedido - {{ pedido.codigo_pedido }}</h3>
                     </div>
                     <div class="card-body">
-                        <p class="estado">{{ pedido.get_estado_display }}</p>
+                       
                         {% for plato in pedido.platos.all %}
-                            <div class="card card-info card-outline">
-                                <div class="card-header">
+                            <div class="card  ">
+                                <div class="card-header" style="background-color: white; color:#47525E" >
                                     <h5 class="card-title">{{ plato.nombre }}</h5>
                                 </div>
                                 <div class="card-body">

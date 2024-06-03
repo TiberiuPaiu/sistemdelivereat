@@ -17,7 +17,7 @@ class ListPedidosCocina(LoginRequiredMixin, RolRequiredMixin, ListView):
     user_type_required = ['cocina']
     template_name = 'cocina/lista_pedidos.html'
     context_object_name = 'pedidos'
-    paginate_by = 10
+    paginate_by = 4
 
 
     def get_queryset(self):

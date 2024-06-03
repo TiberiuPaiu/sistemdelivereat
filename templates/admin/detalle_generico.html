@@ -1,6 +1,6 @@
 {% extends 'base/base_adminlte.html' %}
 {% load static %}
-
+{% load custom_filters %}
 {% block style %}
  <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -26,7 +26,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card card-primary">
-                                <div class="card-header">
+                                <div class="card-header" style="background-color: #969FAA; color:white">
                                     <h3 class="card-title">Detalles del {{ tipo_objeto }}</h3>
                                 </div>
                                 <div class="card-body">
@@ -65,8 +65,37 @@
                                         <p> Telfeono: {{ object.full_telefono }}</p>
                                         <p> Rol: {{ oject.user_type }}</p>
                                         
+                                        <!-- Agrega más detalles específicos del pedido -->
+
+                                    {% elif tipo_objeto == 'pedido' %}
+                                        <p> Codigo Pedido: {{ object.codigo_pedido }}</p>
+                                        <p> Estado: {{ object.get_estado_display }}</p>
+                                        <p> El codigo de validacion: {{ object.codigo_validacio }}</p>
+                                        <p> {{ object.fecha_pedido }}</p>
+                                         
+                                        <p> Restaurante al que realizo el pedido: {{ object.restaurante.nombre }}</p>
+                                        <p> total: {{ object.total }} € </p>
+                                        
+                                        {% for plato in object.platos.all %}
+
+                            <p>
+                                <img class="img-circle img-bordered-sm" src="{{ plato.imagen.url }}" alt="user image" width="20%" height="20%" >
+
+                                {{ plato.nombre }}
+
+                                 {% if plato.descuento > 0 %}
+            <del>{{ plato.precio }}</del> -  {{ plato|descuento }}  € Descuento : {{ plato.descuento }}%
+
+            {% else %}
+               {{ plato.precio }}  €
+            {% endif %}
+                                            </p>
+                                        {% endfor %}
+                                        
+
                                         <!-- Agrega más detalles específicos del usuario -->
                                     {% endif %}
+
                                 </div>
                             </div>
                         </div>
