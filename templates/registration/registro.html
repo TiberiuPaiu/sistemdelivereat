@@ -28,7 +28,8 @@
                <div class="card-body p-0">
                   <div class="bs-stepper">
                      <div class="bs-stepper-header" role="tablist">
-                        <div class="step" data-target="#information-personal">
+                        
+                         <div class="step" data-target="#information-personal">
                            <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="information-personal-trigger">
                            <span class="bs-stepper-circle " style="background-color: #F49941;" >1</span>
                            <span class="bs-stepper-label">Información personal</span>
@@ -43,14 +44,14 @@
                         </div>
                          <div class="line"></div>
                          <div class="step" data-target="#information-cuenta">
-                           <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-cuenta-trigger">
+                           <button type="button" class="step-trigger" role="tab" aria-controls="information-cuenta" id="information-cuenta-trigger">
                            <span class="bs-stepper-circle" style="background-color: #F49941;">3</span>
                            <span class="bs-stepper-label">Información de cuenta</span>
                            </button>
                         </div>
                          <div class="line"></div>
                          <div class="step" data-target="#information-direcion">
-                           <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-direcion-trigger">
+                           <button type="button" class="step-trigger" role="tab" aria-controls="information-direcion" id="information-direcion-trigger">
                            <span class="bs-stepper-circle" style="background-color: #F49941; ">4</span>
                            <span class="bs-stepper-label">Información de Negocio</span>
                            </button>
@@ -93,9 +94,10 @@
                                 <input type="text" id="form3Example3c"  name="last_name" class="form-control" />
                               </div>
                             </div>
-
-                           <button class="btn btn-primary next-button">Siguiente</button>
+                            
                              <a href="{% url 'myapp:login' %}" class="fa-align-left">  Iniciar sesión  </a>
+                           <button class="btn btn-primary next-button">Siguiente</button>
+                            
 
                         </div>
                         <div id="information-contacto" class="content" role="tabpanel" aria-labelledby="information-contacto-trigger">
