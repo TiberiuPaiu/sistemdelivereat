@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 
-from myapp.forms import RegistroFormulario ,RegistroClienteFormulario
+from myapp.forms import RegistroFormulario, RegistroClienteFormulario
 from myapp.models import User, Negocio, Partners, Archivo, Ubicacion, Cliente
 
 
@@ -35,32 +35,48 @@ def post_registro(request):
             nombre_negocio = form.cleaned_data['nombre_negocio']
             archivos = request.FILES.getlist('archivos')
 
-            # Crear el usuario
-            user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
-                                            last_name=last_name)
-            user.user_type = user_type
-            user.prefix_tel = prefix_tel
-            user.telefono = telefono
-            user.save()
+            if archivos is not None:
+                messages.error(request, "Es obligatorio añadir archivos de Licencias comerciales, permisos de salud y registros sanitarios")
+                return redirect("myapp:hacer_registro")
 
-            # Crear un nuevo objeto Negocio con el nombre ingresado en el formulario
-            negocio = Negocio.objects.create(nombre=nombre_negocio)
+            try:
+                # Crear el usuario
+                user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
+                                                last_name=last_name)
+                user.user_type = user_type
+                user.prefix_tel = prefix_tel
+                user.telefono = telefono
+                user.save()
 
-            # Asignar al usuario como Partners
-            Partners.objects.create(user=user, negocio=negocio)
+                # Crear un nuevo objeto Negocio con el nombre ingresado en el formulario
+                negocio = Negocio.objects.create(nombre=nombre_negocio)
 
-            # Manejar la carga de archivos
+                # Asignar al usuario como Partners
+                Partners.objects.create(user=user, negocio=negocio)
 
-            for archivo in archivos:
-                Archivo.objects.create(negocio=negocio, archivo=archivo)
+                # Manejar la carga de archivos
 
+                for archivo in archivos:
+                    Archivo.objects.create(negocio=negocio, archivo=archivo)
+
+            except Exception as e:
+                messages.error(request, e)
+                return redirect("myapp:hacer_registro")
 
             return redirect('myapp:login')
+        else:
+            # Mostrar errores en el formulario
+            for field in form:
+                if field.errors:
+                    for error in field.errors:
+                        messages.error(request, error)
+
+        return render(request, 'registration/registro.html', {'form': form, 'titulo_pagina': titulo_pagina})
+
     else:
         form = RegistroFormulario()
 
     return render(request, 'registration/registro.html', {'form': form, 'titulo_pagina': titulo_pagina})
-
 
 def post_registro_cliente(request):
     titulo_pagina = "Pagina de registro para los Clientes"
