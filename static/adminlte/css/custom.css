@@ -54,7 +54,7 @@ a:focus {
     background-color: #ffffff; /* Color de fondo negro */
 }
 
-h1 {
+h1,h4,h5 {
     color:#47525E;
 }
 

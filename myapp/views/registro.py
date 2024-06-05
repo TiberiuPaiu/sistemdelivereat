@@ -1,8 +1,9 @@
+from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 
-from myapp.forms import RegistroFormulario
+from myapp.forms import RegistroFormulario ,RegistroClienteFormulario
 from myapp.models import User, Negocio, Partners, Archivo, Ubicacion, Cliente
 
 
@@ -62,29 +63,27 @@ def post_registro(request):
 
 
 def post_registro_cliente(request):
-
-    titulo_pagina= "Pagina de registro para los Clientes"
+    titulo_pagina = "Pagina de registro para los Clientes"
 
     if request.method == 'POST':
+        form = RegistroClienteFormulario(request.POST)
+        if form.is_valid():
             # Procesar los datos del formulario si son válidos
-            username = request.POST.get('username')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
             user_type = 'cliente'
-            prefix_tel = request.POST.get('prefix_tel')
-            telefono = request.POST.get('telefono')
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            pais = request.POST.get('pais')
-            ciudad = request.POST.get('ciudad')
-            codigo_postal = request.POST.get('codigo_postal')
-            direcion = request.POST.get('direcion')
-            numero = request.POST.get('numero')
-
+            prefix_tel = form.cleaned_data['prefix_tel']
+            telefono = form.cleaned_data['telefono']
+            first_name = form.cleaned_data['first_name']
+            last_name = form.cleaned_data['last_name']
+            pais = form.cleaned_data['pais']
+            ciudad = form.cleaned_data['ciudad']
+            codigo_postal = form.cleaned_data['codigo_postal']
+            direcion = form.cleaned_data['direcion']
+            numero = form.cleaned_data['numero']
 
             # Crear el usuario
-
-
             geocoder = Geocoder()
             full_address = f"{direcion} {str(numero)}, {ciudad}, {codigo_postal}, {pais}"
             coordenadas = geocoder.obtener_coordenadas(full_address)
@@ -100,39 +99,39 @@ def post_registro_cliente(request):
                     latitud=latitud,
                     longitud=longitud,
                 )
+                try:
+                    user = User.objects.create_user(username=username, email=email, password=password,
+                                                    first_name=first_name,
+                                                    last_name=last_name)
+                    user.user_type = user_type
+                    user.prefix_tel = prefix_tel
+                    user.telefono = telefono
+                    user.save()
 
-                user = User.objects.create_user(username=username, email=email, password=password,
-                                                first_name=first_name,
-                                                last_name=last_name)
-                user.user_type = user_type
-                user.prefix_tel = prefix_tel
-                user.telefono = telefono
-                user.save()
+                    Cliente.objects.create(user=user, ubicacion=ubicacion)
 
-                Cliente.objects.create(user=user, ubicacion=ubicacion)
+                except Exception as e:
+                    messages.error(request, e)
+                    return redirect("myapp:hacer_registro_cliente")
 
             else:
-                print(geocoder.error)
-
-
-
-
-
-            # Asignar al usuario como Partners
-
-
-            # Manejar la carga de archivos
-
-
-
+                messages.error(request, "No se encontró la dirección. Por favor ingrese la dirección.")
+                return redirect('myapp:hacer_registro_cliente')
 
             return redirect('myapp:login')
+
+        else:
+            # Mostrar errores en el formulario
+            for field in form:
+                if field.errors:
+                    for error in field.errors:
+                        messages.error(request, error)
+            return render(request, 'registration/registro_cliente.html', {'form': form, 'titulo_pagina': titulo_pagina})
+
     else:
         form = RegistroFormulario()
 
     return render(request, 'registration/registro_cliente.html', {'form': form, 'titulo_pagina': titulo_pagina})
-
-
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
 
