@@ -19,10 +19,12 @@
 {% block content %}
 
 
-    <div class="content-wrapper">
+
+
+
             <!-- Contenido de la página -->
             <section class="content">
-                <div class="container-fluid">
+                <div class="container">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card card-primary">
@@ -68,31 +70,138 @@
                                         <!-- Agrega más detalles específicos del pedido -->
 
                                     {% elif tipo_objeto == 'pedido' %}
-                                        <p> Codigo Pedido: {{ object.codigo_pedido }}</p>
-                                        <p> Estado: {{ object.get_estado_display }}</p>
-                                        <p> El codigo de validacion: {{ object.codigo_validacio }}</p>
-                                        <p> {{ object.fecha_pedido }}</p>
-                                         
-                                        <p> Restaurante al que realizo el pedido: {{ object.restaurante.nombre }}</p>
-                                        <p> total: {{ object.total }} € </p>
-                                        
-                                        {% for plato in object.platos.all %}
 
-                            <p>
-                                <img class="img-circle img-bordered-sm" src="{{ plato.imagen.url }}" alt="user image" width="20%" height="20%" >
 
-                                {{ plato.nombre }}
+                                        <div class="invoice p-3 mb-3">
 
-                                 {% if plato.descuento > 0 %}
+<div class="row">
+<div class="col-12">
+<h4>
+<i class="fas fa-globe"></i> DeliverEat
+<small class="float-right"> {{ object.fecha_pedido }} </small>
+</h4>
+</div>
+
+</div>
+
+<div class="row invoice-info">
+<div class="col-sm-4 invoice-col">
+
+<address>
+<strong>{{ object.restaurante.nombre }}</strong><br>
+
+{{ object.restaurante.ubicacion.direcion }} {{ object.restaurante.ubicacion.numero }}<br>
+{{ object.restaurante.ubicacion.pais }} {{ object.restaurante.ubicacion.ciudad }}, {{ object.restaurante.ubicacion.codigo_postal }}<br>
+Teléfono: {{ object.restaurante.partner.user.full_telefono }} <br>
+Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.restaurante.partner.user.email }}</a>
+</address>
+</div>
+
+<div class="col-sm-4 invoice-col">
+
+<address>
+<strong>{{ object.cliente.user.get_full_name }}</strong><br>
+{{ object.ubicacion.direcion }} {{ object.ubicacion.numero }}<br>
+{{ object.ubicacion.pais }} {{ object.ubicacion.ciudad }}, {{ object.restaurante.ubicacion.codigo_postal }}<br>
+Teléfono: {{ object.cliente.user.full_telefono }} <br>
+Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.user.email }}</a>
+</address>
+</div>
+
+<div class="col-sm-4 invoice-col">
+<b>Pedido #{{ object.codigo_pedido }}</b><br>
+<br>
+<b>Código de confirmación :</b> {{ object.codigo_validacio }}<br>
+<b>Fecha de pago:</b> <br>
+<b>Cuenta:</b> 
+</div>
+
+</div>
+
+
+<div class="row">
+<div class="col-12 table-responsive">
+<table class="table table-striped">
+<thead>
+<tr>
+<th>Unidades</th>
+<th>Product</th>
+
+<th>Imagen</th>
+<th>Precio unidad</th>
+<th>Subtotal</th>
+</tr>
+</thead>
+<tbody>
+ {% for plato in object.platos.all %}
+<tr>
+<td>-</td>
+<td>{{ plato.nombre }}</td>
+<td> <img class="img-circle img-bordered-sm" src="{{ plato.imagen.url }}" alt="user image" width="20%" height="20%" ></td>
+
+<td>    {% if plato.descuento > 0 %}
             <del>{{ plato.precio }}</del> -  {{ plato|descuento }}  € Descuento : {{ plato.descuento }}%
 
             {% else %}
                {{ plato.precio }}  €
-            {% endif %}
-                                            </p>
-                                        {% endfor %}
-                                        
+            {% endif %}</td>
+<td>    - </td>
 
+</tr>
+        {% endfor %}
+
+</tbody>
+</table>
+</div>
+
+</div>
+
+<div class="row">
+
+<div class="col-5">
+
+</div>
+
+
+
+<div class="col-7">
+<p class="lead">Amount Due 2/22/2014</p>
+<div class="table-responsive">
+<table class="table">
+<tr>
+<th style="width:50%">Subtotal:</th>
+<td>{{ object.total }}  €</td>
+</tr>
+<tr>
+<th>Impuesto Plataforma (10%)</th>
+<td>{{  object.total|tax_plat}}  €  </td>
+</tr>
+<tr>
+<th>Impuesto Traferencias (3% + 0,50€):</th>
+<td>{{  object.total|tax_trans}} €  </td>
+</tr>
+<tr>
+<th>Total:</th>
+<td>{{  object.total|tax_full}} €  </td>
+</tr>
+</table>
+</div>
+</div>
+
+</div>
+
+
+<div class="row no-print">
+<div class="col-12">
+<button   type="button" name="imprimir" value="Imprimir" onclick="window.print();" class="btn btn-default"><i class="fas fa-print"></i> Imprimir </button>
+
+<button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
+<i class="fas fa-download"></i> Generar PDF
+</button>
+</div>
+</div>
+</div>
+                                        
                                         <!-- Agrega más detalles específicos del usuario -->
                                     {% endif %}
 
@@ -102,7 +211,7 @@
                     </div>
                 </div>
             </section>
-        </div>
+
 {% endblock %}
 
 {% block script %}
