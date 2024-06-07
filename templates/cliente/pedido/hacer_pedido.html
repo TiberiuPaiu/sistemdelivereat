@@ -38,7 +38,7 @@
      <div class="row">
 
 
-        <div class="col-md-10">
+        <div class="col-md-12">
 
             <div class="card card-primary">
                     <form action=""  method="POST" >
@@ -114,24 +114,7 @@
              </div>
 
         </div>
-
-         <div class="col-md-2 ">
-
-                   <div class="card">
-                        <div class="card-body">
-                        <!-- Contenido del menú lateral -->
-
-{% for restaurante_id, data in totales_por_restaurante.items %}
-    <p>Total {{ data.nombre }}: {{ data.total}} €</p>
-{% endfor %}
-        <p>Total : {{ total }} €</p>
-
-
-
-                             </div>
-                   </div>
-
-         </div>
+         
     </div>
 
 </div>

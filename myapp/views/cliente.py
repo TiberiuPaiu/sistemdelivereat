@@ -142,7 +142,9 @@ class PlatosListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
 def descuento(plato):
     precio_con_descuento = plato.precio * (1 - Decimal(str(plato.descuento)) / 100)
     return precio_con_descuento.quantize(Decimal('0.00'))
-
+def tax(precio):
+    precio_con_tax = precio + ((precio * 10 ) / 100 ) + ((precio * 3 ) / 100 )
+    return precio_con_tax.quantize(Decimal('0.00') + Decimal('0.50') )
 @login_required
 @web_access_type_required("cliente")
 def agregar_al_carrito(request, plato_id):
@@ -180,7 +182,7 @@ def carrito_lista(request):
             totales_por_restaurante[restaurante_id]['total'] += cantidad * precio_final
 
         # Calcular el total general
-        total_general = sum(restaurante['total'] for restaurante in totales_por_restaurante.values())
+        total_general = sum(tax(restaurante['total']) for restaurante in totales_por_restaurante.values())
         total_formateado = Decimal(str(total_general)).quantize(Decimal('0.01'))
 
     # Crear un diccionario para almacenar las cantidades de cada plato en el carrito
