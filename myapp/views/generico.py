@@ -5,6 +5,8 @@ from myapp.models import Restaurante, User, Pedido
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 
 
+
+
 class DetalleGenericoView(LoginRequiredMixin, RolRequiredMixin, DetailView):
     template_name = 'admin/detalle_generico.html'
     user_type_required = ['partners', 'cliente']
@@ -27,3 +29,4 @@ class DetalleGenericoView(LoginRequiredMixin, RolRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context['tipo_objeto'] = self.kwargs['tipo_objeto']
         return context
+

@@ -98,11 +98,32 @@
                    <div class="card">
                         <div class="card-body">
                         <!-- Contenido del menú lateral -->
-
-{% for restaurante_id, data in totales_por_restaurante.items %}
-    <p>Total {{ data.nombre }}: {{ data.total}} €</p>
+                        
+   {% for restaurante_id, data in totales_por_restaurante.items %}                    
+<p class="lead">Restaurante : {{ data.nombre }}</p>
+<div class="table-responsive">
+<table class="table">
+<tr>
+<th style="width:60%">Subtotal:</th>
+<td>{{ data.total}}  €</td>
+</tr>
+<tr>
+<th>Impuesto Plataforma (10%)</th>
+<td>{{  data.total|tax_plat}}  €  </td>
+</tr>
+<tr>
+<th>Impuesto Traferencias (3% + 0,50€):</th>
+<td>{{  data.total|tax_trans}} €  </td>
+</tr>
+<tr>
+<th>Total:</th>
+<td>{{  data.total|tax_full}} €  </td>
+</tr>
+</table>
+</div>
 {% endfor %}
-        <p>Total : {{ total }} €</p>
+  <p class="lead">Total : {{ total }} € </p>                      
+      
                          {% if platos %}
                              <a href="{% url 'myapp:borrar_carrito' %}"><button type="button" class="btn btn-sm btn-danger">Borrar Carrito</button></a>
                             <a  href="{% url 'myapp:procesar_pedido_form'%}" >  <button type="button " class="btn btn-sm btn-primary" >Realizar Pedido</button> </a>
