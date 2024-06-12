@@ -133,19 +133,22 @@ Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.us
 </tr>
 </thead>
 <tbody>
- {% for plato in object.platos.all %}
-<tr>
-<td>-</td>
-<td>{{ plato.nombre }}</td>
-<td> <img class="img-circle img-bordered-sm" src="{% media plato.imagen.url %}" alt="user image" width="20%" height="20%" ></td>
 
-<td>    {% if plato.descuento > 0 %}
-            <del>{{ plato.precio }}</del> -  {{ plato|descuento }}  € Descuento : {{ plato.descuento }}%
+
+
+ {% for pedido_plato in object.pedidoplato_set.all %}
+<tr>
+<td> {{ pedido_plato.cantidad }} </td>
+<td>{{ pedido_plato.plato.nombre }}</td>
+<td> <img class="img-circle img-bordered-sm" src="{{pedido_plato.plato.imagen.url}}" alt="user image" width="20%" height="20%" ></td>
+
+<td>    {% if pedido_plato.plato.descuento > 0 %}
+            <del>{{ pedido_plato.plato.precio }}</del> -  {{ pedido_plato.plato|descuento }}  € Descuento : {{ pedido_plato.plato.descuento }}%
 
             {% else %}
-               {{ plato.precio }}  €
+               {{ pedido_plato.plato.precio }}  €
             {% endif %}</td>
-<td>    - </td>
+<td>   {{ pedido_plato.subtotal}} € </td>
 
 </tr>
         {% endfor %}

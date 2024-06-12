@@ -35,7 +35,7 @@ def post_registro(request):
             nombre_negocio = form.cleaned_data['nombre_negocio']
             archivos = request.FILES.getlist('archivos')
 
-            if archivos is not None:
+            if archivos is None:
                 messages.error(request, "Es obligatorio añadir archivos de Licencias comerciales, permisos de salud y registros sanitarios")
                 return redirect("myapp:hacer_registro")
 

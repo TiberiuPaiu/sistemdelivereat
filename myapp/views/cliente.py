@@ -8,7 +8,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from django.db.models import F, ExpressionWrapper, DecimalField
 from django.db.models.functions import Round, Cast
-from myapp.models import Restaurante, Plato, Cliente, Pedido, Ubicacion, TipoComida
+from myapp.models import Restaurante, Plato, Cliente, Pedido, Ubicacion, TipoComida, PedidoPlato
 from sistemdelivereat.utils.OpenStreetMap import Geocoder
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.carito_copras import CarritoDeCompras
@@ -336,6 +336,7 @@ def procesar_pedido_from(request):
                         restaurante = Restaurante.objects.get(id=restaurante_id)
                         cliente = Cliente.objects.get(user=request.user)
                         platos_en_pedido = Plato.objects.filter(id__in=data['platos'])
+
                         total_pedido = data['total']
 
                         # Crear una nueva ubicación para cada pedido
@@ -355,7 +356,17 @@ def procesar_pedido_from(request):
                             total=total_pedido,
                             restaurante=restaurante
                         )
-                        pedido.platos.set(platos_en_pedido)
+
+                        for plato in platos_en_pedido:
+                            cantidad = carrito[str(plato.id)]['cantidad']
+                            subtotal = descuento(plato) * cantidad
+                            PedidoPlato.objects.create(
+                                pedido=pedido,
+                                plato=plato,
+                                cantidad=cantidad,
+                                subtotal=subtotal
+                            )
+
 
                 # Limpiar el carrito de compras después de realizar los pedidos
                 carrito.clear()

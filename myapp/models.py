@@ -159,7 +159,7 @@ class Pedido(models.Model):
         default='espera_preparacion',
     )
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
-    platos = models.ManyToManyField(Plato)
+    platos = models.ManyToManyField(Plato, through='PedidoPlato')
     ubicacion = models.OneToOneField(Ubicacion, on_delete=models.CASCADE, null=True, related_name='pedido_ubicacion')
 
     total = models.DecimalField(max_digits=10, decimal_places=2)
@@ -179,6 +179,11 @@ class Pedido(models.Model):
             self.codigo_validacio = unique_id_validacio
         super(Pedido, self).save(*args, **kwargs)
 
+class PedidoPlato(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE)
+    plato = models.ForeignKey(Plato, on_delete=models.CASCADE)
+    cantidad = models.IntegerField(default=1)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
 
 """
