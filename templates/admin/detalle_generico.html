@@ -76,9 +76,12 @@
 
 <div class="row">
 <div class="col-12">
+
 <h4>
-<i class="fas fa-globe"></i> DeliverEat
+<img class="img-circle " src="/media/img/icono_app.ico" alt="user image" width="50" height="50" >
+DeliverEat
 <small class="float-right"> {{ object.fecha_pedido }} </small>
+          
 </h4>
 </div>
 
@@ -168,7 +171,7 @@ Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.us
 
 
 <div class="col-7">
-<p class="lead">Amount Due 2/22/2014</p>
+<p class="lead"> Fecha del pedido {{ object.fecha_pedido|date:"d/m/Y" }}</p>
 <div class="table-responsive">
 <table class="table">
 <tr>
