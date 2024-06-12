@@ -94,6 +94,9 @@ urlpatterns = [
     path('pedidos/<int:pedido_id>/validar_pedido/', login_required(validar_pedido), name='validar_pedido'),
 
 
+    path('generar/<int:id_objeto>/<str:tipo_objeto>/pdf', login_required(Generar_pdf.as_view()),name='generar_pdf'),
+
+
 
 
 ]
