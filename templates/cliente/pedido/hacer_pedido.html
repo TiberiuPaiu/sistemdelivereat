@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block style %}
- <link rel="stylesheet"
+ 
+    <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
@@ -11,44 +12,31 @@
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
     <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
-
-
+    
+    <script src="https://js.stripe.com/v3/"></script>
 {% endblock %}
 
-
 {% block content %}
-
-
-
-
 <div class="content">
-<div class="container">
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
-
-{% if messages %}
-      {% for message in messages %}
-      <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
-      <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-      <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
-      {{ message }}
-   </div>
-   {% endfor %}
-   {% endif %}
-
-     <div class="row">
-
-
-        <div class="col-md-12">
-
-            <div class="card card-primary">
-                    <form action=""  method="POST" >
-                    {% csrf_token %}
-                  <div class="card-title">
-                      </div>
-
-                  <div class="card-body">
-
-                         <div class="form-group row">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <form action="" method="POST" id="payment-form">
+                        {% csrf_token %}
+                        <div class="card-title"></div>
+                        <div class="card-body">
+                            <div class="form-group row">
                             <label for="first_name" class="col-sm-3 col-form-label">Nombre:</label>
                             <div class="col-sm-9">
                               <input type="text" class="form-control" id="first_name"    placeholder="{{ user.first_name }}" disabled>
@@ -102,47 +90,76 @@
                               <input type="text" class="form-control" id="numero"  name="numero" value="{{ cliente.ubicacion.numero }}" placeholder="">
                             </div>
                          </div>
-
-                  </div>
-
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Envia</button>
-                     </div>
-  </form>
-
-
-             </div>
-
+                            
+                            
+                            <div class="form-group row">
+                                <label for="card-element" class="col-sm-3 col-form-label">Tarjeta de crédito o débito</label>
+                                <div class="col-sm-9">
+                                    <div id="card-element" class="form-control">
+                                        <!-- Stripe.js will create this element -->
+                                    </div>
+                                </div>
+                                  <div class="col-sm-3 col-form-label"></div>
+                              <small id="emailHelp" class="form-text text-danger">
+                                <div id="card-errors" role="alert"></div>
+                              </small>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Enviar Pago</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-         
     </div>
-
 </div>
-</div>
-
-
-
-
-
-
-
-
-
 {% endblock %}
 
-
-
 {% block script %}
-
 <!-- jQuery -->
 <script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
 <!-- Bootstrap 4 -->
 <script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
-
-
 <!-- AdminLTE App -->
 <script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
 
+<script>
+    var stripe = Stripe('pk_test_51PMYfiGF2SGr9v2EBwtrcVsJN6QWLD6hEi07dNc4vVHpDMaxLX41hthGjo92MKkTHmYhB4IXKhXqSt2iiMRC4OXl00lstOu6Pm');
+    var elements = stripe.elements();
+    var card = elements.create('card');
+    card.mount('#card-element');
 
+    card.addEventListener('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
 
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        stripe.createToken(card).then(function(result) {
+            if (result.error) {
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                stripeTokenHandler(result.token);
+            }
+        });
+    });
+
+    function stripeTokenHandler(token) {
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripeToken');
+        hiddenInput.setAttribute('value', token.id);
+        form.appendChild(hiddenInput);
+        form.submit();
+    }
+</script>
 {% endblock %}

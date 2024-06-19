@@ -9,7 +9,7 @@ from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
-
+import stripe
 
 class PedidoFiltrar:
     @staticmethod
@@ -99,7 +99,33 @@ def validar_pedido(request, pedido_id):
             try:
                 pedido.estado = 'entregado'
                 pedido.save()
+
+                stripe.api_key = 'sk_test_51PMYfiGF2SGr9v2Ept70FwVCMRnjM8pdznzqezNqqxb3nmOx2xKFV9tezdmUONwHliygMlXXIFejCtvSdaIs2Hmg00AbvQ91MU'
+                try:
+                    pago = stripe.PaymentIntent.create(
+                        amount=int(pedido.total * 100),
+                        currency='usd',
+                        payment_method_types=['card'],
+                        payment_method={
+                            'type': 'card',
+                            'card': {
+                                'number': '4242424242424242',
+                                'exp_month': 12,
+                                'exp_year': 2025,
+                                'cvc': '123'
+                            }
+                        },
+                        metadata={
+                            'order_id': pedido.id
+                        }
+                    )
+                except Exception as e:
+                    messages.error(request, e)
+                    return redirect('myapp:validar_pedido', pedido_id=pedido_id)
+
                 messages.success(request, "El pedido a sido entregado corectamente.")
+
+
                 return redirect('myapp:pedidos_repartidor', tipo_objeto='entregado')
             except Exception as e:
                 messages.error(request,e)

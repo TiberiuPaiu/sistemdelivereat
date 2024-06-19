@@ -142,3 +142,7 @@ LOGIN_REDIRECT_URL = reverse_lazy("myapp:login")
 LOGOUT_REDIRECT_URL = reverse_lazy("myapp:login")
 
 GLOBAL_PASSWORD ="Tiberiu.1234"
+
+#configuraciones de Stripe
+STRIPE_PUBLIC_KEY = 'pk_test_51PMYfiGF2SGr9v2EBwtrcVsJN6QWLD6hEi07dNc4vVHpDMaxLX41hthGjo92MKkTHmYhB4IXKhXqSt2iiMRC4OXl00lstOu6Pm'
+STRIPE_SECRET_KEY = 'sk_test_51PMYfiGF2SGr9v2Ept70FwVCMRnjM8pdznzqezNqqxb3nmOx2xKFV9tezdmUONwHliygMlXXIFejCtvSdaIs2Hmg00AbvQ91MU'

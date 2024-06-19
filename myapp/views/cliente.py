@@ -1,5 +1,6 @@
 from decimal import Decimal
 
+import stripe
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.db.models import Avg, Q, Subquery, OuterRef, Sum
@@ -16,6 +17,9 @@ from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
 
 from django.contrib import messages
+
+stripe.api_key = 'sk_test_51PMYfiGF2SGr9v2Ept70FwVCMRnjM8pdznzqezNqqxb3nmOx2xKFV9tezdmUONwHliygMlXXIFejCtvSdaIs2Hmg00AbvQ91MU'
+
 
 class RestauranteListClienteView(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Restaurante
@@ -248,8 +252,6 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
     def get_queryset(self):
         return Pedido.objects.filter(cliente=Cliente.objects.get(user = self.request.user )).order_by('-fecha_pedido')
 
-
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -322,6 +324,7 @@ def procesar_pedido_from(request):
                 # Agrupar los platos por restaurante
                 plato_ids = carrito.keys()
                 platos = Plato.objects.filter(id__in=plato_ids)
+
                 for plato in platos:
                     restaurante_id = plato.restaurante.id
                     if restaurante_id not in platos_por_restaurante:
@@ -329,6 +332,14 @@ def procesar_pedido_from(request):
                     platos_por_restaurante[restaurante_id]['platos'].append(plato.id)
                     platos_por_restaurante[restaurante_id]['total'] += descuento(plato) * carrito[str(plato.id)][
                         'cantidad']
+
+                # Verificar si el token de Stripe está presente
+                total_trasferencia=0
+                restaurantes=""
+                stripe_token = request.POST.get('stripeToken')
+                if not stripe_token:
+                    messages.error(request, "Error con el token de Stripe. Inténtalo de nuevo.")
+                    return redirect('myapp:procesar_pedido_form')
 
                 # Crear los pedidos dentro de una transacción
                 with transaction.atomic():
@@ -338,6 +349,8 @@ def procesar_pedido_from(request):
                         platos_en_pedido = Plato.objects.filter(id__in=data['platos'])
 
                         total_pedido = data['total']
+                        total_trasferencia += tax(total_pedido)
+                        restaurantes=restaurantes+" "+ restaurante.nombre
 
                         # Crear una nueva ubicación para cada pedido
                         ubicacion_pedido = Ubicacion.objects.create(
@@ -367,6 +380,18 @@ def procesar_pedido_from(request):
                                 subtotal=subtotal
                             )
 
+                # Crear una nueva carga de Stripe para cada restaurante
+                try:
+                    charge = stripe.Charge.create(
+                                    amount=int(total_trasferencia * 100),  # Stripe maneja los montos en centavos
+                                    currency='eur',
+                                    description=f'Pago del pedido para los restaurantes: {restaurantes}',
+                                    source=stripe_token
+                    )
+                except stripe.error.StripeError as e:
+                    messages.error(request,
+                                               f"Error en el procesamiento del pago para los restaurantes: {restaurantes}: {e.error.message}")
+                    return redirect('myapp:procesar_pedido_form')
 
                 # Limpiar el carrito de compras después de realizar los pedidos
                 carrito.clear()
@@ -387,6 +412,8 @@ def procesar_pedido_from(request):
                        'ruta_pagina': ruta_pagina,
                    }
     )
+
+
 
 
 
