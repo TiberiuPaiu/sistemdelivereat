@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.generic import DetailView
 from rest_framework import generics
 
-from myapp.forms import RestauranteForm, AddUserFormulario
+from myapp.forms import RestauranteForm, AddUserFormulario, AddPlatoFormulario
 from myapp.models import Restaurante, Ubicacion, Imagen, Negocio, User, Repartidor, Cocina, Plato, Ingrediente, \
     TipoComida, Partners, Pedido
 from sistemdelivereat import settings
@@ -69,56 +69,57 @@ def post_add_restaurante(request):
             descripcion = form.cleaned_data['descripcion']
             imagenes = request.FILES.getlist('imagenes')
 
+            if not imagenes:
+                messages.error(request, "Es obligatorio añadir una imagen para el restaurante.")
+                return redirect("myapp:add_restaurante")
 
             geocoder = Geocoder()
             full_address = f"{direcion} {str(numero)}, {ciudad}, {codigo_postal}, {pais}"
             coordenadas = geocoder.obtener_coordenadas(full_address)
             if coordenadas:
                 latitud, longitud = coordenadas
+                try:
+                    ubicacion = Ubicacion.objects.create(
+                        direcion=direcion,
+                        numero=numero,
+                        codigo_postal=codigo_postal,
+                        pais=pais,
+                        ciudad=ciudad,
+                        latitud =latitud,
+                        longitud =longitud,
+                    )
+                    restaurante = Restaurante.objects.create(
+                        partner= Partners.objects.get(user=request.user),
+                        nombre=nombre_restaurante,
+                        descripcion=descripcion,
+                        ubicacion = ubicacion,
+                    )
+                    for imagen in imagenes:
+                        Imagen.objects.create(restaurante=restaurante, imagen=imagen)
 
-                ubicacion = Ubicacion.objects.create(
-                    direcion=direcion,
-                    numero=numero,
-                    codigo_postal=codigo_postal,
-                    pais=pais,
-                    ciudad=ciudad,
-                    latitud =latitud,
-                    longitud =longitud,
-                )
-                restaurante = Restaurante.objects.create(
-                    partner= Partners.objects.get(user=request.user),
-                    nombre=nombre_restaurante,
-                    descripcion=descripcion,
-                    ubicacion = ubicacion,
-                )
-                for imagen in imagenes:
-                    Imagen.objects.create(restaurante=restaurante, imagen=imagen)
-
-                messages.success(request, 'El restaurante se creado exitosamente')
-                return redirect('myapp:list_restaurantes')
+                    messages.success(request, 'El restaurante se creado exitosamente')
+                    return redirect('myapp:list_restaurantes')
+                except Exception as e:
+                    messages.error(request, str(e))
+                    return redirect("myapp:add_restaurante")
             else:
-                error = geocoder.error
-
+                messages.error(request, "No se encontró la dirección. Por favor ingrese la dirección.")
+                return redirect('myapp:add_restaurante')
+        else:
+            # Mostrar errores en el formulario
+            for field in form:
+                if field.errors:
+                    for error in field.errors:
+                        messages.error(request, error)
+            return redirect('myapp:add_restaurante')
     else:
         form = RestauranteForm()
 
-    ruta_pagina = [
-        {
-            'text': "Lista de restaurantes",
-            'link': "myapp:list_restaurantes",
-        },
-
-        {
-            'text': "Añadir restaurante",
-            'link': "",
-        }
-    ]
-
     title_pagina = [
         {
-        'label_title': "Añadir el restaurante",
-        'title_card': "Añadir el restaurante",
-         }
+            'label_title': "Añadir el restaurante",
+            'title_card': "Añadir el restaurante",
+        }
     ]
     ruta_pagina = [
         {
@@ -144,7 +145,8 @@ def post_add_restaurante(request):
 @login_required
 @web_access_type_required("partners")
 def add_user_reparidor(request, restaurante_id):
-    restaurante = Restaurante.objects.get(id=restaurante_id)
+    restaurante = get_object_or_404(Restaurante, id=restaurante_id)
+
     if request.method == 'POST':
         form = AddUserFormulario(request.POST)
         if form.is_valid():
@@ -158,18 +160,27 @@ def add_user_reparidor(request, restaurante_id):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
 
+            try:
+                # Crear el usuario
+                user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
+                                                last_name=last_name)
+                user.user_type = user_type
+                user.prefix_tel = prefix_tel
+                user.telefono = telefono
+                user.save()
+                Repartidor.objects.create(user=user, restaurante=restaurante)
 
-            # Crear el usuario
-            user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
-                                            last_name=last_name)
-            user.user_type = user_type
-            user.prefix_tel = prefix_tel
-            user.telefono = telefono
-            user.save()
-            Repartidor.objects.create(user=user, restaurante=restaurante )
-            messages.success(request, 'El usuario con el rol de repartidor se creado exitosamente')
-
-            return redirect('myapp:list_restaurantes')
+                messages.success(request, 'El usuario con el rol de repartidor se creado exitosamente')
+                return redirect('myapp:list_restaurantes')
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect('myapp:add_user_reparidor', restaurante_id=restaurante_id)
+        else:
+            for field in form:
+                if field.errors:
+                    for error in field.errors:
+                        messages.error(request, error)
+            return redirect('myapp:add_user_reparidor',restaurante_id=restaurante_id)
     else:
         form = AddUserFormulario()
 
@@ -204,7 +215,7 @@ def add_user_reparidor(request, restaurante_id):
 @login_required
 @web_access_type_required("partners")
 def add_user_cocina(request, restaurante_id):
-    restaurante = Restaurante.objects.get(id=restaurante_id)
+    restaurante = get_object_or_404(Restaurante, id=restaurante_id)
     if request.method == 'POST':
         form = AddUserFormulario(request.POST)
         if form.is_valid():
@@ -217,17 +228,26 @@ def add_user_cocina(request, restaurante_id):
             telefono = form.cleaned_data['telefono']
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
-
-            # Crear el usuario
-            user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
-                                            last_name=last_name)
-            user.user_type = user_type
-            user.prefix_tel = prefix_tel
-            user.telefono = telefono
-            user.save()
-            Cocina.objects.create(user=user, restaurante=restaurante)
-            messages.success(request, 'El usuario con el rol de resoposable cocina se creado exitosamente')
-            return redirect('myapp:list_restaurantes')
+            try:
+                # Crear el usuario
+                user = User.objects.create_user(username=username, email=email, password=password, first_name=first_name,
+                                                last_name=last_name)
+                user.user_type = user_type
+                user.prefix_tel = prefix_tel
+                user.telefono = telefono
+                user.save()
+                Cocina.objects.create(user=user, restaurante=restaurante)
+                messages.success(request, 'El usuario con el rol de resoposable cocina se creado exitosamente')
+                return redirect('myapp:list_restaurantes')
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect('myapp:add_user_reparidor', restaurante_id=restaurante_id)
+        else:
+            for field in form:
+                if field.errors:
+                    for error in field.errors:
+                        messages.error(request, error)
+            return redirect('myapp:add_user_cocina',restaurante_id=restaurante_id)
     else:
         form = RestauranteForm()
 
@@ -315,19 +335,19 @@ class UsuariosRestauranteListView(LoginRequiredMixin, RolRequiredMixin,ListView)
 @login_required
 @web_access_type_required("partners")
 def reset_password(request, user_id, restaurante_id):
-    user = User.objects.get(id=user_id)
+    user = get_object_or_404(User, id=user_id)
+    try:
+        # reset password
+        user.set_password(settings.GLOBAL_PASSWORD)
+        user.save()
 
+        # Construir la URL de redirección
+        messages.success(request, 'La contraseña se ha cambiado exitosamente.')
+        return redirect('myapp:list_user_restaurant', restaurante_id=restaurante_id )
 
-    # reset password
-    user.set_password(settings.GLOBAL_PASSWORD)
-    user.save()
-
-    # Construir la URL de redirección
-
-
-    url = reverse('myapp:list_user_restaurant', kwargs={'restaurante_id': restaurante_id})
-
-    return redirect(url)
+    except Exception as e:
+        messages.error(request, str(e))
+        return redirect('myapp:list_user_restaurant', restaurante_id=restaurante_id)
 
 
 @login_required
@@ -337,25 +357,46 @@ def agregar_plato(request, restaurante_id):
     tipos_comida = TipoComida.objects.all()
 
     if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        precio = request.POST.get('precio')
-        descuento = request.POST.get('descuento')
-        ingredientes = request.POST.getlist('ingredientes')
-        imagen = request.FILES.get('imagen')
-        tipo_comida = TipoComida.objects.get(id=request.POST.get('tipo_comida'))
+        form = AddPlatoFormulario(request.POST)
+        if form.is_valid():
+            # Procesar los datos del formulario si son válidos
+            username = form.cleaned_data
+            nombre = form.cleaned_data['nombre']
+            precio = form.cleaned_data['precio']
+            descuento = form.cleaned_data['descuento']
+            ingredientes = request.POST.getlist('ingredientes')
+            imagen = request.FILES.get('imagen')
+            tipo_comida = TipoComida.objects.get(id=request.POST.get('tipo_comida'))
 
-        print(ingredientes)
+            if not imagen:
+                messages.error(request, "Es obligatorio añadir una imagen para un plato.")
+                return redirect('myapp:agregar_plato', restaurante_id=restaurante_id)
+            if not ingredientes:
+                messages.error(request, "Es obligatorio añadir al menos un ingrediente.")
+                return redirect('myapp:agregar_plato', restaurante_id=restaurante_id)
 
-        # Guardar el plato
-        plato = Plato.objects.create(nombre=nombre, precio=precio, descuento=descuento ,restaurante=restaurante , tipo_comida=tipo_comida, imagen =imagen)
+            try:
+                # Guardar el plato
+                plato = Plato.objects.create(nombre=nombre, precio=precio, descuento=descuento ,restaurante=restaurante , tipo_comida=tipo_comida, imagen =imagen)
 
-        # Guardar los ingredientes
-        for ingrediente in ingredientes:
-            Ingrediente.objects.create(nombre=ingrediente, plato=plato)
+                # Guardar los ingredientes
+                for ingrediente in ingredientes:
+                    Ingrediente.objects.create(nombre=ingrediente, plato=plato)
 
-        messages.success(request, 'Podiste añadir un nuevo plato exitosamente ')
-        url = reverse('myapp:list_platos', kwargs={'restaurante_id': restaurante_id})
-        return redirect(url)
+                messages.success(request, 'Podiste añadir un nuevo plato exitosamente ')
+                url = reverse('myapp:list_platos', kwargs={'restaurante_id': restaurante_id})
+                return redirect(url)
+
+            except Exception as e:
+                messages.error(request, str(e))
+                return redirect('myapp:agregar_plato', restaurante_id=restaurante_id)
+        else:
+            for field in form:
+                if field.errors:
+                    for error in field.errors:
+                        messages.error(request, error)
+            return redirect('myapp:agregar_plato',restaurante_id=restaurante_id)
+
 
 
     ruta_pagina = [

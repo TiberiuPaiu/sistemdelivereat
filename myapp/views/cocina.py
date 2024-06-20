@@ -80,7 +80,7 @@ def preparacion_pedido(request, pedido_id):
 
 
 def asignar_repartidor(request,pedido_id):
-    pedido = Pedido.objects.get(id=pedido_id)
+    pedido = get_object_or_404(Pedido,id=pedido_id)
     if request.method == 'POST':
         try:
             repartidor = Repartidor.objects.get(id=request.POST['repartidor_id'])

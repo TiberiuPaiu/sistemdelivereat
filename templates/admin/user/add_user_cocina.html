@@ -1,6 +1,6 @@
 {% extends 'base/base_adminlte.html' %}
 {% load static %}
-
+{% load custom_tags %}
 {% block style %}
  <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -23,23 +23,53 @@
 
 <div class="content">
 <div class="container">
+{% if messages %}
 
+            {% for message in messages %}
+                  <div {% if message.tags %} class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible" {% endif %}>
+                         <button  type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                         <h5><i class="icon fas fa-check"></i> {{ message.tags }}</h5>
+                            {{ message }}
+                </div>
+            {% endfor %}
+
+            {% endif %}
   
             
              <div class="row">
 
-        <div class="col-md-2 d-flex align-items-center">
+        <div class="col-md-3 d-flex align-items-center">
 
                    <div class="card">
                         <!-- Contenido del menú lateral -->
-                        <ul class="list-group">
+                         <ul class="list-group">
                             <li class="list-group-item"><a href="{% url 'myapp:detalle_generico' tipo_objeto='restaurante' id_objeto=restaurante_id %}">Datos Restaurante</a></li>
                             <li class="list-group-item"><a href="{% url 'myapp:agregar_plato' restaurante_id=restaurante_id %}">Añadir Plato</a></li>
-                            <li class="list-group-item"><a href="{% url 'myapp:list_platos' restaurante_id=restaurante_id %}">Platos</a></li>
+                            <li class="list-group-item"><a href="{% url 'myapp:list_platos' restaurante_id=restaurante_id %}">Platos
+                            {% platos_count_ddbb restaurante_id  as platos_count %}
+                            <span class="float-right badge" style="background-color: #F49941; color:white" > {{ platos_count }}</span>
+                            </a></li>
 
                             <li class="list-group-item"><a href="{% url 'myapp:add_user_reparidor' restaurante_id=restaurante_id %}">Añadri Usuario</a></li>
-                            <li class="list-group-item"><a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante_id %}"> Usuarios</a></li>
+                            <li class="list-group-item">
+                                <a href="{% url 'myapp:list_user_restaurant' restaurante_id=restaurante_id %}"> Usuarios
+                                {% user_count_ddbb restaurante_id  as user_count %} 
+                            Usuario <span class="float-right badge " style="background-color: #F49941; color:white" >{{ user_count }}</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item">
+                        <a href="{% url 'myapp:resena_generico_admin' tipo_objeto='restaurante' id_objeto=restaurante_id  %}">
+                            {% resena_count_ddbb restaurante_id  as resena_count %} 
+                            Reseñas <span class="float-right badge " style="background-color: #F49941; color:white">{{ resena_count }}</span>
+                        </a>
+                    </li>
+                     <li class="list-group-item">
+                        <a href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante_id  %}">
+                            {% historial_pedidos_restaurante_count_ddbb restaurante_id   as historial_pedidos_count %}
+                            Historial de pedidos <span class="float-right badge " style="background-color: #F49941; color:white">{{ historial_pedidos_count }}</span>
 
+                        </a>
+                    </li>
 
                             <!-- Agrega más opciones según sea necesario -->
                         </ul>
@@ -48,7 +78,7 @@
 
          </div>
 
-        <div class="col-md-10">
+        <div class="col-md-9">
 
 
           
@@ -74,11 +104,6 @@
                             <div class="col-sm-9">
                               <input type="text" class="form-control" id="first_name"  name="first_name"  placeholder="">
                             </div>
-
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
                          </div>
 
                         <div class="form-group row">
@@ -86,11 +111,6 @@
                             <div class="col-sm-9">
                               <input type="text" class="form-control" id="first_name"  name="last_name"  placeholder="">
                             </div>
-
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
                          </div>
 
                         <div class="form-group row">
@@ -98,11 +118,6 @@
                             <div class="col-sm-9">
                               <input type="text" class="form-control" id="first_name"  name="email"  placeholder="">
                             </div>
-
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
                          </div>
 
                         <div class="form-group row">
@@ -126,11 +141,6 @@
                           </div>
                     </div>
                             </div>
-
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
                          </div>
                        <div class="form-group row">
                             <label for="first_name" class="col-sm-3 col-form-label">Nombre de usuario:</label>
@@ -139,11 +149,6 @@
                                 <input type="text" class="form-control" id="username"  name="username"  placeholder="">
 
                             </div>
-
-                              <div class="col-sm-3 col-form-label"></div>
-                              <small id="emailHelp" class="form-text text-danger">
-                               Error
-                              </small>
                          </div>
 
 
