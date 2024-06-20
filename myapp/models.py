@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 import uuid
 
-from sistemdelivereat.settings import MEDIA_URL, STATIC_URL
+from sistemdelivereat.settings import MEDIA_URL, STATIC_URL, ENCRYPTION_KEY
 from cryptography.fernet import Fernet
 from django.utils.functional import cached_property
 
@@ -37,12 +37,12 @@ class User(AbstractUser):
 
 class Negocio(models.Model):
     nombre = models.CharField(max_length=255)
-    _numero_de_cuenta = models.CharField(max_length=9, validators=[MinLengthValidator(9)],null=True,blank=True)  # Número de ruta de 9 dígitos
-    _iban = models.CharField(max_length=17,validators=[MinLengthValidator(6)],null=True,blank=True)  # Número de cuenta (mín. 6, máx. 17 dígitos)
+    _numero_de_enrutamiento = models.CharField(max_length=9, validators=[MinLengthValidator(9)],null=True,blank=True,db_column='numero_de_enrutamiento')  # Número de ruta de 9 dígitos
+    _numero_de_cuenta = models.CharField(max_length=17,validators=[MinLengthValidator(6)],null=True,blank=True,db_column='numero_de_cuenta')  # Número de cuenta (mín. 6, máx. 17 dígitos)
 
     @cached_property
     def fernet(self):
-        return Fernet()
+        return Fernet(ENCRYPTION_KEY)
 
     @property
     def numero_de_cuenta(self):
@@ -53,12 +53,12 @@ class Negocio(models.Model):
         self._numero_de_cuenta = self.fernet.encrypt(value.encode()).decode()
 
     @property
-    def iban(self):
-        return self.fernet.decrypt(self._iban.encode()).decode()
+    def numero_de_enrutamiento(self):
+        return self.fernet.decrypt(self._numero_de_enrutamiento.encode()).decode()
 
-    @iban.setter
-    def iban(self, value):
-        self._iban = self.fernet.encrypt(value.encode()).decode()
+    @numero_de_enrutamiento.setter
+    def numero_de_enrutamiento(self, value):
+        self._numero_de_enrutamiento = self.fernet.encrypt(value.encode()).decode()
     def __str__(self):
         return self.nombre
 

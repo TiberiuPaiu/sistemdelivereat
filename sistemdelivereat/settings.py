@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+from cryptography.fernet import Fernet
 from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -147,4 +148,4 @@ GLOBAL_PASSWORD ="Tiberiu.1234"
 STRIPE_PUBLIC_KEY = 'pk_test_51PMYfiGF2SGr9v2EBwtrcVsJN6QWLD6hEi07dNc4vVHpDMaxLX41hthGjo92MKkTHmYhB4IXKhXqSt2iiMRC4OXl00lstOu6Pm'
 STRIPE_SECRET_KEY = 'sk_test_51PMYfiGF2SGr9v2Ept70FwVCMRnjM8pdznzqezNqqxb3nmOx2xKFV9tezdmUONwHliygMlXXIFejCtvSdaIs2Hmg00AbvQ91MU'
 
-ENCRYPTION_KEY = 'KWOVwD9g6PKR7AAcQS9Dw05VvJmPVSGpSl5p1ElckZ0'
+ENCRYPTION_KEY = Fernet.generate_key()
