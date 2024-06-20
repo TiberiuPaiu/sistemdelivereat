@@ -1,11 +1,12 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 import uuid
 
 from sistemdelivereat.settings import MEDIA_URL, STATIC_URL
-
+from cryptography.fernet import Fernet
+from django.utils.functional import cached_property
 
 class User(AbstractUser):
     USER_TYPE_CHOICES = [
@@ -36,6 +37,30 @@ class User(AbstractUser):
 
 class Negocio(models.Model):
     nombre = models.CharField(max_length=255)
+    _numero_de_cuenta = models.CharField(max_length=9, validators=[MinLengthValidator(9)],null=True,blank=True)  # Número de ruta de 9 dígitos
+    _iban = models.CharField(max_length=17,validators=[MinLengthValidator(6)],null=True,blank=True)  # Número de cuenta (mín. 6, máx. 17 dígitos)
+
+    @cached_property
+    def fernet(self):
+        return Fernet()
+
+    @property
+    def numero_de_cuenta(self):
+        return self.fernet.decrypt(self._numero_de_cuenta.encode()).decode()
+
+    @numero_de_cuenta.setter
+    def numero_de_cuenta(self, value):
+        self._numero_de_cuenta = self.fernet.encrypt(value.encode()).decode()
+
+    @property
+    def iban(self):
+        return self.fernet.decrypt(self._iban.encode()).decode()
+
+    @iban.setter
+    def iban(self, value):
+        self._iban = self.fernet.encrypt(value.encode()).decode()
+    def __str__(self):
+        return self.nombre
 
 class Partners(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='partners_role')

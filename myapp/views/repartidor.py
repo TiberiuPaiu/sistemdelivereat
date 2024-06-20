@@ -24,6 +24,7 @@ class PedidoFiltrar:
             raise Http404('Página no encontrada')
 
 
+
 class ListPedidosRepartidor(LoginRequiredMixin, RolRequiredMixin, ListView):
     model = Pedido
     user_type_required = ['repartidor']
@@ -99,31 +100,9 @@ def validar_pedido(request, pedido_id):
             try:
                 pedido.estado = 'entregado'
                 pedido.save()
+                pedido.restaurante.partner.negocio.cuenta
 
-                stripe.api_key = 'sk_test_51PMYfiGF2SGr9v2Ept70FwVCMRnjM8pdznzqezNqqxb3nmOx2xKFV9tezdmUONwHliygMlXXIFejCtvSdaIs2Hmg00AbvQ91MU'
-                try:
-                    pago = stripe.PaymentIntent.create(
-                        amount=int(pedido.total * 100),
-                        currency='usd',
-                        payment_method_types=['card'],
-                        payment_method={
-                            'type': 'card',
-                            'card': {
-                                'number': '4242424242424242',
-                                'exp_month': 12,
-                                'exp_year': 2025,
-                                'cvc': '123'
-                            }
-                        },
-                        metadata={
-                            'order_id': pedido.id
-                        }
-                    )
-                except Exception as e:
-                    messages.error(request, e)
-                    return redirect('myapp:validar_pedido', pedido_id=pedido_id)
-
-                messages.success(request, "El pedido a sido entregado corectamente.")
+                #transferir_fondos(restaurante_cuenta_bcn, monto, motivo)
 
 
                 return redirect('myapp:pedidos_repartidor', tipo_objeto='entregado')
@@ -183,3 +162,14 @@ class Map_Rpartidor(LoginRequiredMixin, RolRequiredMixin, DetailView):
 
 
 
+def transferir_fondos(restaurante_cuenta_bcn, dinero,motivo):
+    try:
+        transferencia = stripe.Transfer.create(
+            amount=int(dinero) * 100,
+            currency='eur',
+            destination=restaurante_cuenta_bcn,
+            transfer_group=motivo,
+        )
+        return True, str(f"Transferencia realizada correctamente: {transferencia.id}")
+    except stripe.error.StripeError as e:
+        return False, str(f"Error en la transferencia de fondos: {e.error.message}")
