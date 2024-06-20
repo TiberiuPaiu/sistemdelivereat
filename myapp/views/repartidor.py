@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView ,TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from myapp.models import Pedido, Cocina, Repartidor
+from sistemdelivereat import settings
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.decorators import web_access_type_required
 from django.contrib.auth.decorators import login_required
@@ -98,16 +99,44 @@ def validar_pedido(request, pedido_id):
         if codigo_validacio == pedido.codigo_validacio:
             # Código de validación correcto, puedes marcar el pedido como validado
             try:
+
+                negocio=pedido.restaurante.partner.negocio
+
+                stripe.api_key = "sk_test_51PMYfiGF2SGr9v2Ept70FwVCMRnjM8pdznzqezNqqxb3nmOx2xKFV9tezdmUONwHliygMlXXIFejCtvSdaIs2Hmg00AbvQ91MU"
+
+                try:
+                    account1 = stripe.Account.create(
+                        type='express',
+                        country='US',
+                        email='user1@example.com',
+                        capabilities={
+                            'transfers': {'requested': True},
+                        },
+                    )
+                    cuenta_destino = account1.id
+                except Exception as e:
+                    messages.error(request, "Error en la cuenta :"+str(e))
+                    return redirect('myapp:validar_pedido', pedido_id=pedido_id)
+
+                try:
+                    # Transferir fondos a la cuenta conectada del negocio
+                    transferencia=stripe.Transfer.create(
+                        amount=400,
+                        currency="usd",
+                        destination=cuenta_destino,
+                        transfer_group="ORDER_95",
+                    )
+                    messages.success(request,"Transferencia realizada correctamente:"+transferencia.id )
+                except Exception as e:
+                    messages.error(request, "Error en la transferencia de fondos:"+str(e))
+                    return redirect('myapp:validar_pedido', pedido_id=pedido_id)
+
                 pedido.estado = 'entregado'
                 pedido.save()
-                pedido.restaurante.partner.negocio.cuenta
-
-                #transferir_fondos(restaurante_cuenta_bcn, monto, motivo)
-
 
                 return redirect('myapp:pedidos_repartidor', tipo_objeto='entregado')
             except Exception as e:
-                messages.error(request,e)
+                messages.error(request, "Error aqui"+ str(e))
                 return redirect('myapp:validar_pedido', pedido_id=pedido_id)
 
         else:
@@ -162,14 +191,29 @@ class Map_Rpartidor(LoginRequiredMixin, RolRequiredMixin, DetailView):
 
 
 
-def transferir_fondos(restaurante_cuenta_bcn, dinero,motivo):
+def transferir_fondos(negocio, dinero):
     try:
+        # Transferir fondos a la cuenta conectada del negocio
         transferencia = stripe.Transfer.create(
-            amount=int(dinero) * 100,
-            currency='eur',
-            destination=restaurante_cuenta_bcn,
-            transfer_group=motivo,
+            amount=int(dinero) * 100,  # El monto debe estar en centavos
+            currency='eur',  # Especificar la moneda como 'eur' para euros
+            destination=negocio.numero_de_cuenta,  # ID de la cuenta conectada del negocio en Stripe
         )
         return True, str(f"Transferencia realizada correctamente: {transferencia.id}")
     except stripe.error.StripeError as e:
         return False, str(f"Error en la transferencia de fondos: {e.error.message}")
+
+
+def obtener_cuenta_bancaria(account_number, routing_number):
+    try:
+        bank_accounts = stripe.PaymentMethod.list(
+            type="ach_debit",
+            ach_debit={"account_number": "000123456789", "routing_number": "110000000"},
+        )
+
+        # Suponiendo que hayas creado una cuenta bancaria de prueba y quieres usar la primera
+        bank_account_id = bank_accounts.data[0].id if bank_accounts.data else None
+        return bank_account_id
+    except stripe.error.StripeError as e:
+        print(f"Error al obtener cuenta bancaria de prueba: {e}")
+        return None
