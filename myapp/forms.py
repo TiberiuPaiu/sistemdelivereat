@@ -130,6 +130,7 @@ class AddPlatoFormulario(forms.Form):
             'min_value': 'El precio debe ser un valor positivo mayor a cero.'
         }
     )
+
     descuento = forms.DecimalField(
         max_digits=3,
         decimal_places=0,
