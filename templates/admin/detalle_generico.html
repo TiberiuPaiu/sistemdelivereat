@@ -19,6 +19,82 @@
 {% block content %}
     <!-- Agrega más detalles específicos del restaurante -->
 {% if tipo_objeto == 'restaurante' %}
+ <section class="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card card-primary">
+                                <div class="card-header" style="background-color: #969FAA; color:white">
+                                    <h3 class="card-title">Detalles del {{ tipo_objeto }}</h3>
+                                </div>
+                                     <div class="card-body">
+                                     
+                                      <div class="post clearfix">
+<div class="user-block">
+<img class="img-circle img-bordered-sm" src="{{ object.imagens.first.imagen.url }}" alt="user image">
+<span class="username">
+<a href="#">{{ object.nombre }}</a>
+<div class="float-right ">
+
+     <div class="estrellas" data-puntuacion=" {{ object.puntuacion_media }}"></div>
+</div>
+</span>
+<span class="description"> {{ object.ubicacion.full_address }}</span>
+       
+<div class="row">
+
+     {% for tipo_comida in restaurante.tipos_comida %}
+         <div class="col">
+             <small class="badge badge-info"> {{ tipo_comida }}  </small>
+              
+        </div>
+           {% endfor %}
+     
+</div>
+
+
+</div>
+
+<p>
+ {{ object.descripcion}}
+</p>
+<p>
+
+<span class="float-right">
+<a href="{% url 'myapp:resena_generico' tipo_objeto='restaurante' id_objeto=object.id %}" class="link-black text-sm">
+<i class="far fa-comments mr-1"></i> Reseñas ({{ object.resenas.count }})
+</a>
+</span>
+</p>
+                                         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                                <div class="carousel-inner">
+                                    <!-- Aquí puedes iterar sobre las imágenes del restaurante y mostrarlas en el carrusel -->
+                                    {% for obj in object.imagens.all %}
+                                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                            <img class="d-block w-100" style="max-height: 200px; object-fit: cover;" src="{{ obj.imagen.url }}" >
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+                            </div>
+
+                                      </div>   
+
+                                </div>
+                            
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>   
+    
  <!-- Agrega más detalles específicos del usuario -->
 {% elif tipo_objeto == 'usuario' %}
   <section class="content">
@@ -59,7 +135,6 @@
   </section>
 <!-- Agrega más detalles específicos del pedido -->
 {% elif tipo_objeto == 'pedido' %}
-            <!-- Contenido de la página -->
             <section class="content">
                 <div class="container">
                     <div class="row">
@@ -68,10 +143,9 @@
                                 <div class="card-header" style="background-color: #969FAA; color:white">
                                     <h3 class="card-title">Detalles del {{ tipo_objeto }}</h3>
                                 </div>
-                                    {% elif tipo_objeto == 'pedido' %}
+                                     <div class="card-body">
 
-
-                                        <div class="invoice p-3 mb-3">
+ <div class="invoice p-3 mb-3">
 
 <div class="row">
 <div class="col-12">
@@ -206,11 +280,14 @@ Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.us
 </div>
 </div>
 </div>
+
+                                        
                                         
                                         <!-- Agrega más detalles específicos del usuario -->
-
+                                     </div>
 
                                 </div>
+                            
                             </div>
                         </div>
                     </div>
