@@ -349,6 +349,27 @@ def reset_password(request, user_id, restaurante_id):
         messages.error(request, str(e))
         return redirect('myapp:list_user_restaurant', restaurante_id=restaurante_id)
 
+@login_required
+@web_access_type_required("partners")
+def denegar_acceso(request, user_id, restaurante_id):
+    user = get_object_or_404(User, id=user_id)
+    try:
+        # reset password
+        if user.is_active == 1:
+            user.is_active=0
+            user.save()
+            messages.success(request, 'El usuario '+user.get_full_name()+'se le ha denegado el acceso en el sistema.')
+            return redirect('myapp:list_user_restaurant', restaurante_id=restaurante_id )
+        else:
+            user.is_active = 1
+            user.save()
+            messages.success(request, 'El usuario '+user.get_full_name()+' se le ha devuelto el acceso en el sistema.')
+            return redirect('myapp:list_user_restaurant', restaurante_id=restaurante_id)
+
+    except Exception as e:
+        messages.error(request, str(e))
+        return redirect('myapp:list_user_restaurant', restaurante_id=restaurante_id)
+
 
 @login_required
 @web_access_type_required("partners")

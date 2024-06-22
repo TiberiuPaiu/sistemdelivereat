@@ -37,6 +37,7 @@ urlpatterns = [
     path('lista/trabajdores/<int:restaurante_id>', login_required(UsuariosRestauranteListView.as_view()), name='list_user_restaurant'),
 
     path('reset_password/<int:user_id>/<int:restaurante_id>/', login_required(reset_password), name='reset_password'),
+    path('denegar_acceso/<int:user_id>/<int:restaurante_id>/', login_required(denegar_acceso), name='denegar_acceso'),
     #platos
     path('restaurante/agregar_plato/<int:restaurante_id>/', login_required(agregar_plato), name='agregar_plato'),
     path('restaurante/listar_plato/<int:restaurante_id>/', login_required(PlatosRestauranteListView.as_view()) , name='list_platos'),

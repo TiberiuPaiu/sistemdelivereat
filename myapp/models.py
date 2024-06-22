@@ -29,7 +29,7 @@ class User(AbstractUser):
         return self.prefix_tel + " " + self.telefono
 
     def get_img(self):
-        if self.path_profile_photo == None:
+        if self.path_profile_photo == None or self.path_profile_photo =="":
             return MEDIA_URL + "/img/user-150x150.png"
         else:
             return MEDIA_URL + "/profile_photo/" + str(self.path_profile_photo)

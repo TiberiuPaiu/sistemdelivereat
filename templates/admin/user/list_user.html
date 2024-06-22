@@ -99,8 +99,9 @@
                         <a href="{% url 'myapp:reset_password'  user.id  restaurante_id %}" class="nav-link">
                             Restear Contraseña
                         </a>
-                         <a href="#" class="nav-link">
-                            Denegar acceso
+                         <a href="{% url 'myapp:denegar_acceso'  user.id  restaurante_id %}" class="nav-link">
+                            {% if user.is_active == 1 %} Denegar el acceso  {% else %} Devolver el acceso    {% endif %}
+                            
                         </a>
                         <a href="{% url 'myapp:detalle_generico' tipo_objeto='usuario' id_objeto=user.id   %}" class="nav-link">
                             Ver los datos
