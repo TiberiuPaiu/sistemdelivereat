@@ -79,8 +79,11 @@
 
     <div class="col-md-4 ">
         <div class="card card-widget widget-user-2">
+           
             <div class="widget-user-header " style="background-color: #F49941; color:white">
-
+                 <div class="widget-user-image">
+                    <img class="img-circle elevation-2" src=" {{ user.get_img }}" alt="User Avatar">
+                </div>
                 <h3 class="widget-user-username">{{ user.username }}</h3>
                 <h5 class="widget-user-desc">
 

@@ -42,10 +42,6 @@ class AddUserFormulario(forms.Form):
                                error_messages={'required': 'El nombre de usuario es obligatorio'})
     email = forms.EmailField(label='Correo electrónico', required=True,
                              error_messages={'required': 'El correo electrónico es obligatorio'})
-    password = forms.CharField(widget=forms.PasswordInput, max_length=128, min_length=8, required=True,
-                               error_messages={'required': 'La contraseña es obligatoria',
-                                               'max_length': 'El campo nombre no puede ser tan largo.',
-                                               'min_length': 'La contraseña tiene que contener 8 caracteres'})
     prefix_tel = forms.CharField(max_length=3, required=True,
                                  error_messages={'required': 'Seleccione un prefijo'})
     telefono = forms.CharField(max_length=10, required=True,
