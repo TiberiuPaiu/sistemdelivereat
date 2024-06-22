@@ -6,7 +6,7 @@ from django.http import HttpResponse, Http404
 from django.views.generic import DetailView
 
 
-from myapp.models import Restaurante, User, Pedido
+from myapp.models import Restaurante, User, Pedido, Plato
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
 from sistemdelivereat.utils.To_PDF import render_to_pdf
 
@@ -31,6 +31,9 @@ class DetalleGenericoView(LoginRequiredMixin, RolRequiredMixin, DetailView):
         # Determinar qué modelo se está solicitando y obtener el objeto correspondiente
         if tipo_objeto == 'restaurante':
             return Restaurante.objects.get(pk=id_objeto)
+        elif tipo_objeto == 'plato':
+            return Plato.objects.get(pk=id_objeto)
+
         elif tipo_objeto == 'usuario':
             return User.objects.get(pk=id_objeto)
         elif tipo_objeto == 'pedido':

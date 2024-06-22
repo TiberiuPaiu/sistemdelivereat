@@ -18,7 +18,79 @@
 
 {% block content %}
     <!-- Agrega más detalles específicos del restaurante -->
-{% if tipo_objeto == 'restaurante' %}
+{% if tipo_objeto == 'plato' %}
+  <section class="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card card-primary">
+                                <div class="card-header" style="background-color: #969FAA; color:white">
+                                    <h3 class="card-title">Detalles del {{ tipo_objeto }}</h3>
+                                </div>
+                                     <div class="card-body">
+
+                                      <div class="post clearfix">
+                                        <div class="user-block" >
+<img class="img-circle img-bordered-sm" src="{{ object.imagen.url }}" alt="Imagen de {{ object.nombre }}">
+<span class="username">
+<a href="#">{{ object.nombre }} </a>
+<div class="float-right ">
+
+     <div class="estrellas" data-puntuacion=" {{ object.puntuacion_media }}"></div>
+</div>
+
+</span>
+<span class="description">
+
+     {% if object.descuento > 0 %}
+             <h5> <del>{{ object.precio }}</del> -  {{ object.precio }}  €</h5>
+
+            {% else %}
+                 <h5>{{ object.precio }}  €  </h5>
+            {% endif %}
+
+    <small class="badge " style="background-color: #F49941; color:white"> {{ object.tipo_comida.nombre }} </small>
+
+
+</span>
+
+</div>
+
+
+<ul>
+{% for ingrediente in object.ingredientes.all %}
+                  <li> {{ ingrediente.nombre }}</li>
+                   {% endfor %}
+</ul>
+<p>
+<a href="{% url 'myapp:resena_generico' tipo_objeto='plato' id_objeto=object.id %}" class="link-black text-sm">
+<i class="far fa-comments mr-1"></i> Reseñas ({{ object.resenas.count }})
+</a>
+
+ {% if  user.user_type == "cliente"  %}
+<span class="float-right">
+<a href="{% url 'myapp:agregar_carrito' plato_id=object.id %}">Agregar al carrito</a>
+</span>
+     {% endif %}
+</p>
+
+
+
+
+
+                                      </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+{% elif tipo_objeto == 'restaurante' %}
  <section class="content">
                 <div class="container">
                     <div class="row">
@@ -28,7 +100,7 @@
                                     <h3 class="card-title">Detalles del {{ tipo_objeto }}</h3>
                                 </div>
                                      <div class="card-body">
-                                     
+
                                       <div class="post clearfix">
 <div class="user-block">
 <img class="img-circle img-bordered-sm" src="{{ object.imagens.first.imagen.url }}" alt="user image">
@@ -40,16 +112,16 @@
 </div>
 </span>
 <span class="description"> {{ object.ubicacion.full_address }}</span>
-       
+
 <div class="row">
 
      {% for tipo_comida in restaurante.tipos_comida %}
          <div class="col">
              <small class="badge badge-info"> {{ tipo_comida }}  </small>
-              
+
         </div>
            {% endfor %}
-     
+
 </div>
 
 
@@ -85,16 +157,16 @@
                                 </a>
                             </div>
 
-                                      </div>   
+                                      </div>
 
                                 </div>
-                            
+
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>   
-    
+            </section>
+
  <!-- Agrega más detalles específicos del usuario -->
 {% elif tipo_objeto == 'usuario' %}
   <section class="content">
@@ -154,7 +226,7 @@
 <img class="img-circle " src="/media/img/icono_app.ico" alt="user image" width="50" height="50" >
 DeliverEat
 <small class="float-right"> {{ object.fecha_pedido }} </small>
-          
+
 </h4>
 </div>
 
@@ -189,7 +261,7 @@ Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.us
 <br>
 <b>Código de confirmación :</b> {{ object.codigo_validacio }}<br>
 <b>Fecha de pago:</b> <br>
-<b>Cuenta:</b> 
+<b>Cuenta:</b>
 </div>
 
 </div>
@@ -271,9 +343,9 @@ Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.us
 
 
 <div class="row no-print">
-<div class="col-12"> 
+<div class="col-12">
 <button   type="button" name="imprimir" value="Imprimir" onclick="window.print();" class="btn btn-default"><i class="fas fa-print"></i> Imprimir </button>
-<a href="{% url 'myapp:generar_pdf' id_objeto=object.id tipo_objeto='pedido' %}"> 
+<a href="{% url 'myapp:generar_pdf' id_objeto=object.id tipo_objeto='pedido' %}">
 <button type="button" class="btn btn-primary float-right" style="margin-right: 5px;" >
 <i class="fas fa-download"></i> Generar PDF
 </button></a>
@@ -281,13 +353,13 @@ Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.us
 </div>
 </div>
 
-                                        
+
                                         
                                         <!-- Agrega más detalles específicos del usuario -->
                                      </div>
 
                                 </div>
-                            
+
                             </div>
                         </div>
                     </div>
@@ -299,6 +371,43 @@ Correo electrónico:<a href="/cdn-cgi/l/email-protection"  >{{ object.cliente.us
 {% endblock %}
 
 {% block script %}
+
+
+     <script>
+    function dibujarEstrellas(elemento) {
+         const puntuacion = parseFloat(elemento.getAttribute('data-puntuacion'));
+        // Tu código para dibujar las estrellas
+        const totalEstrellas = 5;
+        const estrellasLlenas = Math.floor(puntuacion);
+        const estrellaParcial = puntuacion - estrellasLlenas;
+        const estrellasVacias = totalEstrellas - estrellasLlenas - (estrellaParcial > 0 ? 1 : 0);
+        let estrellasHtml = '';
+
+        for (let i = 0; i < estrellasLlenas; i++) {
+            estrellasHtml += '<i class="fas fa-star mr-1 text-warning"></i>';
+        }
+
+         if (estrellaParcial > 0) {
+            estrellasHtml += '<i class="fas fa-star-half-alt mr-1 text-warning"></i>';
+        }
+
+        for (let i = 0; i < estrellasVacias; i++) {
+            estrellasHtml += '<i class="far fa-star mr-1 text-warning"></i>';
+        }
+
+        // Agregar el HTML generado al elemento
+        elemento.innerHTML = estrellasHtml;
+    }
+
+    // Seleccionar todos los elementos con la clase 'estrellas'
+    const elementosEstrellas = document.querySelectorAll('.estrellas');
+
+    // Iterar sobre los elementos seleccionados y llamar a la función dibujarEstrellas
+    elementosEstrellas.forEach(function(elemento) {
+        dibujarEstrellas(elemento);
+    });
+
+    </script>
 
 
 <!-- jQuery -->

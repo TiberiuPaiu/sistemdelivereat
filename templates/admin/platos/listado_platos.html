@@ -96,7 +96,11 @@
                     <tbody>
                         {% for plato in platos %}
                         <tr>
-                            <td>{{ plato.nombre }}</td>
+                            <td>
+                                <a href="{% url 'myapp:detalle_generico' tipo_objeto='plato' id_objeto=plato.id %}" >
+                                {{ plato.nombre }}
+                                </a>
+                            </td>
                             <td>{{ plato.precio }}</td>
                             <td>{{ plato.descuento }}</td>
                             <td>
