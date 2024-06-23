@@ -458,7 +458,22 @@ class PlatosRestauranteListView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_queryset(self):
         restaurante_id = self.kwargs['restaurante_id']
-        return Plato.objects.filter(restaurante_id=restaurante_id)
+        platos = Plato.objects.filter(restaurante_id=restaurante_id)
+        query = self.request.GET.get('query')
+        tipo_comida = self.request.GET.get('tipo_comida')
+        if query:
+            platos = platos.filter(
+                Q(nombre__icontains=query)
+
+            )
+        if tipo_comida:
+            platos = platos.filter(
+                Q(tipo_comida__nombre=tipo_comida)
+
+            )
+        return platos
+
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -467,7 +482,7 @@ class PlatosRestauranteListView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
         # Obtén el restaurante
         restaurante = Restaurante.objects.get(pk=restaurante_id)
-
+        context['tipos_comida'] = TipoComida.objects.all()
 
         context['title_pagina'] = {'label_title': "Llistat de platos",
                                    'title_card': "Llistat de platos de " + restaurante.nombre,

@@ -43,7 +43,7 @@
 <span class="description">
 
      {% if object.descuento > 0 %}
-             <h5> <del>{{ object.precio }}</del> -  {{ object.precio }}  €</h5>
+             <h5> <del>{{ object.precio }}</del> -  {{ object|descuento  }}  €</h5>
 
             {% else %}
                  <h5>{{ object.precio }}  €  </h5>

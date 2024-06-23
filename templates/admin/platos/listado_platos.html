@@ -1,7 +1,7 @@
 {% extends 'base/base_adminlte.html' %}
 {% load static %}
 {% load custom_tags %}
-
+{% load custom_filters %}
 {% block style %}
  <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -12,7 +12,6 @@
           integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
 
     <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
-
 
 {% endblock %}
 {% block content %}
@@ -34,6 +33,33 @@
 <div class="container">
 
     <div class="row">
+    
+     <div class="col-md-12">
+        <form action="" method="get"  name="prodsubmit" >
+            <div class="input-group mb-3">
+                
+                  <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por tipos </button>
+                    <div class="dropdown-menu">
+                        {% for tipos in tipos_comida %}
+
+                          <a class="dropdown-item" href="{% url 'myapp:list_platos' restaurante_id=restaurante_id  %}?tipos={{ tipos.nombre }}"> {{ tipos.nombre }} </a>
+                         {% endfor %}
+                    
+                        <div role="separator" class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'myapp:list_platos' restaurante_id=restaurante_id %}">Mostrar todo</a>
+                      </div>
+                    </div>
+        
+                  <input type="text" name="query" class="form-control" placeholder="Escribe la direcion que desea buscar" value="{{ request.GET.query }}" autocomplete="off">
+                  <a href="javascript:document.prodsubmit.submit()" style="text-decoration:none;">
+                    <span class="input-group-text" id="basic-addon1">Buscar</span>
+                  </a>
+      
+             </div>
+        </form>
+       
+       </div>
 
         <div class="col-md-3 d-flex align-items-center">
 
@@ -88,12 +114,14 @@
                         <tr>
                             <th>Nombre</th>
                             <th>Precio</th>
-                            <th>Descuento (%)</th>
+                            <th>Descuento</th>
                             <th>Ingredientes</th>
+                            <th>Puntuacion</th>
                               <th>Opciónes</th>
                         </tr>
                     </thead>
                     <tbody>
+                    {% if platos %}
                         {% for plato in platos %}
                         <tr>
                             <td>
@@ -101,8 +129,13 @@
                                 {{ plato.nombre }}
                                 </a>
                             </td>
-                            <td>{{ plato.precio }}</td>
-                            <td>{{ plato.descuento }}</td>
+                            <td>{% if plato.descuento > 0 %}
+              <del>{{ plato.precio }}</del> -  {{ plato|descuento  }}  €
+
+            {% else %}
+                {{ plato.precio }}  €  
+            {% endif %}</td>
+                            <td>{{ plato.descuento }} % </td>
                             <td>
                                 <ul>
                                     {% for ingrediente in plato.ingredientes.all %}
@@ -110,7 +143,7 @@
                                     {% endfor %}
                                 </ul>
                             </td>
-                        
+                             <td><div class="estrellas" data-puntuacion=" {{ object.puntuacion_media }}"></div> </td>
                             <td> 
                                 <a href="{% url 'myapp:resena_generico_admin' tipo_objeto='plato' id_objeto=plato.id %}"  class="link-black text-sm">
 
@@ -121,6 +154,12 @@
                             </td>
                         </tr>
                         {% endfor %}
+                    
+                     {% else %}
+                                    <tr>
+                                        <td colspan="7">No hay ningún plato en este momento.</td>
+                                    </tr>
+                                {% endif %}
                     </tbody>
                 </table>
             </div>
@@ -175,7 +214,41 @@
 
 {% block script %}
 
+ <script>
+    function dibujarEstrellas(elemento) {
+         const puntuacion = parseFloat(elemento.getAttribute('data-puntuacion'));
+        // Tu código para dibujar las estrellas
+        const totalEstrellas = 5;
+        const estrellasLlenas = Math.floor(puntuacion);
+        const estrellaParcial = puntuacion - estrellasLlenas;
+        const estrellasVacias = totalEstrellas - estrellasLlenas - (estrellaParcial > 0 ? 1 : 0);
+        let estrellasHtml = '';
 
+        for (let i = 0; i < estrellasLlenas; i++) {
+            estrellasHtml += '<i class="fas fa-star mr-1 text-warning"></i>';
+        }
+
+         if (estrellaParcial > 0) {
+            estrellasHtml += '<i class="fas fa-star-half-alt mr-1 text-warning"></i>';
+        }
+
+        for (let i = 0; i < estrellasVacias; i++) {
+            estrellasHtml += '<i class="far fa-star mr-1 text-warning"></i>';
+        }
+
+        // Agregar el HTML generado al elemento
+        elemento.innerHTML = estrellasHtml;
+    }
+
+    // Seleccionar todos los elementos con la clase 'estrellas'
+    const elementosEstrellas = document.querySelectorAll('.estrellas');
+
+    // Iterar sobre los elementos seleccionados y llamar a la función dibujarEstrellas
+    elementosEstrellas.forEach(function(elemento) {
+        dibujarEstrellas(elemento);
+    });
+
+    </script>
 <!-- jQuery -->
 <script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
 <!-- Bootstrap 4 -->
