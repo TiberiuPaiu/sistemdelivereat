@@ -1,0 +1,116 @@
+{% extends 'base/base_adminlte.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block style %}
+ <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{% static 'adminlte/css/all.min.css' %}">
+    <!--  iconas fas -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+          integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{% static 'adminlte/css/adminlte.min.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bs-stepper/dist/css/bs-stepper.min.css"  rel="stylesheet" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+ <style>
+        .bs-stepper-circle.active {
+            background-color: #e38b37;
+        }
+        .step-container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .step-container .step-wrapper {
+            flex: 1 1 33.3333%;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+        .step-container .step-wrapper .step, .step-container .step-wrapper .line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
+{% endblock %}
+
+
+{% block content %}
+    <!-- Agrega más detalles específicos del restaurante -->
+
+  <section class="content">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card card-primary">
+                                <div class="card-header" style="background-color: #969FAA; color:white">
+                                    <h3 class="card-title">Estado Actual que se encuentra el pedido {{ pedido.codigo_pedido }} </h3>
+                                </div>
+                                     <div class="card-body">
+                                         <div class="bs-stepper">
+           
+                                          <div class="bs-stepper-header" role="tablist">
+                                           {% for estado, nombre in pedido.ESTADOS_TYPE %}
+            {% if estado != 'pendiente_pago' %}
+                <div class="step-wrapper" id="step-wrapper-{{ estado }}">
+                    <div class="step" data-target="#{{ estado }}">
+                        <button type="button" class="step-trigger" role="tab" aria-controls="{{ estado }}" id="{{ estado }}-trigger">
+                            <span class="bs-stepper-circle {% if pedido.estado == estado %}active{% endif %}" id="circle-{{ estado }}">{{ forloop.counter }}</span>
+                            <span class="bs-stepper-label">{{ nombre }}</span>
+                        </button>
+                    </div>
+                   
+                </div>
+            {% endif %}
+        {% endfor %}
+            </div>
+              </div>                        
+
+                            
+                                     </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </section>
+    
+
+{% endblock %}
+
+{% block script %}
+    
+<script src="https://cdn.jsdelivr.net/npm/bs-stepper/dist/js/bs-stepper.min.js"></script>
+    
+    <script>
+       
+            var x_segundo=20000
+            function actualizarEstado() {
+                $.ajax({
+                    url: '{% url 'myapp:estado_pedido_actualizado' pedido_id=pedido.id %}',
+                    method: 'GET',
+                    success: function(response) {
+                        var estadoActual = response.estado;
+                        // Actualiza el stepper visualmente
+                        $('.bs-stepper-circle').removeClass('active');
+                        $('#circle-' + estadoActual).addClass('active');
+                    }
+                });
+            }
+
+            // Actualiza el estado cada x segundos
+            setInterval(actualizarEstado, x_segundo);
+      
+    </script>
+
+<!-- jQuery -->
+<script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/js/bootstrap.bundle.min.js' %}"></script>
+
+
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/js/adminlte.min.js' %}"></script>
+
+{% endblock %}

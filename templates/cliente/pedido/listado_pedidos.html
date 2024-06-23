@@ -60,7 +60,7 @@
         {{ pedido.codigo_pedido }} </a>
 
     </td>
-      <td>{{ pedido.get_estado_display }}</td>
+        <td> <a  href="{% url 'myapp:estado_pedido_actualizado' pedido_id=pedido.id %}"> Estado Actual </a></td>
       <td>
         <ul>
           {% for plato in pedido.platos.all %}

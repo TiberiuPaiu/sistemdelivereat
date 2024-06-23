@@ -2,9 +2,9 @@ from io import BytesIO
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, Http404
-from django.views.generic import DetailView
-
+from django.http import HttpResponse, Http404, JsonResponse
+from django.shortcuts import get_object_or_404, render
+from django.views.generic import DetailView, View
 
 from myapp.models import Restaurante, User, Pedido, Plato
 from sistemdelivereat.utils.RolRequiredMixin import RolRequiredMixin
@@ -68,5 +68,13 @@ class Generar_pdf(LoginRequiredMixin, RolRequiredMixin, DetailView):
         pdf = render_to_pdf("pdf/template_pdf.html", data)#Funcion en otro archivo que renderiza
         return HttpResponse(pdf, content_type = "application/pdf")
 
+
+class EstadoPedidoActualizado(View):
+    def get(self, request, pedido_id, *args, **kwargs):
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'estado': pedido.estado})
+        else:
+            return render(request, 'generico/estado_pedido_actualizado.html', {'pedido': pedido})
 
 
