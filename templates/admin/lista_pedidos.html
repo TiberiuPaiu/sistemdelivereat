@@ -55,11 +55,15 @@
   {% if pedidos %}
     {% for pedido in pedidos %}
     <tr>
-    <td>{{ pedido.codigo_pedido }}</td>
+    <td>
+        <a  href="{% url 'myapp:detalle_generico' 'pedido' pedido.id %}">
+
+        {{ pedido.codigo_pedido }} </a>
+    </td>
     <td>
           {{ pedido.cliente.user.get_full_name }}
       </td>
-      <td>{{ pedido.get_estado_display }}</td>
+      <td>  <a  href="{% url 'myapp:estado_pedido_actualizado' pedido_id=pedido.id %}"> Estado Actual </a></td>
       <td>
         <ul>
           {% for plato in pedido.platos.all %}
@@ -74,9 +78,11 @@
           {% endfor %}
         </ul>
       </td>
-      <td>{{ pedido.total }} €</td>
+      <td>{{ pedido.total }} €</td> 
       <td>
-          {{ pedido.repartidor.user.get_full_name }}
+          {% if pedido.repartidor.user  %}
+          <a  href="{% url 'myapp:detalle_generico' tipo_objeto='usuario' id_objeto=pedido.repartidor.user.id %}"> {{ pedido.repartidor.user.get_full_name }} </a>
+            {% endif %}
       </td>
       <td>{{ pedido.fecha_pedido }}</td>
         
