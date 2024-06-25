@@ -114,7 +114,7 @@ class Imagen(models.Model):
 
 class Repartidor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='repartidor_user')
-    restaurante = models.OneToOneField(Restaurante, on_delete=models.CASCADE, null=True, related_name='repartidor_restaurante')
+    restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE, null=True, related_name='repartidores')
 
 
 class Cocina(models.Model):
