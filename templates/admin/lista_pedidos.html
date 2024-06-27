@@ -33,6 +33,70 @@
 
         <div class="col-md-12">
         
+        <form action="" method="get"  name="prodsubmit" >
+            <div class="input-group mb-3">
+             <div class="input-group-prepend">
+                  <a href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante_id  %}"> 
+                      
+                    <button class="btn btn-outline-secondary" type="button">   Mostrar todo </button>
+                  </a>
+            </div>
+             
+                     
+                    
+
+                 <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por estado </button>
+                    <div class="dropdown-menu">
+                         {% for estado in estados %}
+                         <a class="dropdown-item" href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante_id  %}?estado={{ estado.0 }}"> {{ estado.1 }} </a>
+
+                         {% endfor%}
+                    <div role="separator" class="dropdown-divider"></div>
+                     <a class="dropdown-item" href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante_id  %}"> Mostrar todo </a>
+                      </div>
+                    </div>
+
+                 <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por repartidores </button>
+                    <div class="dropdown-menu">
+                         {% for repartidor in repartidores %}
+                         <a class="dropdown-item" href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante_id  %}?repartidor={{ repartidor.id }}"> {{ repartidor.user.get_full_name }} </a>
+
+                         {% endfor%}
+                    <div role="separator" class="dropdown-divider"></div>
+                     <a class="dropdown-item" href="{% url 'myapp:historial_pedidos_restaurante' restaurante_id=restaurante_id  %}"> Mostrar todo </a>
+                      </div>
+                    </div>
+
+             <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por data </button>
+                    <div class="dropdown-menu">
+                          <div class="p-2">
+<div class="input-group-prepend">
+    
+</div>
+<input class="form-control" name="data_inico"  type="datetime-local" value="{{ request.GET.data_inico }}" >
+<div class="input-group-prepend" >
+   Precio hasta
+</div>
+<input class="form-control" name="data_fin"  type="datetime-local" value="{{ request.GET.data_fin }}" >
+<br>
+                         <a href="javascript:document.prodsubmit.submit()" style="text-decoration:none;">
+                    <span class="input-group-text" id="basic-addon1">Buscar</span>
+                  </a>
+ </div>
+                      </div>
+                    </div>
+                
+                  <input type="text" name="query" class="form-control" placeholder="Buscar ... " value="{{ request.GET.query }}" autocomplete="off">
+                  <a href="javascript:document.prodsubmit.submit()" style="text-decoration:none;">
+                    <span class="input-group-text" id="basic-addon1">Buscar</span>
+                  </a>
+
+             </div>
+        </form>
+        
 
   <div class="card">
   

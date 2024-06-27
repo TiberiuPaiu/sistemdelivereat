@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 
 import stripe
@@ -250,10 +251,57 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
 
     def get_queryset(self):
-        return Pedido.objects.filter(cliente=Cliente.objects.get(user = self.request.user )).order_by('-fecha_pedido')
+        pedidos = Pedido.objects.filter(cliente=Cliente.objects.get(user = self.request.user )).order_by('-fecha_pedido')
+        query = self.request.GET.get('query')
+        estado_pedido = self.request.GET.get('estado')
+        restaurante = self.request.GET.get('restaurante')
+        data_inicio = self.request.GET.get('data_inicio')
+        data_fin = self.request.GET.get('data_fin')
+
+        if query:
+            pedidos = pedidos.filter(
+                Q(platos__nombre__icontains=query)
+                # Q(codigo_pedido=query)
+            )
+        if estado_pedido:
+            pedidos = pedidos.filter(
+                Q(estado=estado_pedido)
+            )
+        if restaurante:
+            pedidos = pedidos.filter(
+                Q(restaurante_id=restaurante)
+            )
+        if data_inicio and data_fin:
+            new_data_inicio = datetime.strptime(data_inicio, '%Y-%m-%dT%H:%M')
+            new_data_fin = datetime.strptime(data_fin, '%Y-%m-%dT%H:%M')
+            pedidos = pedidos.filter(fecha_pedido__range=(new_data_inicio, new_data_fin))
+
+            try:
+                new_data_inicio = datetime.strptime(data_inicio, '%Y-%m-%dT%H:%M')
+                new_data_fin = datetime.strptime(data_fin, '%Y-%m-%dT%H:%M')
+                if new_data_inicio > new_data_fin:
+                    messages.error(self.request, 'La fecha inicial no puede ser posterior a la fecha final.')
+                else:
+                    pedidos = pedidos.filter(fecha_pedido__range=(new_data_inicio, new_data_fin))
+            except ValueError:
+                messages.error(self.request, 'El formato de la fecha no es correcto. Use el formato AAAA-MM-DDTHH:MM.')
+                return redirect('myapp:pedidos_realizados', )
+
+        return pedidos
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        cliente_ciudad = get_object_or_404(Cliente, user=self.request.user).ubicacion.ciudad
+        context['restaurantes'] = Restaurante.objects.filter(ubicacion__ciudad=cliente_ciudad)
+        context['estados'] = [
+            ('espera_preparacion', 'En espera la preparación'),
+            ('preparacion', 'En preparación'),
+            ('espera_repartidor', 'Pendiente para su recogida por el repartidor'),
+            ('en_camino', 'En camino'),
+            ('entregado', 'Entregado'),
+            ('cancelado', 'Cancelado'),
+        ]
 
         context['title_pagina'] = {'label_title': "Llistat de pedidos realizados",
                                    'title_card': "Llistat de pedidos realizados "

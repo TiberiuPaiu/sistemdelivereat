@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
@@ -41,7 +43,15 @@ class ArticleDetailView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
+        context['estados']=[
+            ('espera_preparacion', 'En espera la preparación'),
+            ('preparacion', 'En preparación'),
+            ('espera_repartidor', 'Pendiente para su recogida por el repartidor'),
+            ('en_camino', 'En camino'),
+            ('entregado', 'Entregado'),
+            ('cancelado', 'Cancelado'),
+            ('pendiente_pago', 'Pendiente de pago'),
+        ]
         context['title_pagina'] = {'label_title': "Llistado de restaurantes",
                                    'title_card': "Llistado de restaurantes  " ,
                                    },
@@ -460,7 +470,7 @@ class PlatosRestauranteListView(LoginRequiredMixin, RolRequiredMixin, ListView):
         restaurante_id = self.kwargs['restaurante_id']
         platos = Plato.objects.filter(restaurante_id=restaurante_id)
         query = self.request.GET.get('query')
-        tipo_comida = self.request.GET.get('tipo_comida')
+        tipo_comida = self.request.GET.get('tipos')
         if query:
             platos = platos.filter(
                 Q(nombre__icontains=query)
@@ -550,12 +560,58 @@ class ListPedidosAdmin(LoginRequiredMixin, RolRequiredMixin, ListView):
     def get_queryset(self, **kwargs):
         # Obtén el ID del restaurante de la URL
         restaurante_id = self.kwargs['restaurante_id']
-        return Pedido.objects.filter(restaurante_id=restaurante_id).order_by('-fecha_pedido')
+        pedidos=Pedido.objects.filter(restaurante_id=restaurante_id).order_by('-fecha_pedido')
+        query = self.request.GET.get('query')
+        estado_pedido = self.request.GET.get('estado')
+        repartidor = self.request.GET.get('repartidor')
+        data_inicio = self.request.GET.get('data_inicio')
+        data_fin = self.request.GET.get('data_fin')
+
+        if query:
+            pedidos = pedidos.filter(
+                Q(platos__nombre__icontains=query)
+                #Q(codigo_pedido=query)
+            )
+        if estado_pedido:
+            pedidos = pedidos.filter(
+                Q(estado=estado_pedido)
+            )
+        if repartidor:
+            pedidos = pedidos.filter(
+                Q(repartidor_id=repartidor)
+            )
+        if data_inicio and data_fin:
+            new_data_inicio = datetime.strptime(data_inicio, '%Y-%m-%dT%H:%M')
+            new_data_fin = datetime.strptime(data_fin, '%Y-%m-%dT%H:%M')
+            pedidos = pedidos.filter(fecha_pedido__range=(new_data_inicio, new_data_fin))
+
+            try:
+                new_data_inicio = datetime.strptime(data_inicio, '%Y-%m-%dT%H:%M')
+                new_data_fin = datetime.strptime(data_fin, '%Y-%m-%dT%H:%M')
+                if new_data_inicio > new_data_fin:
+                    messages.error(self.request,'La fecha inicial no puede ser posterior a la fecha final.')
+                else:
+                    pedidos = pedidos.filter(fecha_pedido__range=(new_data_inicio, new_data_fin))
+            except ValueError:
+                    messages.error(self.request,'El formato de la fecha no es correcto. Use el formato AAAA-MM-DDTHH:MM.')
+                    return redirect('myapp:historial_pedidos_restaurante', restaurante_id=restaurante_id )
+
+        return pedidos
 
 
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['restaurante_id']=self.kwargs['restaurante_id']
+        context['repartidores'] = Restaurante.objects.get(id=self.kwargs['restaurante_id']).repartidores.all()
+        context['estados'] = [
+            ('espera_preparacion', 'En espera la preparación'),
+            ('preparacion', 'En preparación'),
+            ('espera_repartidor', 'Pendiente para su recogida por el repartidor'),
+            ('en_camino', 'En camino'),
+            ('entregado', 'Entregado'),
+            ('cancelado', 'Cancelado'),
+        ]
 
         context['title_pagina'] = {'label_title': "Historial de pedidos",
                                    'title_card': "Historial de pedidos "
