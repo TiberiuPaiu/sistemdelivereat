@@ -1,7 +1,6 @@
 import os
 
-from behave import given, when, then
-from django.contrib.auth.models import User
+
 from myapp.models import User, Archivo, Partners, Negocio
 
 from behave import given, when, then
@@ -141,3 +140,43 @@ def check_files_uploaded(context,username ):
     except Archivo.DoesNotExist:
         raise AssertionError(f"No se encontraron archivos asociados al negocio de {partner}")
 
+@given(u'estoy en la página de inicio de sesión')
+def visit_login_page(context):
+    context.client = Client()
+    context.response = context.client.get(reverse('myapp:login'))
+
+@given(u'existen las sigentes cuentas registradas en el sistema')
+def create_test_users(context):
+    for row in context.table:
+        user = User.objects.create_user(username=row['username'], password=row['password'])
+        user.user_type = row['rol']
+        user.save()
+@when(u'ingreso mis credenciales')
+def fill_login_form(context):
+    for row in context.table:
+        form = {
+            'username': row['username'],
+            'password': row['password'],
+        }
+        context.response = context.client.post(reverse('myapp:login'), form, follow=True)
+
+
+@when(u'presiono el botón de iniciar sesión')
+def press_login_button(context):
+    pass  # Ya se realiza la acción de enviar el formulario en el paso anterior
+
+
+@then(u'debería ser redirigido a la página corespodiente a mi rol')
+def verify_redirection(context):
+
+    assert context.client.session.get('_auth_user_id') is not None
+    user = User.objects.get(id=context.client.session['_auth_user_id'])
+    for row in context.table:
+        if user.user_type == row['rol']:
+            if row['rol'] == 'repartidor':
+                expected_url = reverse('myapp:'+str(row['url']),   kwargs={'tipo_objeto': 'recoger'})
+            else:
+                expected_url = reverse('myapp:'+str(row['url']))
+            print(f"Expected URL: {expected_url}")
+            print(f"Redirect chain: {context.response.redirect_chain}")
+            assert expected_url in context.response.redirect_chain[-1][0]
