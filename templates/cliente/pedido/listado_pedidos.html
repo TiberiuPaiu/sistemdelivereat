@@ -58,8 +58,9 @@
                     </div>
 
                  <div class="input-group-prepend">
-                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por restaurante </button>
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filtrar por repartidores </button>
                     <div class="dropdown-menu">
+                   
                          {% for restaurante in restaurantes %}
                          <a class="dropdown-item" href="{% url 'myapp:pedidos_realizados'  %}?restaurante={{ restaurante.id }}"> {{ restaurante.nombre }} </a>
 

@@ -3,6 +3,7 @@ from decimal import Decimal
 
 import stripe
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Avg, Q, Subquery, OuterRef, Sum
 from django.http import HttpResponse
@@ -251,6 +252,7 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
 
     def get_queryset(self):
+        page_number = self.request.GET.get('page', 2)
         pedidos = Pedido.objects.filter(cliente=Cliente.objects.get(user = self.request.user )).order_by('-fecha_pedido')
         query = self.request.GET.get('query')
         estado_pedido = self.request.GET.get('estado')
@@ -287,7 +289,11 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
                 messages.error(self.request, 'El formato de la fecha no es correcto. Use el formato AAAA-MM-DDTHH:MM.')
                 return redirect('myapp:pedidos_realizados', )
 
-        return pedidos
+                # Configura el paginador
+        paginator = Paginator(pedidos, self.paginate_by)
+        page_obj = paginator.get_page(page_number)
+
+        return page_obj
 
 
     def get_context_data(self, **kwargs):
@@ -316,7 +322,10 @@ class Pedidos_realizadosView(LoginRequiredMixin, RolRequiredMixin, ListView):
             }
         ]
 
+
         return context
+
+
 @login_required
 @web_access_type_required("cliente")
 def cancelar_pedido(request, pedido_id):
