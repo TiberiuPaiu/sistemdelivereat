@@ -10,12 +10,13 @@ Feature: Registro de Partners
       | username      | email             | password       | prefix_tel | telefono  | first_name | last_name | nombre_negocio  |
       | tibi_partner  | tibi@ejemplo.com  | Tiberiu.1234   | +34       | 600000000  | Test       | Partner   | Test Business   |
     And envío el formulario
-    Then debería ver la página de inicio de sesión de partners
+    Then debería ver la página de inicio de sesión
     And debería haber un username registrado con el username "tibi_partner" con el siguiente rol "partners"
+    And debería ver que los archivos fueron subidos correctamente para el usuario "tibi_partner"
 
   Scenario: Registro fallido de partner por no añadir achivos pdf
     Given estoy en la página de registro de partners
-    When lleno el formulario de partners con los siguientes datos
+    When lleno el formulario de partners con los siguientes datos pero sin archivos
     | username      | email             | password       | prefix_tel | telefono  | first_name | last_name | nombre_negocio  |
     | tibi_partner  | tibi@ejemplo.com  | Tiberiu.1234   | +34       | 600000000  | Test       | Partner   | Test Business   |
     And envío el formulario

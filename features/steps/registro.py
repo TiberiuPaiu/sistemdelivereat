@@ -2,7 +2,7 @@ import os
 
 from behave import given, when, then
 from django.contrib.auth.models import User
-from myapp.models import User
+from myapp.models import User, Archivo, Partners, Negocio
 
 from behave import given, when, then
 from django.urls import reverse
@@ -33,6 +33,10 @@ def fill_registration_form(context):
         }
         context.data = form
         context.response = context.client.post(reverse('myapp:hacer_registro_cliente'), form,follow=True)
+        # Verificar inmediatamente después de enviar el formulario
+        print("Datos del formulario enviados:", form)
+        print("Código de estado de la respuesta:", context.response.status_code)
+        print("Contenido de la respuesta:", context.response.content.decode('utf-8'))
 @when(u'envío el formulario')
 def submit_registration_form(context):
     pass  # La acción de enviar el formulario ya se realiza en el paso 'when lleno el formulario...'
@@ -59,7 +63,9 @@ def check_user_registered(context, username, rol):
 def check_user_not_registered(context, username):
     assert not User.objects.filter(username=username).exists()
 
-
+@then(u'debería  existir solo "{namber_registred}" usuarios')
+def check_namber_user_registered(context, namber_registred):
+    assert int(namber_registred) == User.objects.all().count()
 
 @given(u'estoy en la página de registro de partners')
 def visit_registration_page(context):
@@ -67,14 +73,34 @@ def visit_registration_page(context):
     context.response = context.client.get(reverse('myapp:hacer_registro'))
     assert context.response.status_code == 200
 
-
-@then('debería ver la página de inicio de sesión de partners')
-def see_login_page(context):
-    assert context.response.status_code == 302
-
-
 @when(u'lleno el formulario de partners con los siguientes datos')
 def fill_registration_form(context):
+    for row in context.table:
+        archivos_path = os.path.join(os.path.dirname(__file__), 'test_files')
+        archivos = [
+            ('archivos', open(os.path.join(archivos_path, 'file1.pdf'), 'rb')),
+            ('archivos', open(os.path.join(archivos_path, 'file2.pdf'), 'rb'))
+        ]
+
+        form = {
+            'username': row['username'],
+            'email': row['email'],
+            'password': row['password'],
+            'prefix_tel': row['prefix_tel'],
+            'telefono': row['telefono'],
+            'first_name': row['first_name'],
+            'last_name': row['last_name'],
+            'nombre_negocio': row['nombre_negocio'],
+            'archivos': archivos,
+        }
+
+        context.data = form
+        context.response = context.client.post(reverse('myapp:hacer_registro'), form, format='multipart', follow=True)
+        #print("Datos del formulario enviados:", form)
+        #print("Código de estado de la respuesta:", context.response.status_code)
+        #print("Contenido de la respuesta:", context.response.content.decode('utf-8'))
+@when(u'lleno el formulario de partners con los siguientes datos pero sin archivos')
+def not_fill_registration_form(context):
     for row in context.table:
         form = {
             'username': row['username'],
@@ -87,14 +113,31 @@ def fill_registration_form(context):
             'nombre_negocio': row['nombre_negocio'],
         }
 
-        archivos_path = os.path.join(os.path.dirname(__file__), 'test_files')
-        archivos = [
-            ('archivos', open(os.path.join(archivos_path, 'file1.pdf'), 'rb')),
-            ('archivos', open(os.path.join(archivos_path, 'file2.pdf'), 'rb'))
-        ]
 
         context.data = form
-        context.response = context.client.post(reverse('myapp:hacer_registro_partner'), form, files=archivos)
+        context.response = context.client.post(reverse('myapp:hacer_registro'), form, files=None, follow=True)
 
+@then('debería ver que los archivos fueron subidos correctamente para el usuario "{username}"')
+def check_files_uploaded(context,username ):
+    # Aquí verificas si los archivos están disponibles en tu aplicación
+    try:
+        user = User.objects.get(username=username)
+        partner = Partners.objects.get(user=user)
+        negocio = partner.negocio
 
+        archivos_negocio = Archivo.objects.filter(negocio=negocio)
+        assert archivos_negocio.exists(), f"No se encontraron archivos asociados al negocio de {partner}"
+
+        # Verificar archivos específicos
+        assert archivos_negocio.filter(archivo__icontains='file1.pdf').exists(), "No se encontró file1.pdf"
+        assert archivos_negocio.filter(archivo__icontains='file2.pdf').exists(), "No se encontró file2.pdf"
+
+    except User.DoesNotExist:
+        raise AssertionError(f"El usuario con username '{username}' no existe en la base de datos")
+    except Partners.DoesNotExist:
+        raise AssertionError(f"No se encontró un partner asociado al usuario '{username}'")
+    except Negocio.DoesNotExist:
+        raise AssertionError(f"No se encontró un negocio asociado al partner de '{username}'")
+    except Archivo.DoesNotExist:
+        raise AssertionError(f"No se encontraron archivos asociados al negocio de {partner}")
 
