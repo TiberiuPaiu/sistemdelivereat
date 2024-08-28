@@ -37,30 +37,7 @@ class User(AbstractUser):
 
 class Negocio(models.Model):
     nombre = models.CharField(max_length=255)
-    _numero_de_enrutamiento = models.CharField(max_length=9, validators=[MinLengthValidator(9)],null=True,blank=True,db_column='numero_de_enrutamiento')  # Número de ruta de 9 dígitos
-    _numero_de_cuenta = models.CharField(max_length=17,validators=[MinLengthValidator(6)],null=True,blank=True,db_column='numero_de_cuenta')  # Número de cuenta (mín. 6, máx. 17 dígitos)
 
-    @cached_property
-    def fernet(self):
-        return Fernet(ENCRYPTION_KEY)
-
-    @property
-    def numero_de_cuenta(self):
-        return self.fernet.decrypt(self._numero_de_cuenta.encode()).decode()
-
-    @numero_de_cuenta.setter
-    def numero_de_cuenta(self, value):
-        self._numero_de_cuenta = self.fernet.encrypt(value.encode()).decode()
-
-    @property
-    def numero_de_enrutamiento(self):
-        return self.fernet.decrypt(self._numero_de_enrutamiento.encode()).decode()
-
-    @numero_de_enrutamiento.setter
-    def numero_de_enrutamiento(self, value):
-        self._numero_de_enrutamiento = self.fernet.encrypt(value.encode()).decode()
-    def __str__(self):
-        return self.nombre
 
 class Partners(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, related_name='partners_role')
@@ -191,9 +168,10 @@ class Pedido(models.Model):
     restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
     fecha_pedido = models.DateTimeField(auto_now_add=True)
     repartidor = models.ForeignKey(Repartidor, on_delete=models.CASCADE, null=True,  related_name='repartidor_asignado')
-
+    # Otros campos relevantes del modelo
     codigo_pedido = models.CharField(max_length=50, unique=True)
     codigo_validacio = models.CharField(max_length=50, unique=True, null=True)
+
 
     def save(self, *args, **kwargs):
         if not self.codigo_pedido:
@@ -210,36 +188,6 @@ class PedidoPlato(models.Model):
     cantidad = models.IntegerField(default=1)
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-
-"""
-class HorarioTrabajo(models.Model):
-    DIA_CHOICES = [
-        ('lunes', 'Lunes'),
-        ('martes', 'Martes'),
-        ('miercoles', 'Miércoles'),
-        ('jueves', 'Jueves'),
-        ('viernes', 'Viernes'),
-        ('sabado', 'Sábado'),
-        ('domingo', 'Domingo'),
-    ]
-
-    dia = models.CharField(max_length=20, choices=DIA_CHOICES)
-    apertura = models.TimeField(null=True)
-    cierre = models.TimeField(null=True)
-    estado_local = models.CharField(max_length=20, choices=[('abierto', 'Abierto'), ('cerrado', 'Cerrado')],
-                                    default='abierto')
-    restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.dia} - {self.apertura} a {self.cierre} ({self.estado_local})"
-
-
-class DiaFestivo(models.Model):
-    fecha = models.DateField()
-    estado_local = models.CharField(max_length=20, choices=[('cerrado', 'Cerrado')],
-                                    default='cerrado')
-    restaurante = models.ForeignKey(Restaurante, on_delete=models.CASCADE)
-"""
 
 
 
