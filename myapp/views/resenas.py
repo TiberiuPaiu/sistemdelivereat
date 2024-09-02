@@ -49,16 +49,26 @@ class ResenasView( DetailView):
             context['title_pagina'] = {'label_title': "Reseñas para restaurante",
                                        'title_card': "Reseñas del restaurante " + restaurante.nombre,
                                        },
-
-            context['ruta_pagina'] = [{
+            if self.request.user.user_type == "cliente":
+                context['ruta_pagina'] = [{
+                        'text': "Lista de restaurantes",
+                        'link': "myapp:restaurantes_list_cliente",
+                },
+                        {
+                            'text': "Reseñas del restaurante " + restaurante.nombre,
+                            'link': "",
+                        }
+                ]
+            else:
+                context['ruta_pagina'] = [{
                     'text': "Lista de restaurantes",
-                    'link': "myapp:restaurantes_list_cliente",
-            },
+                    'link': "myapp:list_restaurantes",
+                },
                     {
                         'text': "Reseñas del restaurante " + restaurante.nombre,
                         'link': "",
                     }
-            ]
+                ]
         elif tipo_objeto == 'plato':
             plato = context['object']
             context['resenas'] = plato.resenas.all()
@@ -71,6 +81,15 @@ class ResenasView( DetailView):
             context['title_pagina'] = {'label_title': "Reseñas para plato",
                                        'title_card': "Reseñas del plato " + plato.nombre,
                                        }
+            context['ruta_pagina'] = [{
+                'text': "Lista de restaurantes",
+                'link': "myapp:restaurantes_list_cliente",
+            },
+                {
+                    'text': "Reseñas del restaurante " + plato.nombre,
+                    'link': "",
+                }
+            ]
 
 
         context['tipo_objeto'] = tipo_objeto

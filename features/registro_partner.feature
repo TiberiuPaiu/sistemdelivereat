@@ -20,5 +20,5 @@ Feature: Registro de Partners
     | username      | email             | password       | prefix_tel | telefono  | first_name | last_name | nombre_negocio  |
     | tibi_partner  | tibi@ejemplo.com  | Tiberiu.1234   | +34       | 600000000  | Test       | Partner   | Test Business   |
     And envío el formulario
-    Then debería ver la página de registro con el siguiente "Es obligatorio añadir archivos de Licencias comerciales, permisos de salud y registros sanitarios"
+    Then debería ver la página de registro con el siguiente mesaje "Es obligatorio añadir archivos de Licencias comerciales, permisos de salud y registros sanitarios"
     And debería de no existir el usuario con el username "tibi_partner"

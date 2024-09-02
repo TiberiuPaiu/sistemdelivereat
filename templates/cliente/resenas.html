@@ -63,7 +63,7 @@
         {% for resena in resenas %}
         <div class="post clearfix">
 <div class="user-block">
-<img class="img-circle img-bordered-sm" src="{% static '../../media/img/user-150x150.png' %}" alt="user image">
+<img class="img-circle img-bordered-sm" src="{{ user.get_img }}" alt="user image">
 <span class="username">
 <a href="#">{{ resena.cliente.user.username }}</a>
 <div class="float-right ">

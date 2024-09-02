@@ -392,6 +392,7 @@ def procesar_pedido_from(request):
 
                 # Verificar si el token de Stripe está presente
                 total_trasferencia=0
+                codigos_pedidos = []
                 restaurantes=""
                 stripe_token = request.POST.get('stripeToken')
                 if not stripe_token:
@@ -427,6 +428,9 @@ def procesar_pedido_from(request):
                             restaurante=restaurante
                         )
 
+                        # Guardar el código del pedido
+                        codigos_pedidos.append(pedido.codigo_pedido)
+
                         for plato in platos_en_pedido:
                             cantidad = carrito[str(plato.id)]['cantidad']
                             subtotal = descuento(plato) * cantidad
@@ -439,10 +443,11 @@ def procesar_pedido_from(request):
 
                 # Crear una nueva carga de Stripe para cada restaurante
                 try:
+                    descripcion_cargo = f"Pago realizado por los siguientes pedidos: {', '.join(codigos_pedidos)}"
                     charge = stripe.Charge.create(
                                     amount=int(total_trasferencia * 100),  # Stripe maneja los montos en centavos
                                     currency='eur',
-                                    description=f'Pago del pedido para los restaurantes: {restaurantes}',
+                                    description=descripcion_cargo,
                                     source=stripe_token
                     )
                 except stripe.error.StripeError as e:

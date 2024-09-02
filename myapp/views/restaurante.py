@@ -3,7 +3,7 @@ from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Avg
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -38,7 +38,10 @@ class ArticleDetailView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
         restarantes = Restaurante.objects.filter(
             partner=user_partners,
+        ).annotate(
+            puntuacion_media=Avg('resenas__puntuacion')
         )
+
         return restarantes
 
     def get_context_data(self, **kwargs):
@@ -468,7 +471,9 @@ class PlatosRestauranteListView(LoginRequiredMixin, RolRequiredMixin, ListView):
 
     def get_queryset(self):
         restaurante_id = self.kwargs['restaurante_id']
-        platos = Plato.objects.filter(restaurante_id=restaurante_id)
+        platos = Plato.objects.filter(restaurante_id=restaurante_id).annotate(
+            puntuacion_media=Avg('resenas__puntuacion')
+        )
         query = self.request.GET.get('query')
         tipo_comida = self.request.GET.get('tipos')
         if query:

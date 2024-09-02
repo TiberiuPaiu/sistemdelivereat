@@ -22,6 +22,8 @@ def resena_count_ddbb(restaurante_id):
 
 
 
+
+
 @register.simple_tag
 def resena_plato_count_ddbb(plato_id):
      return ResenaPlato.objects.filter(plato_id=plato_id).count()

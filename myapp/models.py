@@ -145,7 +145,7 @@ class ResenaPlato(Resena):
 
 class Pedido(models.Model):
     ESTADOS_TYPE = [
-        ('espera_preparacion', 'En espera la preparación'),
+        ('espera_preparacion', 'En espera de la preparación'),
         ('preparacion', 'En preparación'),
         ('espera_repartidor', 'Pendiente para su recogida por el repartidor'),
         ('en_camino', 'En camino'),

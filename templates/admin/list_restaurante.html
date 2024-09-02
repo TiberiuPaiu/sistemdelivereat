@@ -39,9 +39,10 @@
                 <div class="widget-user-image">
                     <img class="img-circle elevation-2" src="{{ restaurante.imagens.first.imagen.url }}" alt="User Avatar">
                 </div>
-                <h3 class="widget-user-username">{{ restaurante.nombre }}</h3>
+                <h3 class="widget-user-username">{{ restaurante.nombre }} </h3>
                 <h5 class="widget-user-desc">
                     
+                    <div class="estrellas" data-puntuacion=" {{ restaurante.puntuacion_media }}"></div> 
                     {{ restaurante.ubicacion.full_address }}
 
 
@@ -137,14 +138,48 @@
 
 
 </div>
-</div>
+
     
 
 {% endblock %}
 
 
 {% block script %}
+<script>
+    function dibujarEstrellas(elemento) {
+         const puntuacion = parseFloat(elemento.getAttribute('data-puntuacion'));
+        // Tu código para dibujar las estrellas
+        const totalEstrellas = 5;
+        const estrellasLlenas = Math.floor(puntuacion);
+        const estrellaParcial = puntuacion - estrellasLlenas;
+        const estrellasVacias = totalEstrellas - estrellasLlenas - (estrellaParcial > 0 ? 1 : 0);
+        let estrellasHtml = '';
 
+        for (let i = 0; i < estrellasLlenas; i++) {
+            estrellasHtml += '<i class="fas fa-star mr-1 text-warning"></i>';
+        }
+
+         if (estrellaParcial > 0) {
+            estrellasHtml += '<i class="fas fa-star-half-alt mr-1 text-warning"></i>';
+        }
+
+        for (let i = 0; i < estrellasVacias; i++) {
+            estrellasHtml += '<i class="far fa-star mr-1 text-warning"></i>';
+        }
+
+        // Agregar el HTML generado al elemento
+        elemento.innerHTML = estrellasHtml;
+    }
+
+    // Seleccionar todos los elementos con la clase 'estrellas'
+    const elementosEstrellas = document.querySelectorAll('.estrellas');
+
+    // Iterar sobre los elementos seleccionados y llamar a la función dibujarEstrellas
+    elementosEstrellas.forEach(function(elemento) {
+        dibujarEstrellas(elemento);
+    });
+
+    </script>
 <!-- jQuery -->
 <script src="{% static 'adminlte/js/jquery.min.js' %}"></script>
 <!-- Bootstrap 4 -->

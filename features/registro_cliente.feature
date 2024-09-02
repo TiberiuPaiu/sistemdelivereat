@@ -19,7 +19,7 @@ Feature: Registro de Cliente en el Sistema
     | Tiberiu        | Paiu           | tibi@ejemplo.com | 610344405 | +34     | tibi_cliente_test | Tiberiu.1234 | España  | Valladolid   | 47011        | direccion_error    | 1      |
     And envío el formulario
     #Then debería ser redirigido a la página de registro de clientes
-    Then debería ver la página de registro con el siguiente "No se encontró la dirección. Por favor ingrese la dirección."
+    Then debería ver la página de registro con el siguiente mesaje "No se encontró la dirección. Por favor ingrese la dirección."
     And debería de no existir el usuario con el username "tibi_cliente_test_2"
 
   Scenario: Falla en el registro debido a un usuario existente
@@ -32,5 +32,5 @@ Feature: Registro de Cliente en el Sistema
 
     And envío el formulario
     #Then debería ser redirigido a la página de registro de clientes
-    Then debería ver la página de registro con el siguiente "El nombre de usuario ya existe"
+    Then debería ver la página de registro con el siguiente mesaje "El nombre de usuario ya existe"
     And debería  existir solo "2" usuarios

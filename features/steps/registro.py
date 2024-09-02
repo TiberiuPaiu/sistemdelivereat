@@ -44,7 +44,7 @@ def submit_registration_form(context):
 def see_login_page(context):
     assert context.response.status_code == 200  # Debe ser 200 después de seguir la redirección
     assert 'Inicia sesión dentro del sistema de DeliveEreat' in context.response.content.decode('utf-8')
-@then(u'debería ver la página de registro con el siguiente "{mesg_error}"')
+@then(u'debería ver la página de registro con el siguiente mesaje "{mesg_error}"')
 def see_registration_page_with_errors(context,mesg_error):
     content = context.response.content.decode('utf-8')
     # Verificar si hay mensajes de error en el contenido
@@ -180,3 +180,23 @@ def verify_redirection(context):
             print(f"Expected URL: {expected_url}")
             print(f"Redirect chain: {context.response.redirect_chain}")
             assert expected_url in context.response.redirect_chain[-1][0]
+
+@given(u'existe un usuario "{username}" con contraseña "{password}"')
+def create_user(context, username, password):
+    User.objects.create_user(username=username, password=password)
+
+@when(u'inicio sesión como usuario "{username}" con contraseña "{password}"')
+def login_user(context, username, password):
+    context.client = Client()
+    form = {
+        'username': username,
+        'password': password,
+    }
+    context.response = context.client.post(reverse('myapp:login'), form)
+
+
+
+@then(u'debería ver la página de login con el siguiente mensaje "{message}"')
+def verify_login_error_message(context, message):
+    assert context.response.status_code == 200
+    assert message in context.response.content.decode()

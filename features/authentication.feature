@@ -23,3 +23,17 @@ Feature: Login de Usuario
     | partners    | restaurantes_list                 |
     | cocina      | pedidos_actualizados              |
     | repartidor  | pedidos_repartidor                |
+
+    Scenario: el nombre de usuario no registrado no puede iniciar sesión
+    When inicio sesión como usuario "inexistente" con contraseña "contraseña"
+    And presiono el botón de iniciar sesión
+    Then debería ver la página de login con el siguiente mensaje "Por favor, introduzca un nombre de usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas."
+
+  Scenario: error tipográfico incorrecto, el usuario registrado no puede iniciar sesión
+    Given existe un usuario "nombredeusuario" con contraseña "contraseña"
+    When inicio sesión como usuario "nombredeusuario" con contraseña "contraseña incorrecta"
+    And presiono el botón de iniciar sesión
+    Then debería ver la página de login con el siguiente mensaje "Por favor, introduzca un nombre de usuario y clave correctos. Observe que ambos campos pueden ser sensibles a mayúsculas."
+
+
+

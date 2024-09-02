@@ -202,14 +202,59 @@
     {% endblock %}
      </footer>
 {% else %}
-    <footer class="main-footer">
+   <footer class="main-footer  py-4">
+    <div class="container">
+        <div class="row">
+            <!-- Sobre nosotros -->
+            
+            <div class="col-md-2">
+                 <img src="/media/img/icono_app.ico" width="200px" height="200px" alt="logotipo menu"  >
+            </div>
+            
+            <div class="col-md-4">
+                <h5>Sobre Nosotros</h5>
+                <p style="color: #3f474e">
+                    Somos una plataforma dedicada a ofrecer la mejor experiencia en entrega de comida. Nuestro objetivo es conectar a los usuarios con sus restaurantes cercanos de manera rápida y eficiente.
+                </p>
+            </div>
 
-        <div class="float-right d-none d-sm-inline">
-        Anything you want
+            <!-- Enlaces útiles -->
+            <div class="col-md-2">
+                <h5>Enlaces Útiles</h5>
+                <ul class="list-unstyled">
+                    <li><a href="#" class="text-black">Términos y Condiciones</a></li>
+                    <li><a href="#" class="text-black">Política de Privacidad</a></li>
+                </ul>
+            </div>
+
+            <!-- Contacto -->
+            <div class="col-md-2">
+                <h5>Contacto</h5>
+                <p>
+                    <i class="fas fa-map-marker-alt"></i> Calle 123, Lleida, España<br>
+                    <i class="fas fa-phone"></i> +34 123 456 789<br>
+                    <i class="fas fa-envelope"></i> info@delivereat.com
+                </p>
+            </div>
+
+            <!-- Redes Sociales -->
+            <div class="col-md-2">
+                <h5>Síguenos</h5>
+                <a href="#" class="text-black mr-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-black mr-3"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-black mr-3"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-black"><i class="fab fa-linkedin"></i></a>
+            </div>
         </div>
-        
-        <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
-        </footer>
+
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="mb-0" style="color: #3f474e" >&copy; 2024 .</p>
+                <p class="mb-0" style="color: #3f474e" >Desarrollado por <a href="https://github.com/TiberiuPaiu">Tiberiu Paiu </a>.</p>
+            </div>
+        </div>
+    </div>
+</footer>
 {% endif %}
  
 {% if kanban  %}

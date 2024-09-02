@@ -1,5 +1,6 @@
 {% extends 'base/base_adminlte.html' %}
 {% load static %}
+{% load custom_tags %}
 {% block style %}
  <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -80,7 +81,14 @@
  {{ restaurante.descripcion}}
 </p>
 <p>
-
+<span class="float-left">    
+   
+    <a href="{% url 'myapp:platos_list_cliente' restaurante_id=restaurante.id %}" class="link-black text-sm">
+      {% platos_count_ddbb restaurante.id  as platos_count %}
+        
+        Menú ({{ platos_count }} )
+</a>
+</span>
 <span class="float-right">
 <a href="{% url 'myapp:resena_generico' tipo_objeto='restaurante' id_objeto=restaurante.id %}" class="link-black text-sm">
 <i class="far fa-comments mr-1"></i> Reseñas ({{ restaurante.resenas.count }})
