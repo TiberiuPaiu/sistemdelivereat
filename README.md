@@ -11,5 +11,5 @@ En la memoria se detalla el desarrollo completo del proyecto, incluyendo:
 
 Puedes consultarla aquí:
 
-[Ver memoria en PDF](LINK_DEL_PDF_AQUI)
+[Ver memoria en PDF](./TFG_TiberiuIonutPaiu (1).pdf)
 ---
